@@ -15,6 +15,10 @@ import { useInternetIdentity } from "./hooks/useInternetIdentity";
 
 type Page = "home" | "history" | "customerCase" | "admin";
 
+function getLocalStorageKey(principalId: string) {
+  return `wbcom_username_${principalId}`;
+}
+
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>("home");
   const [activeTopic, setActiveTopic] = useState("journal");
@@ -54,11 +58,25 @@ export default function App() {
   );
 
   const checkProfile = useCallback(async () => {
-    if (!actor) return;
+    if (!actor || !identity) return;
+    const principalId = identity.getPrincipal().toString();
+    const localKey = getLocalStorageKey(principalId);
+    const savedName = localStorage.getItem(localKey);
+
+    // If we already have the name in localStorage, use it immediately — no backend call needed
+    if (savedName?.trim()) {
+      setUsername(savedName.trim());
+      setShowUsernameModal(false);
+      return;
+    }
+
+    // Otherwise, try backend
     try {
       const profile = await actor.getCallerUserProfile();
       if (profile?.name?.trim()) {
-        setUsername(profile.name.trim());
+        const name = profile.name.trim();
+        localStorage.setItem(localKey, name);
+        setUsername(name);
         setShowUsernameModal(false);
       } else {
         setShowUsernameModal(true);
@@ -66,7 +84,7 @@ export default function App() {
     } catch {
       setShowUsernameModal(true);
     }
-  }, [actor]);
+  }, [actor, identity]);
 
   useEffect(() => {
     const currentPrincipal = identity?.getPrincipal().toString() ?? null;
@@ -96,6 +114,14 @@ export default function App() {
     }
   }, [identity, actor, isFetching, checkAdmin, checkProfile]);
 
+  // When identity is cleared (logout), reset username state but keep localStorage intact
+  useEffect(() => {
+    if (!identity) {
+      setUsername("");
+      setIsAdmin(false);
+    }
+  }, [identity]);
+
   function handleNavigate(page: Page) {
     if (
       (page === "history" || page === "customerCase" || page === "admin") &&
@@ -108,6 +134,11 @@ export default function App() {
   function handleUsernameSaved(name: string) {
     setUsername(name);
     setShowUsernameModal(false);
+    // Persist to localStorage so modal never reappears for this identity
+    if (identity) {
+      const principalId = identity.getPrincipal().toString();
+      localStorage.setItem(getLocalStorageKey(principalId), name);
+    }
   }
 
   if (!identity) {
