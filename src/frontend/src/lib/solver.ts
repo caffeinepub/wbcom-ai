@@ -31,6 +31,301 @@ export function solveDepreciation(
   return rows;
 }
 
+// ============================================================
+// Depreciation Account Format (T-Account / WBCHSE style)
+// ============================================================
+export interface AssetAccountRow {
+  year: number;
+  dr_particulars: string;
+  dr_amount: number;
+  cr_particulars: string;
+  cr_amount: number;
+}
+
+export interface ProvisionRow {
+  year: number;
+  particulars: string;
+  dr: number;
+  cr: number;
+  balance: number;
+}
+
+export interface DepreciationAccountResult {
+  assetAccount: AssetAccountRow[];
+  provisionAccount: ProvisionRow[];
+}
+
+export function solveDepreciationAccounts(
+  cost: number,
+  salvage: number,
+  life: number,
+  method: "SLM" | "WDV",
+  wdvRate?: number,
+): DepreciationAccountResult {
+  const rows = solveDepreciation(cost, salvage, life, method, wdvRate);
+  const assetAccount: AssetAccountRow[] = rows.map((r) => ({
+    year: r.year,
+    dr_particulars: r.year === 1 ? "To Bank A/c (Purchase)" : "To Balance b/d",
+    dr_amount: r.year === 1 ? cost : r.opening,
+    cr_particulars: "By Depreciation A/c / By Balance c/d",
+    cr_amount: r.opening,
+  }));
+
+  let provBalance = 0;
+  const provisionAccount: ProvisionRow[] = rows.map((r) => {
+    provBalance += r.depreciation;
+    return {
+      year: r.year,
+      particulars: `Year ${r.year} — Depreciation on Asset`,
+      dr: 0,
+      cr: r.depreciation,
+      balance: provBalance,
+    };
+  });
+
+  return { assetAccount, provisionAccount };
+}
+
+// ============================================================
+// Asset Disposal / Sale
+// ============================================================
+export interface AssetDisposalResult {
+  bookValueAtSale: number;
+  salePrice: number;
+  profitOrLoss: number;
+  isProfit: boolean;
+  depreciationRows: DepreciationRow[];
+}
+
+export function solveAssetDisposal(
+  cost: number,
+  purchaseYear: number,
+  saleYear: number,
+  salePrice: number,
+  salvage: number,
+  method: "SLM" | "WDV",
+  wdvRate?: number,
+): AssetDisposalResult {
+  const life = saleYear - purchaseYear + 1;
+  const rows = solveDepreciation(
+    cost,
+    salvage,
+    Math.max(life, 1),
+    method,
+    wdvRate,
+  );
+  const lastRow = rows[rows.length - 1];
+  const bookValueAtSale = lastRow ? lastRow.closing : cost;
+  const diff = salePrice - bookValueAtSale;
+  return {
+    bookValueAtSale,
+    salePrice,
+    profitOrLoss: Math.abs(diff),
+    isProfit: diff >= 0,
+    depreciationRows: rows,
+  };
+}
+
+// ============================================================
+// Revaluation Account (Partnership)
+// ============================================================
+export interface RevaluationItem {
+  name: string;
+  type: "asset" | "liability";
+  increase: number;
+  decrease: number;
+}
+
+export interface RevaluationResult {
+  revaluationItems: RevaluationItem[];
+  netGainOrLoss: number;
+  partnerShares: { name: string; share: number }[];
+  isGain: boolean;
+}
+
+export function solveRevaluation(
+  assets: { name: string; oldValue: number; newValue: number }[],
+  liabilities: { name: string; oldValue: number; newValue: number }[],
+  partners: { name: string; ratio: number }[],
+): RevaluationResult {
+  const items: RevaluationItem[] = [];
+
+  for (const a of assets) {
+    const diff = a.newValue - a.oldValue;
+    items.push({
+      name: a.name,
+      type: "asset",
+      increase: diff > 0 ? diff : 0,
+      decrease: diff < 0 ? -diff : 0,
+    });
+  }
+
+  for (const l of liabilities) {
+    const diff = l.newValue - l.oldValue;
+    // Liability increase = loss (debit), decrease = gain (credit)
+    items.push({
+      name: l.name,
+      type: "liability",
+      increase: diff > 0 ? diff : 0,
+      decrease: diff < 0 ? -diff : 0,
+    });
+  }
+
+  // Net: asset increases + liability decreases = gain side
+  //      asset decreases + liability increases = loss side
+  const gainSide = items.reduce((s, i) => {
+    if (i.type === "asset") return s + i.increase;
+    return s + i.decrease; // liability decrease = gain
+  }, 0);
+  const lossSide = items.reduce((s, i) => {
+    if (i.type === "asset") return s + i.decrease;
+    return s + i.increase; // liability increase = loss
+  }, 0);
+
+  const net = gainSide - lossSide;
+  const isGain = net >= 0;
+  const totalRatio = partners.reduce((s, p) => s + p.ratio, 0);
+
+  const partnerShares = partners.map((p) => ({
+    name: p.name,
+    share: totalRatio > 0 ? (Math.abs(net) * p.ratio) / totalRatio : 0,
+  }));
+
+  return {
+    revaluationItems: items,
+    netGainOrLoss: Math.abs(net),
+    partnerShares,
+    isGain,
+  };
+}
+
+// ============================================================
+// Retirement of Partner
+// ============================================================
+export interface RetirementResult {
+  amountDueToRetiredPartner: number;
+  goodwillAdjustments: { name: string; dr: number; cr: number }[];
+  closingEntries: string[];
+}
+
+export function solveRetirement(
+  retiringPartner: {
+    name: string;
+    capitalBalance: number;
+    goodwillShare: number;
+    revaluationShare: number;
+  },
+  remainingPartners: { name: string; newRatio: number }[],
+  _totalGoodwill: number,
+): RetirementResult {
+  const amountDueToRetiredPartner =
+    retiringPartner.capitalBalance +
+    retiringPartner.goodwillShare +
+    retiringPartner.revaluationShare;
+
+  const totalRatio = remainingPartners.reduce((s, p) => s + p.newRatio, 0);
+  const goodwillAdjustments = remainingPartners.map((p) => ({
+    name: p.name,
+    dr:
+      totalRatio > 0
+        ? (retiringPartner.goodwillShare * p.newRatio) / totalRatio
+        : 0,
+    cr: 0,
+  }));
+
+  const closingEntries = [
+    `${retiringPartner.name}'s Capital A/c   Dr.   ₹${retiringPartner.capitalBalance.toFixed(2)}`,
+    `    To ${retiringPartner.name}'s Loan A/c / Bank A/c   ₹${amountDueToRetiredPartner.toFixed(2)}`,
+    `(Being amount due to ${retiringPartner.name} on retirement)`,
+  ];
+
+  return { amountDueToRetiredPartner, goodwillAdjustments, closingEntries };
+}
+
+// ============================================================
+// Share Forfeiture & Reissue
+// ============================================================
+export interface ShareForfeitureResult {
+  forfeitureEntries: JournalEntry[];
+  reissueEntries: JournalEntry[];
+  capitalReserve: number;
+}
+
+export function solveShareForfeiture(
+  shares: number,
+  faceValue: number,
+  paidUpValue: number,
+  reissuePrice: number,
+  sharesReissued: number,
+): ShareForfeitureResult {
+  const callInArrears = shares * (faceValue - paidUpValue);
+  const shareCapitalDr = shares * faceValue;
+  const forfeitureCr = shares * paidUpValue;
+
+  const forfeitureEntries: JournalEntry[] = [
+    {
+      particulars: "Share Capital A/c   Dr.",
+      debit: shareCapitalDr,
+      credit: "-",
+      narration: `(${shares} shares × ₹${faceValue} face value)`,
+    },
+    {
+      particulars: "    To Calls-in-Arrears A/c",
+      debit: "-",
+      credit: callInArrears,
+    },
+    {
+      particulars: "    To Share Forfeiture A/c",
+      debit: "-",
+      credit: forfeitureCr,
+      narration: "(Being shares forfeited for non-payment of calls)",
+    },
+  ];
+
+  const reissueTotal = sharesReissued * reissuePrice;
+  const discountOnReissue = sharesReissued * (faceValue - reissuePrice);
+  const forfeiturePerShare = paidUpValue;
+  const capitalReserve =
+    sharesReissued * forfeiturePerShare - Math.max(discountOnReissue, 0);
+
+  const reissueEntries: JournalEntry[] = [
+    {
+      particulars: "Bank A/c   Dr.",
+      debit: reissueTotal,
+      credit: "-",
+    },
+  ];
+
+  if (discountOnReissue > 0) {
+    reissueEntries.push({
+      particulars: "Share Forfeiture A/c   Dr.",
+      debit: discountOnReissue,
+      credit: "-",
+    });
+  }
+
+  reissueEntries.push({
+    particulars: "    To Share Capital A/c",
+    debit: "-",
+    credit: sharesReissued * faceValue,
+    narration: "(Being forfeited shares reissued)",
+  });
+
+  reissueEntries.push({
+    particulars: "Share Forfeiture A/c   Dr.",
+    debit: capitalReserve,
+    credit: "-",
+  });
+  reissueEntries.push({
+    particulars: "    To Capital Reserve A/c",
+    debit: "-",
+    credit: capitalReserve,
+    narration: "(Being balance of forfeiture transferred to Capital Reserve)",
+  });
+
+  return { forfeitureEntries, reissueEntries, capitalReserve };
+}
+
 export interface GoodwillResult {
   superProfit: number;
   goodwillCap: number;
@@ -293,6 +588,29 @@ export function solveNPO(
   const deficit =
     totalExpenditure > totalIncome ? totalExpenditure - totalIncome : 0;
   return { totalIncome, totalExpenditure, surplus, deficit };
+}
+
+// ============================================================
+// Receipt & Payment Account (NPO)
+// ============================================================
+export interface ReceiptPaymentResult {
+  receipts: { label: string; amount: number }[];
+  payments: { label: string; amount: number }[];
+  totalReceipts: number;
+  totalPayments: number;
+  closingBalance: number;
+}
+
+export function solveReceiptPayment(
+  openingBalance: number,
+  receipts: { label: string; amount: number }[],
+  payments: { label: string; amount: number }[],
+): ReceiptPaymentResult {
+  const totalReceipts =
+    receipts.reduce((s, i) => s + i.amount, 0) + openingBalance;
+  const totalPayments = payments.reduce((s, i) => s + i.amount, 0);
+  const closingBalance = totalReceipts - totalPayments;
+  return { receipts, payments, totalReceipts, totalPayments, closingBalance };
 }
 
 // ============================================================

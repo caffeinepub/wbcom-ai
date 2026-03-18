@@ -20,13 +20,18 @@ import {
   type AppropriationPartner,
   fmt,
   solveAppropriation,
+  solveAssetDisposal,
   solveBalanceSheet,
   solveCashFlow,
   solveDepreciation,
+  solveDepreciationAccounts,
   solveGoodwill,
   solveJournalEntry,
   solveNPO,
+  solveRetirement,
+  solveRevaluation,
   solveSacrificeRatio,
+  solveShareForfeiture,
   solveShareIssue,
 } from "../lib/solver";
 
@@ -138,6 +143,59 @@ export function ProblemSolver({ activeTopic }: ProblemSolverProps) {
     },
   ]);
 
+  // === Sub-type states ===
+  const [depSubType, setDepSubType] = useState<
+    "schedule" | "accountFormat" | "disposal"
+  >("schedule");
+  const [partSubType, setPartSubType] = useState<
+    "goodwill" | "sacrifice" | "revaluation" | "retirement"
+  >("goodwill");
+  const [compSubType, setCompSubType] = useState<
+    "shareIssue" | "shareForfeiture"
+  >("shareIssue");
+
+  // === Extended depreciation form (disposal) ===
+  const [depDisposalForm, setDepDisposalForm] = useState({
+    purchaseYear: "1",
+    saleYear: "3",
+    salePrice: "",
+  });
+
+  // === Share Forfeiture form ===
+  const [sfForm, setSfForm] = useState({
+    shares: "100",
+    faceValue: "10",
+    paidUpValue: "7",
+    reissuePrice: "8",
+    reissued: "100",
+  });
+
+  // === Revaluation form ===
+  const [revAssets, setRevAssets] = useState([
+    { name: "Land", oldValue: "100000", newValue: "120000" },
+    { name: "Machinery", oldValue: "80000", newValue: "75000" },
+  ]);
+  const [revLiabilities, setRevLiabilities] = useState([
+    { name: "Creditors", oldValue: "50000", newValue: "48000" },
+  ]);
+  const [revPartners, setRevPartners] = useState([
+    { name: "A", ratio: "3" },
+    { name: "B", ratio: "2" },
+  ]);
+
+  // === Retirement form ===
+  const [retForm, setRetForm] = useState({
+    retiredName: "A",
+    capital: "100000",
+    goodwillShare: "20000",
+    revaluationShare: "5000",
+    totalGoodwill: "60000",
+  });
+  const [retRemaining, setRetRemaining] = useState([
+    { name: "B", newRatio: "3" },
+    { name: "C", newRatio: "2" },
+  ]);
+
   function parseItems(text: string): { label: string; amount: number }[] {
     return text
       .split("\n")
@@ -166,115 +224,566 @@ export function ProblemSolver({ activeTopic }: ProblemSolverProps) {
         toast.error("Please fill all required fields");
         return;
       }
-      const rows = solveDepreciation(
-        cost,
-        salvage || 0,
-        life,
-        depForm.method as "SLM" | "WDV",
-        wdvRate,
-      );
-      jsonIn = JSON.stringify(depForm);
-      solStr = JSON.stringify(rows);
-      node = (
-        <div>
-          <WorkingNote>
-            <p>Cost of Asset = ₹{fmt(cost)}</p>
-            <p>Residual Value = ₹{fmt(salvage || 0)}</p>
-            {depForm.method === "SLM" ? (
+      jsonIn = JSON.stringify({ depForm, depSubType, depDisposalForm });
+
+      if (depSubType === "accountFormat") {
+        const res = solveDepreciationAccounts(
+          cost,
+          salvage || 0,
+          life,
+          depForm.method as "SLM" | "WDV",
+          wdvRate,
+        );
+        solStr = JSON.stringify(res);
+        node = (
+          <div className="space-y-6">
+            <WorkingNote>
               <p>
-                Annual Depreciation (SLM) = (Cost - Salvage) / Life = ₹
-                {fmt((cost - (salvage || 0)) / life)}
+                Cost = ₹{fmt(cost)} | Salvage = ₹{fmt(salvage || 0)} | Life ={" "}
+                {life} years | Method = {depForm.method}
               </p>
-            ) : (
-              <p>WDV Rate = {wdvRate}% per year</p>
-            )}
-          </WorkingNote>
-          <table className="accounting-table mt-4">
-            <thead>
-              <tr>
-                <th>Year</th>
-                <th>Opening Value (₹)</th>
-                <th>Depreciation (₹)</th>
-                <th>Closing Value (₹)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r) => (
-                <tr key={r.year}>
-                  <td>{r.year}</td>
-                  <td className="text-right">{fmt(r.opening)}</td>
-                  <td className="text-right text-destructive">
-                    {fmt(r.depreciation)}
-                  </td>
-                  <td className="text-right">{fmt(r.closing)}</td>
+            </WorkingNote>
+            <div>
+              <h4 className="text-sm font-bold text-navy mb-2">
+                Asset Account (Dr / Cr)
+              </h4>
+              <table className="accounting-table">
+                <thead>
+                  <tr>
+                    <th>Year</th>
+                    <th>Dr — Particulars</th>
+                    <th>Dr ₹</th>
+                    <th>Cr — Particulars</th>
+                    <th>Cr ₹</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {res.assetAccount.map((row) => (
+                    <tr key={row.year}>
+                      <td>{row.year}</td>
+                      <td>{row.dr_particulars}</td>
+                      <td className="text-right">{fmt(row.dr_amount)}</td>
+                      <td>By Depreciation A/c + By Balance c/d</td>
+                      <td className="text-right">{fmt(row.dr_amount)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-navy mb-2">
+                Provision for Depreciation Account
+              </h4>
+              <table className="accounting-table">
+                <thead>
+                  <tr>
+                    <th>Year</th>
+                    <th>Particulars</th>
+                    <th>Depreciation (₹)</th>
+                    <th>Cumulative Balance (₹)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {res.provisionAccount.map((row) => (
+                    <tr key={row.year}>
+                      <td>{row.year}</td>
+                      <td>{row.particulars}</td>
+                      <td className="text-right text-destructive">
+                        {fmt(row.cr)}
+                      </td>
+                      <td className="text-right font-semibold">
+                        {fmt(row.balance)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+      } else if (depSubType === "disposal") {
+        const salePrice = Number.parseFloat(depDisposalForm.salePrice);
+        const saleYear = Number.parseInt(depDisposalForm.saleYear) || 3;
+        const purchaseYear = Number.parseInt(depDisposalForm.purchaseYear) || 1;
+        if (!salePrice) {
+          toast.error("Enter sale price");
+          return;
+        }
+        const res = solveAssetDisposal(
+          cost,
+          purchaseYear,
+          saleYear,
+          salePrice,
+          salvage || 0,
+          depForm.method as "SLM" | "WDV",
+          wdvRate,
+        );
+        solStr = JSON.stringify(res);
+        node = (
+          <div className="space-y-4">
+            <WorkingNote>
+              <p>
+                Cost = ₹{fmt(cost)} | Purchased: Year {purchaseYear} | Sold:
+                Year {saleYear}
+              </p>
+              <p>Book Value at Sale = ₹{fmt(res.bookValueAtSale)}</p>
+              <p>Sale Price = ₹{fmt(res.salePrice)}</p>
+              <p
+                className={
+                  res.isProfit
+                    ? "text-green-700 font-semibold"
+                    : "text-destructive font-semibold"
+                }
+              >
+                {res.isProfit ? "✅ Profit on Sale" : "⚠️ Loss on Sale"} = ₹
+                {fmt(res.profitOrLoss)}
+              </p>
+            </WorkingNote>
+            <h4 className="text-sm font-bold text-navy">
+              Depreciation Schedule up to Sale
+            </h4>
+            <table className="accounting-table">
+              <thead>
+                <tr>
+                  <th>Year</th>
+                  <th>Opening (₹)</th>
+                  <th>Depreciation (₹)</th>
+                  <th>Closing (₹)</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      );
-    } else if (activeTopic === "partnership") {
-      // Show Goodwill sub-solver
-      const avgProfit = Number.parseFloat(gwForm.avgProfit);
-      const normalProfit = Number.parseFloat(gwForm.normalProfit);
-      const capRate = Number.parseFloat(gwForm.capRate);
-      const years = Number.parseFloat(gwForm.years);
-      if (!avgProfit || !capRate || !years) {
-        toast.error("Please fill required fields");
-        return;
+              </thead>
+              <tbody>
+                {res.depreciationRows.map((r) => (
+                  <tr key={r.year}>
+                    <td>{r.year}</td>
+                    <td className="text-right">{fmt(r.opening)}</td>
+                    <td className="text-right text-destructive">
+                      {fmt(r.depreciation)}
+                    </td>
+                    <td className="text-right">{fmt(r.closing)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <table className="accounting-table mt-2">
+              <tbody>
+                <tr>
+                  <td>Book Value at Sale (Year {saleYear})</td>
+                  <td className="text-right">{fmt(res.bookValueAtSale)}</td>
+                </tr>
+                <tr>
+                  <td>Sale Price Received</td>
+                  <td className="text-right">{fmt(res.salePrice)}</td>
+                </tr>
+                <tr>
+                  <td
+                    className={`font-bold ${res.isProfit ? "text-green-700" : "text-destructive"}`}
+                  >
+                    {res.isProfit
+                      ? "Profit on Sale of Asset"
+                      : "Loss on Sale of Asset"}
+                  </td>
+                  <td
+                    className={`text-right font-bold ${res.isProfit ? "text-green-700" : "text-destructive"}`}
+                  >
+                    {fmt(res.profitOrLoss)}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        );
+      } else {
+        // Schedule (default)
+        const rows = solveDepreciation(
+          cost,
+          salvage || 0,
+          life,
+          depForm.method as "SLM" | "WDV",
+          wdvRate,
+        );
+        solStr = JSON.stringify(rows);
+        node = (
+          <div>
+            <WorkingNote>
+              <p>Cost of Asset = ₹{fmt(cost)}</p>
+              <p>Residual Value = ₹{fmt(salvage || 0)}</p>
+              {depForm.method === "SLM" ? (
+                <p>
+                  Annual Depreciation (SLM) = (Cost - Salvage) / Life = ₹
+                  {fmt((cost - (salvage || 0)) / life)}
+                </p>
+              ) : (
+                <p>WDV Rate = {wdvRate}% per year</p>
+              )}
+            </WorkingNote>
+            <table className="accounting-table mt-4">
+              <thead>
+                <tr>
+                  <th>Year</th>
+                  <th>Opening Value (₹)</th>
+                  <th>Depreciation (₹)</th>
+                  <th>Closing Value (₹)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((r) => (
+                  <tr key={r.year}>
+                    <td>{r.year}</td>
+                    <td className="text-right">{fmt(r.opening)}</td>
+                    <td className="text-right text-destructive">
+                      {fmt(r.depreciation)}
+                    </td>
+                    <td className="text-right">{fmt(r.closing)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
       }
-      const res = solveGoodwill(avgProfit, normalProfit || 0, capRate, years);
-      jsonIn = JSON.stringify(gwForm);
-      solStr = JSON.stringify(res);
-      node = (
-        <div>
-          <WorkingNote>
-            <p>Average Profit = ₹{fmt(res.avgProfit)}</p>
-            <p>Normal Profit = ₹{fmt(res.normalProfit)}</p>
-            <p>
-              Super Profit = Avg Profit − Normal Profit = ₹
-              {fmt(res.superProfit)}
-            </p>
-          </WorkingNote>
-          <table className="accounting-table mt-4">
-            <thead>
-              <tr>
-                <th>Particulars</th>
-                <th>Amount (₹)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Average Profit</td>
-                <td className="text-right">{fmt(res.avgProfit)}</td>
-              </tr>
-              <tr>
-                <td>Less: Normal Profit</td>
-                <td className="text-right">({fmt(res.normalProfit)})</td>
-              </tr>
-              <tr>
-                <td>
-                  <strong>Super Profit</strong>
-                </td>
-                <td className="text-right font-bold">{fmt(res.superProfit)}</td>
-              </tr>
-              <tr>
-                <td>
-                  Goodwill (Capitalisation Method) = Super Profit × 100 /{" "}
-                  {capRate}%
-                </td>
-                <td className="text-right">{fmt(res.goodwillCap)}</td>
-              </tr>
-              <tr>
-                <td>
-                  Goodwill (Years Purchase) = Super Profit × {years} years
-                </td>
-                <td className="text-right">{fmt(res.goodwillYears)}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      );
+    } else if (activeTopic === "partnership") {
+      if (partSubType === "sacrifice") {
+        const rows = solveSacrificeRatio(
+          srPartners.map((p) => ({
+            name: p.name,
+            oldRatio: Number.parseFloat(p.oldRatio) || 0,
+            newRatio: Number.parseFloat(p.newRatio) || 0,
+          })),
+        );
+        jsonIn = JSON.stringify(srPartners);
+        solStr = JSON.stringify(rows);
+        node = (
+          <div>
+            <WorkingNote>
+              <p>Sacrifice = Old Ratio − New Ratio (if positive)</p>
+              <p>Gain = New Ratio − Old Ratio (if positive)</p>
+            </WorkingNote>
+            <table className="accounting-table mt-4">
+              <thead>
+                <tr>
+                  <th>Partner</th>
+                  <th>Old Ratio</th>
+                  <th>New Ratio</th>
+                  <th>Sacrifice</th>
+                  <th>Gain</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((r) => (
+                  <tr key={r.name}>
+                    <td>{r.name}</td>
+                    <td className="text-center">{r.oldRatio}</td>
+                    <td className="text-center">{r.newRatio}</td>
+                    <td className="text-center text-destructive">
+                      {r.sacrifice > 0 ? r.sacrifice : "—"}
+                    </td>
+                    <td className="text-center text-green-700">
+                      {r.gain > 0 ? r.gain : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      } else if (partSubType === "revaluation") {
+        const assets = revAssets.map((a) => ({
+          name: a.name,
+          oldValue: Number.parseFloat(a.oldValue) || 0,
+          newValue: Number.parseFloat(a.newValue) || 0,
+        }));
+        const liabilities = revLiabilities.map((l) => ({
+          name: l.name,
+          oldValue: Number.parseFloat(l.oldValue) || 0,
+          newValue: Number.parseFloat(l.newValue) || 0,
+        }));
+        const partners = revPartners.map((p) => ({
+          name: p.name,
+          ratio: Number.parseFloat(p.ratio) || 1,
+        }));
+        const res = solveRevaluation(assets, liabilities, partners);
+        jsonIn = JSON.stringify({ revAssets, revLiabilities, revPartners });
+        solStr = JSON.stringify(res);
+        const drItems = res.revaluationItems.filter((i) =>
+          i.type === "asset" ? i.decrease > 0 : i.increase > 0,
+        );
+        const crItems = res.revaluationItems.filter((i) =>
+          i.type === "asset" ? i.increase > 0 : i.decrease > 0,
+        );
+        node = (
+          <div className="space-y-4">
+            <WorkingNote>
+              <p>
+                {res.isGain
+                  ? "✅ Net Gain on Revaluation"
+                  : "⚠️ Net Loss on Revaluation"}{" "}
+                = ₹{fmt(res.netGainOrLoss)}
+              </p>
+            </WorkingNote>
+            <h4 className="text-sm font-bold text-navy">Revaluation Account</h4>
+            <table className="accounting-table">
+              <thead>
+                <tr>
+                  <th>Dr — Particulars</th>
+                  <th>₹</th>
+                  <th>Cr — Particulars</th>
+                  <th>₹</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Array.from({
+                  length: Math.max(drItems.length, crItems.length, 1),
+                }).map((_, idx) => {
+                  const dr = drItems[idx];
+                  const cr = crItems[idx];
+                  const rowKey = `${dr?.name ?? "dr"}-${cr?.name ?? "cr"}-${idx}`;
+                  return (
+                    <tr key={rowKey}>
+                      <td>
+                        {dr
+                          ? `To ${dr.name} A/c`
+                          : idx === 0 && !drItems.length && res.isGain
+                            ? `To ${res.isGain ? "" : ""}Profit on Revaluation`
+                            : ""}
+                      </td>
+                      <td className="text-right">
+                        {dr
+                          ? fmt(dr.type === "asset" ? dr.decrease : dr.increase)
+                          : idx === 0 && !drItems.length && res.isGain
+                            ? fmt(res.netGainOrLoss)
+                            : ""}
+                      </td>
+                      <td>
+                        {cr
+                          ? `By ${cr.name} A/c`
+                          : idx === 0 && !crItems.length && !res.isGain
+                            ? "By Loss on Revaluation"
+                            : ""}
+                      </td>
+                      <td className="text-right">
+                        {cr
+                          ? fmt(cr.type === "asset" ? cr.increase : cr.decrease)
+                          : idx === 0 && !crItems.length && !res.isGain
+                            ? fmt(res.netGainOrLoss)
+                            : ""}
+                      </td>
+                    </tr>
+                  );
+                })}
+                {res.isGain ? null : (
+                  <tr>
+                    <td className="font-bold text-destructive">
+                      To Loss on Revaluation
+                    </td>
+                    <td className="text-right font-bold text-destructive">
+                      {fmt(res.netGainOrLoss)}
+                    </td>
+                    <td />
+                    <td />
+                  </tr>
+                )}
+                {!res.isGain ? null : (
+                  <tr>
+                    <td />
+                    <td />
+                    <td className="font-bold text-green-700">
+                      By Profit on Revaluation
+                    </td>
+                    <td className="text-right font-bold text-green-700">
+                      {fmt(res.netGainOrLoss)}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+            <h4 className="text-sm font-bold text-navy mt-2">
+              Partners&apos; Share of {res.isGain ? "Gain" : "Loss"}
+            </h4>
+            <table className="accounting-table">
+              <thead>
+                <tr>
+                  <th>Partner</th>
+                  <th>Ratio</th>
+                  <th>{res.isGain ? "Gain" : "Loss"} Share (₹)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {res.partnerShares.map((ps) => (
+                  <tr key={ps.name}>
+                    <td>{ps.name}</td>
+                    <td className="text-center">
+                      {partners.find((p) => p.name === ps.name)?.ratio ?? 1}
+                    </td>
+                    <td
+                      className={`text-right font-semibold ${res.isGain ? "text-green-700" : "text-destructive"}`}
+                    >
+                      {fmt(ps.share)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      } else if (partSubType === "retirement") {
+        const retiringPartner = {
+          name: retForm.retiredName,
+          capitalBalance: Number.parseFloat(retForm.capital) || 0,
+          goodwillShare: Number.parseFloat(retForm.goodwillShare) || 0,
+          revaluationShare: Number.parseFloat(retForm.revaluationShare) || 0,
+        };
+        const remaining = retRemaining.map((p) => ({
+          name: p.name,
+          newRatio: Number.parseFloat(p.newRatio) || 1,
+        }));
+        const totalGoodwill = Number.parseFloat(retForm.totalGoodwill) || 0;
+        const res = solveRetirement(retiringPartner, remaining, totalGoodwill);
+        jsonIn = JSON.stringify({ retForm, retRemaining });
+        solStr = JSON.stringify(res);
+        node = (
+          <div className="space-y-4">
+            <WorkingNote>
+              <p>
+                Capital of {retiringPartner.name} = ₹
+                {fmt(retiringPartner.capitalBalance)}
+              </p>
+              <p>Share of Goodwill = ₹{fmt(retiringPartner.goodwillShare)}</p>
+              <p>
+                Share of Revaluation Gain/Loss = ₹
+                {fmt(retiringPartner.revaluationShare)}
+              </p>
+              <p className="font-semibold">
+                Total Amount Due = ₹{fmt(res.amountDueToRetiredPartner)}
+              </p>
+            </WorkingNote>
+            <table className="accounting-table">
+              <thead>
+                <tr>
+                  <th>Particulars</th>
+                  <th>Amount (₹)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Capital Balance of {retiringPartner.name}</td>
+                  <td className="text-right">
+                    {fmt(retiringPartner.capitalBalance)}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Add: Share of Goodwill</td>
+                  <td className="text-right">
+                    {fmt(retiringPartner.goodwillShare)}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Add: Share of Revaluation Gain</td>
+                  <td className="text-right">
+                    {fmt(retiringPartner.revaluationShare)}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="font-bold">
+                    Total Amount Due to {retiringPartner.name}
+                  </td>
+                  <td className="text-right font-bold">
+                    {fmt(res.amountDueToRetiredPartner)}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <h4 className="text-sm font-bold text-navy">
+              Goodwill Written Off by Remaining Partners
+            </h4>
+            <table className="accounting-table">
+              <thead>
+                <tr>
+                  <th>Partner</th>
+                  <th>Dr Amount (₹)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {res.goodwillAdjustments.map((g) => (
+                  <tr key={g.name}>
+                    <td>{g.name}&apos;s Capital A/c Dr.</td>
+                    <td className="text-right">{fmt(g.dr)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <h4 className="text-sm font-bold text-navy">Journal Entry</h4>
+            <div className="bg-secondary/60 rounded-lg p-3 text-xs font-mono space-y-0.5">
+              {res.closingEntries.map((e) => (
+                <p key={e}>{e}</p>
+              ))}
+            </div>
+          </div>
+        );
+      } else {
+        // Goodwill (default)
+        const avgProfit = Number.parseFloat(gwForm.avgProfit);
+        const normalProfit = Number.parseFloat(gwForm.normalProfit);
+        const capRate = Number.parseFloat(gwForm.capRate);
+        const years = Number.parseFloat(gwForm.years);
+        if (!avgProfit || !capRate || !years) {
+          toast.error("Please fill required fields");
+          return;
+        }
+        const res = solveGoodwill(avgProfit, normalProfit || 0, capRate, years);
+        jsonIn = JSON.stringify(gwForm);
+        solStr = JSON.stringify(res);
+        node = (
+          <div>
+            <WorkingNote>
+              <p>Average Profit = ₹{fmt(res.avgProfit)}</p>
+              <p>Normal Profit = ₹{fmt(res.normalProfit)}</p>
+              <p>
+                Super Profit = Avg Profit − Normal Profit = ₹
+                {fmt(res.superProfit)}
+              </p>
+            </WorkingNote>
+            <table className="accounting-table mt-4">
+              <thead>
+                <tr>
+                  <th>Particulars</th>
+                  <th>Amount (₹)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Average Profit</td>
+                  <td className="text-right">{fmt(res.avgProfit)}</td>
+                </tr>
+                <tr>
+                  <td>Less: Normal Profit</td>
+                  <td className="text-right">({fmt(res.normalProfit)})</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Super Profit</strong>
+                  </td>
+                  <td className="text-right font-bold">
+                    {fmt(res.superProfit)}
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    Goodwill (Capitalisation Method) = Super Profit × 100 /{" "}
+                    {capRate}%
+                  </td>
+                  <td className="text-right">{fmt(res.goodwillCap)}</td>
+                </tr>
+                <tr>
+                  <td>
+                    Goodwill (Years Purchase) = Super Profit × {years} years
+                  </td>
+                  <td className="text-right">{fmt(res.goodwillYears)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        );
+      }
     } else if (activeTopic === "ledger") {
       const rows = solveSacrificeRatio(
         srPartners.map((p) => ({
@@ -506,45 +1015,93 @@ export function ProblemSolver({ activeTopic }: ProblemSolverProps) {
         </div>
       );
     } else if (activeTopic === "company") {
-      const shares = Number.parseFloat(siForm.shares);
-      const faceValue = Number.parseFloat(siForm.faceValue);
-      const issuePrice = Number.parseFloat(siForm.issuePrice);
-      if (!shares || !faceValue || !issuePrice) {
-        toast.error("Fill all fields");
-        return;
-      }
-      const entries = solveShareIssue(shares, faceValue, issuePrice);
-      jsonIn = JSON.stringify(siForm);
-      solStr = JSON.stringify(entries);
-      const stages = [...new Set(entries.map((e) => e.stage))];
-      node = (
-        <div>
-          <WorkingNote>
-            <p>Total Shares = {shares.toLocaleString("en-IN")}</p>
-            <p>
-              Face Value = ₹{fmt(faceValue)} | Issue Price = ₹{fmt(issuePrice)}
-            </p>
-            {issuePrice > faceValue && (
-              <p>Premium per share = ₹{fmt(issuePrice - faceValue)}</p>
-            )}
-          </WorkingNote>
-          {stages.map((stage) => (
-            <div key={stage} className="mt-4">
-              <h4 className="text-sm font-semibold text-navy mb-1">{stage}</h4>
-              <table className="accounting-table">
-                <thead>
-                  <tr>
-                    <th>Particulars</th>
-                    <th>Dr (₹)</th>
-                    <th>Cr (₹)</th>
+      if (compSubType === "shareForfeiture") {
+        const sfShares = Number.parseFloat(sfForm.shares);
+        const sfFV = Number.parseFloat(sfForm.faceValue);
+        const sfPaid = Number.parseFloat(sfForm.paidUpValue);
+        const sfReissuePrice = Number.parseFloat(sfForm.reissuePrice);
+        const sfReissued = Number.parseFloat(sfForm.reissued);
+        if (!sfShares || !sfFV || !sfPaid) {
+          toast.error("Fill all forfeiture fields");
+          return;
+        }
+        const res = solveShareForfeiture(
+          sfShares,
+          sfFV,
+          sfPaid,
+          sfReissuePrice || 0,
+          sfReissued || 0,
+        );
+        jsonIn = JSON.stringify(sfForm);
+        solStr = JSON.stringify(res);
+        node = (
+          <div className="space-y-4">
+            <WorkingNote>
+              <p>
+                Shares Forfeited: {sfShares} × Face Value ₹{fmt(sfFV)}
+              </p>
+              <p>
+                Amount Paid Up per share = ₹{fmt(sfPaid)} | Unpaid = ₹
+                {fmt(sfFV - sfPaid)}
+              </p>
+              <p>Capital Reserve = ₹{fmt(res.capitalReserve)}</p>
+            </WorkingNote>
+            <h4 className="text-sm font-bold text-navy">
+              Journal Entries — Share Forfeiture
+            </h4>
+            <table className="accounting-table">
+              <thead>
+                <tr>
+                  <th>Particulars</th>
+                  <th>Dr (₹)</th>
+                  <th>Cr (₹)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {res.forfeitureEntries.map((e) => (
+                  <tr key={e.particulars}>
+                    <td>
+                      {e.particulars}
+                      {e.narration && (
+                        <div className="text-xs italic text-muted-foreground">
+                          {e.narration}
+                        </div>
+                      )}
+                    </td>
+                    <td className="text-right">
+                      {e.debit === "-" ? "" : `₹${fmt(e.debit as number)}`}
+                    </td>
+                    <td className="text-right">
+                      {e.credit === "-" ? "" : `₹${fmt(e.credit as number)}`}
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {entries
-                    .filter((e) => e.stage === stage)
-                    .map((e) => (
+                ))}
+              </tbody>
+            </table>
+            {sfReissued > 0 && (
+              <>
+                <h4 className="text-sm font-bold text-navy">
+                  Journal Entries — Reissue &amp; Capital Reserve
+                </h4>
+                <table className="accounting-table">
+                  <thead>
+                    <tr>
+                      <th>Particulars</th>
+                      <th>Dr (₹)</th>
+                      <th>Cr (₹)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {res.reissueEntries.map((e) => (
                       <tr key={e.particulars}>
-                        <td>{e.particulars}</td>
+                        <td>
+                          {e.particulars}
+                          {e.narration && (
+                            <div className="text-xs italic text-muted-foreground">
+                              {e.narration}
+                            </div>
+                          )}
+                        </td>
                         <td className="text-right">
                           {e.debit === "-" ? "" : `₹${fmt(e.debit as number)}`}
                         </td>
@@ -555,12 +1112,80 @@ export function ProblemSolver({ activeTopic }: ProblemSolverProps) {
                         </td>
                       </tr>
                     ))}
-                </tbody>
-              </table>
+                  </tbody>
+                </table>
+              </>
+            )}
+            <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-sm">
+              <strong className="text-green-800">
+                Capital Reserve Transferred = ₹{fmt(res.capitalReserve)}
+              </strong>
             </div>
-          ))}
-        </div>
-      );
+          </div>
+        );
+      } else {
+        // Share Issue (default)
+        const shares = Number.parseFloat(siForm.shares);
+        const faceValue = Number.parseFloat(siForm.faceValue);
+        const issuePrice = Number.parseFloat(siForm.issuePrice);
+        if (!shares || !faceValue || !issuePrice) {
+          toast.error("Fill all fields");
+          return;
+        }
+        const entries = solveShareIssue(shares, faceValue, issuePrice);
+        jsonIn = JSON.stringify(siForm);
+        solStr = JSON.stringify(entries);
+        const stages = [...new Set(entries.map((e) => e.stage))];
+        node = (
+          <div>
+            <WorkingNote>
+              <p>Total Shares = {shares.toLocaleString("en-IN")}</p>
+              <p>
+                Face Value = ₹{fmt(faceValue)} | Issue Price = ₹
+                {fmt(issuePrice)}
+              </p>
+              {issuePrice > faceValue && (
+                <p>Premium per share = ₹{fmt(issuePrice - faceValue)}</p>
+              )}
+            </WorkingNote>
+            {stages.map((stage) => (
+              <div key={stage} className="mt-4">
+                <h4 className="text-sm font-semibold text-navy mb-1">
+                  {stage}
+                </h4>
+                <table className="accounting-table">
+                  <thead>
+                    <tr>
+                      <th>Particulars</th>
+                      <th>Dr (₹)</th>
+                      <th>Cr (₹)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {entries
+                      .filter((e) => e.stage === stage)
+                      .map((e) => (
+                        <tr key={e.particulars}>
+                          <td>{e.particulars}</td>
+                          <td className="text-right">
+                            {e.debit === "-"
+                              ? ""
+                              : `₹${fmt(e.debit as number)}`}
+                          </td>
+                          <td className="text-right">
+                            {e.credit === "-"
+                              ? ""
+                              : `₹${fmt(e.credit as number)}`}
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            ))}
+          </div>
+        );
+      }
     } else if (activeTopic === "npo") {
       const incomeItems = parseItems(npoForm.incomeItems);
       const expenditureItems = parseItems(npoForm.expenditureItems);
@@ -1020,137 +1645,622 @@ export function ProblemSolver({ activeTopic }: ProblemSolverProps) {
 
         <div className="space-y-4">
           {activeTopic === "depreciation" && (
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label className="text-xs text-muted-foreground">
-                  Cost of Asset (₹) *
-                </Label>
-                <Input
-                  data-ocid="solver.input"
-                  placeholder="e.g. 100000"
-                  value={depForm.cost}
-                  onChange={(e) =>
-                    setDepForm((f) => ({ ...f, cost: e.target.value }))
-                  }
-                />
+            <div className="space-y-3">
+              {/* Sub-type tabs */}
+              <div className="flex gap-2 flex-wrap">
+                {(["schedule", "accountFormat", "disposal"] as const).map(
+                  (t) => (
+                    <button
+                      key={t}
+                      type="button"
+                      onClick={() => setDepSubType(t)}
+                      className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${depSubType === t ? "bg-navy text-white" : "bg-navy/10 text-navy hover:bg-navy/20"}`}
+                    >
+                      {t === "schedule"
+                        ? "Depreciation Schedule"
+                        : t === "accountFormat"
+                          ? "Asset Account Format"
+                          : "Sale of Asset"}
+                    </button>
+                  ),
+                )}
               </div>
-              <div>
-                <Label className="text-xs text-muted-foreground">
-                  Salvage / Residual Value (₹)
-                </Label>
-                <Input
-                  data-ocid="solver.input"
-                  placeholder="e.g. 10000"
-                  value={depForm.salvage}
-                  onChange={(e) =>
-                    setDepForm((f) => ({ ...f, salvage: e.target.value }))
-                  }
-                />
-              </div>
-              <div>
-                <Label className="text-xs text-muted-foreground">
-                  Useful Life (Years) *
-                </Label>
-                <Input
-                  data-ocid="solver.input"
-                  placeholder="e.g. 5"
-                  value={depForm.life}
-                  onChange={(e) =>
-                    setDepForm((f) => ({ ...f, life: e.target.value }))
-                  }
-                />
-              </div>
-              <div>
-                <Label className="text-xs text-muted-foreground">Method</Label>
-                <Select
-                  value={depForm.method}
-                  onValueChange={(v) =>
-                    setDepForm((f) => ({ ...f, method: v }))
-                  }
-                >
-                  <SelectTrigger data-ocid="solver.select">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="SLM">Straight Line (SLM)</SelectItem>
-                    <SelectItem value="WDV">
-                      Written Down Value (WDV)
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              {depForm.method === "WDV" && (
+              <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label className="text-xs text-muted-foreground">
-                    WDV Rate (%)
+                    Cost of Asset (₹) *
                   </Label>
                   <Input
                     data-ocid="solver.input"
-                    placeholder="e.g. 20"
-                    value={depForm.wdvRate}
+                    placeholder="e.g. 100000"
+                    value={depForm.cost}
                     onChange={(e) =>
-                      setDepForm((f) => ({ ...f, wdvRate: e.target.value }))
+                      setDepForm((f) => ({ ...f, cost: e.target.value }))
                     }
                   />
                 </div>
-              )}
+                <div>
+                  <Label className="text-xs text-muted-foreground">
+                    Salvage / Residual Value (₹)
+                  </Label>
+                  <Input
+                    data-ocid="solver.input"
+                    placeholder="e.g. 10000"
+                    value={depForm.salvage}
+                    onChange={(e) =>
+                      setDepForm((f) => ({ ...f, salvage: e.target.value }))
+                    }
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground">
+                    Useful Life (Years) *
+                  </Label>
+                  <Input
+                    data-ocid="solver.input"
+                    placeholder="e.g. 5"
+                    value={depForm.life}
+                    onChange={(e) =>
+                      setDepForm((f) => ({ ...f, life: e.target.value }))
+                    }
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs text-muted-foreground">
+                    Method
+                  </Label>
+                  <Select
+                    value={depForm.method}
+                    onValueChange={(v) =>
+                      setDepForm((f) => ({ ...f, method: v }))
+                    }
+                  >
+                    <SelectTrigger data-ocid="solver.select">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="SLM">Straight Line (SLM)</SelectItem>
+                      <SelectItem value="WDV">
+                        Written Down Value (WDV)
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {depForm.method === "WDV" && (
+                  <div>
+                    <Label className="text-xs text-muted-foreground">
+                      WDV Rate (%)
+                    </Label>
+                    <Input
+                      data-ocid="solver.input"
+                      placeholder="e.g. 20"
+                      value={depForm.wdvRate}
+                      onChange={(e) =>
+                        setDepForm((f) => ({ ...f, wdvRate: e.target.value }))
+                      }
+                    />
+                  </div>
+                )}
+                {depSubType === "disposal" && (
+                  <>
+                    <div>
+                      <Label className="text-xs text-muted-foreground">
+                        Purchase Year
+                      </Label>
+                      <Input
+                        data-ocid="solver.input"
+                        placeholder="e.g. 1"
+                        value={depDisposalForm.purchaseYear}
+                        onChange={(e) =>
+                          setDepDisposalForm((f) => ({
+                            ...f,
+                            purchaseYear: e.target.value,
+                          }))
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs text-muted-foreground">
+                        Year of Sale *
+                      </Label>
+                      <Input
+                        data-ocid="solver.input"
+                        placeholder="e.g. 3"
+                        value={depDisposalForm.saleYear}
+                        onChange={(e) =>
+                          setDepDisposalForm((f) => ({
+                            ...f,
+                            saleYear: e.target.value,
+                          }))
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs text-muted-foreground">
+                        Sale Price (₹) *
+                      </Label>
+                      <Input
+                        data-ocid="solver.input"
+                        placeholder="e.g. 60000"
+                        value={depDisposalForm.salePrice}
+                        onChange={(e) =>
+                          setDepDisposalForm((f) => ({
+                            ...f,
+                            salePrice: e.target.value,
+                          }))
+                        }
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           )}
 
           {activeTopic === "partnership" && (
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label className="text-xs text-muted-foreground">
-                  Average Profit (₹) *
-                </Label>
-                <Input
-                  data-ocid="solver.input"
-                  placeholder="e.g. 80000"
-                  value={gwForm.avgProfit}
-                  onChange={(e) =>
-                    setGwForm((f) => ({ ...f, avgProfit: e.target.value }))
-                  }
-                />
+            <div className="space-y-3">
+              {/* Sub-type tabs */}
+              <div className="flex gap-2 flex-wrap">
+                {(
+                  [
+                    "goodwill",
+                    "sacrifice",
+                    "revaluation",
+                    "retirement",
+                  ] as const
+                ).map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setPartSubType(t)}
+                    className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${partSubType === t ? "bg-navy text-white" : "bg-navy/10 text-navy hover:bg-navy/20"}`}
+                  >
+                    {t === "goodwill"
+                      ? "Goodwill Calculation"
+                      : t === "sacrifice"
+                        ? "Sacrifice/Gain Ratio"
+                        : t === "revaluation"
+                          ? "Revaluation A/c"
+                          : "Retirement of Partner"}
+                  </button>
+                ))}
               </div>
-              <div>
-                <Label className="text-xs text-muted-foreground">
-                  Normal Profit (₹)
-                </Label>
-                <Input
-                  data-ocid="solver.input"
-                  placeholder="e.g. 50000"
-                  value={gwForm.normalProfit}
-                  onChange={(e) =>
-                    setGwForm((f) => ({ ...f, normalProfit: e.target.value }))
-                  }
-                />
-              </div>
-              <div>
-                <Label className="text-xs text-muted-foreground">
-                  Capitalisation Rate (%) *
-                </Label>
-                <Input
-                  data-ocid="solver.input"
-                  placeholder="e.g. 10"
-                  value={gwForm.capRate}
-                  onChange={(e) =>
-                    setGwForm((f) => ({ ...f, capRate: e.target.value }))
-                  }
-                />
-              </div>
-              <div>
-                <Label className="text-xs text-muted-foreground">
-                  Years of Purchase *
-                </Label>
-                <Input
-                  data-ocid="solver.input"
-                  placeholder="e.g. 3"
-                  value={gwForm.years}
-                  onChange={(e) =>
-                    setGwForm((f) => ({ ...f, years: e.target.value }))
-                  }
-                />
-              </div>
+
+              {partSubType === "goodwill" && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="text-xs text-muted-foreground">
+                      Average Profit (₹) *
+                    </Label>
+                    <Input
+                      data-ocid="solver.input"
+                      placeholder="e.g. 80000"
+                      value={gwForm.avgProfit}
+                      onChange={(e) =>
+                        setGwForm((f) => ({ ...f, avgProfit: e.target.value }))
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground">
+                      Normal Profit (₹)
+                    </Label>
+                    <Input
+                      data-ocid="solver.input"
+                      placeholder="e.g. 50000"
+                      value={gwForm.normalProfit}
+                      onChange={(e) =>
+                        setGwForm((f) => ({
+                          ...f,
+                          normalProfit: e.target.value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground">
+                      Capitalisation Rate (%) *
+                    </Label>
+                    <Input
+                      data-ocid="solver.input"
+                      placeholder="e.g. 10"
+                      value={gwForm.capRate}
+                      onChange={(e) =>
+                        setGwForm((f) => ({ ...f, capRate: e.target.value }))
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground">
+                      Years of Purchase *
+                    </Label>
+                    <Input
+                      data-ocid="solver.input"
+                      placeholder="e.g. 3"
+                      value={gwForm.years}
+                      onChange={(e) =>
+                        setGwForm((f) => ({ ...f, years: e.target.value }))
+                      }
+                    />
+                  </div>
+                </div>
+              )}
+
+              {partSubType === "sacrifice" && (
+                <div className="space-y-3">
+                  <Label className="text-xs text-muted-foreground">
+                    Partners (Name, Old Ratio, New Ratio)
+                  </Label>
+                  {srPartners.map((p, i) => (
+                    <div
+                      key={`sr-${p.name || i}`}
+                      className="grid grid-cols-3 gap-2"
+                    >
+                      <Input
+                        data-ocid="solver.input"
+                        placeholder="Name"
+                        value={p.name}
+                        onChange={(e) =>
+                          setSrPartners((prev) =>
+                            prev.map((x, j) =>
+                              j === i ? { ...x, name: e.target.value } : x,
+                            ),
+                          )
+                        }
+                      />
+                      <Input
+                        data-ocid="solver.input"
+                        placeholder="Old Ratio"
+                        value={p.oldRatio}
+                        onChange={(e) =>
+                          setSrPartners((prev) =>
+                            prev.map((x, j) =>
+                              j === i ? { ...x, oldRatio: e.target.value } : x,
+                            ),
+                          )
+                        }
+                      />
+                      <Input
+                        data-ocid="solver.input"
+                        placeholder="New Ratio"
+                        value={p.newRatio}
+                        onChange={(e) =>
+                          setSrPartners((prev) =>
+                            prev.map((x, j) =>
+                              j === i ? { ...x, newRatio: e.target.value } : x,
+                            ),
+                          )
+                        }
+                      />
+                    </div>
+                  ))}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      setSrPartners((p) => [
+                        ...p,
+                        { name: "", oldRatio: "0", newRatio: "0" },
+                      ])
+                    }
+                    className="text-navy border-navy/20"
+                  >
+                    + Add Partner
+                  </Button>
+                </div>
+              )}
+
+              {partSubType === "revaluation" && (
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-xs text-muted-foreground font-semibold mb-1 block">
+                      Assets (Name, Old Value, New Value)
+                    </Label>
+                    {revAssets.map((a, i) => (
+                      <div
+                        key={`reva-${a.name || i}`}
+                        className="grid grid-cols-3 gap-2 mb-2"
+                      >
+                        <Input
+                          data-ocid="solver.input"
+                          placeholder="Asset name"
+                          value={a.name}
+                          onChange={(e) =>
+                            setRevAssets((prev) =>
+                              prev.map((x, j) =>
+                                j === i ? { ...x, name: e.target.value } : x,
+                              ),
+                            )
+                          }
+                        />
+                        <Input
+                          data-ocid="solver.input"
+                          placeholder="Old Value ₹"
+                          value={a.oldValue}
+                          onChange={(e) =>
+                            setRevAssets((prev) =>
+                              prev.map((x, j) =>
+                                j === i
+                                  ? { ...x, oldValue: e.target.value }
+                                  : x,
+                              ),
+                            )
+                          }
+                        />
+                        <Input
+                          data-ocid="solver.input"
+                          placeholder="New Value ₹"
+                          value={a.newValue}
+                          onChange={(e) =>
+                            setRevAssets((prev) =>
+                              prev.map((x, j) =>
+                                j === i
+                                  ? { ...x, newValue: e.target.value }
+                                  : x,
+                              ),
+                            )
+                          }
+                        />
+                      </div>
+                    ))}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        setRevAssets((p) => [
+                          ...p,
+                          { name: "", oldValue: "0", newValue: "0" },
+                        ])
+                      }
+                      className="text-navy border-navy/20 text-xs"
+                    >
+                      + Add Asset
+                    </Button>
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground font-semibold mb-1 block">
+                      Liabilities (Name, Old Value, New Value)
+                    </Label>
+                    {revLiabilities.map((l, i) => (
+                      <div
+                        key={`revl-${l.name || i}`}
+                        className="grid grid-cols-3 gap-2 mb-2"
+                      >
+                        <Input
+                          data-ocid="solver.input"
+                          placeholder="Liability name"
+                          value={l.name}
+                          onChange={(e) =>
+                            setRevLiabilities((prev) =>
+                              prev.map((x, j) =>
+                                j === i ? { ...x, name: e.target.value } : x,
+                              ),
+                            )
+                          }
+                        />
+                        <Input
+                          data-ocid="solver.input"
+                          placeholder="Old Value ₹"
+                          value={l.oldValue}
+                          onChange={(e) =>
+                            setRevLiabilities((prev) =>
+                              prev.map((x, j) =>
+                                j === i
+                                  ? { ...x, oldValue: e.target.value }
+                                  : x,
+                              ),
+                            )
+                          }
+                        />
+                        <Input
+                          data-ocid="solver.input"
+                          placeholder="New Value ₹"
+                          value={l.newValue}
+                          onChange={(e) =>
+                            setRevLiabilities((prev) =>
+                              prev.map((x, j) =>
+                                j === i
+                                  ? { ...x, newValue: e.target.value }
+                                  : x,
+                              ),
+                            )
+                          }
+                        />
+                      </div>
+                    ))}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        setRevLiabilities((p) => [
+                          ...p,
+                          { name: "", oldValue: "0", newValue: "0" },
+                        ])
+                      }
+                      className="text-navy border-navy/20 text-xs"
+                    >
+                      + Add Liability
+                    </Button>
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground font-semibold mb-1 block">
+                      Partners (Name, Ratio)
+                    </Label>
+                    {revPartners.map((p, i) => (
+                      <div
+                        key={`revp-${p.name || i}`}
+                        className="grid grid-cols-2 gap-2 mb-2"
+                      >
+                        <Input
+                          data-ocid="solver.input"
+                          placeholder="Partner name"
+                          value={p.name}
+                          onChange={(e) =>
+                            setRevPartners((prev) =>
+                              prev.map((x, j) =>
+                                j === i ? { ...x, name: e.target.value } : x,
+                              ),
+                            )
+                          }
+                        />
+                        <Input
+                          data-ocid="solver.input"
+                          placeholder="Ratio e.g. 3"
+                          value={p.ratio}
+                          onChange={(e) =>
+                            setRevPartners((prev) =>
+                              prev.map((x, j) =>
+                                j === i ? { ...x, ratio: e.target.value } : x,
+                              ),
+                            )
+                          }
+                        />
+                      </div>
+                    ))}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        setRevPartners((p) => [...p, { name: "", ratio: "1" }])
+                      }
+                      className="text-navy border-navy/20 text-xs"
+                    >
+                      + Add Partner
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {partSubType === "retirement" && (
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-xs text-muted-foreground">
+                        Retiring Partner Name *
+                      </Label>
+                      <Input
+                        data-ocid="solver.input"
+                        placeholder="e.g. A"
+                        value={retForm.retiredName}
+                        onChange={(e) =>
+                          setRetForm((f) => ({
+                            ...f,
+                            retiredName: e.target.value,
+                          }))
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs text-muted-foreground">
+                        Capital Balance (₹) *
+                      </Label>
+                      <Input
+                        data-ocid="solver.input"
+                        placeholder="e.g. 100000"
+                        value={retForm.capital}
+                        onChange={(e) =>
+                          setRetForm((f) => ({ ...f, capital: e.target.value }))
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs text-muted-foreground">
+                        Share of Goodwill (₹)
+                      </Label>
+                      <Input
+                        data-ocid="solver.input"
+                        placeholder="e.g. 20000"
+                        value={retForm.goodwillShare}
+                        onChange={(e) =>
+                          setRetForm((f) => ({
+                            ...f,
+                            goodwillShare: e.target.value,
+                          }))
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs text-muted-foreground">
+                        Share of Revaluation Gain/Loss (₹)
+                      </Label>
+                      <Input
+                        data-ocid="solver.input"
+                        placeholder="e.g. 5000"
+                        value={retForm.revaluationShare}
+                        onChange={(e) =>
+                          setRetForm((f) => ({
+                            ...f,
+                            revaluationShare: e.target.value,
+                          }))
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs text-muted-foreground">
+                        Total Firm Goodwill (₹)
+                      </Label>
+                      <Input
+                        data-ocid="solver.input"
+                        placeholder="e.g. 60000"
+                        value={retForm.totalGoodwill}
+                        onChange={(e) =>
+                          setRetForm((f) => ({
+                            ...f,
+                            totalGoodwill: e.target.value,
+                          }))
+                        }
+                      />
+                    </div>
+                  </div>
+                  <Label className="text-xs text-muted-foreground font-semibold block">
+                    Remaining Partners (Name, New Ratio)
+                  </Label>
+                  {retRemaining.map((p, i) => (
+                    <div
+                      key={`retp-${p.name || i}`}
+                      className="grid grid-cols-2 gap-2"
+                    >
+                      <Input
+                        data-ocid="solver.input"
+                        placeholder="Name"
+                        value={p.name}
+                        onChange={(e) =>
+                          setRetRemaining((prev) =>
+                            prev.map((x, j) =>
+                              j === i ? { ...x, name: e.target.value } : x,
+                            ),
+                          )
+                        }
+                      />
+                      <Input
+                        data-ocid="solver.input"
+                        placeholder="New Ratio"
+                        value={p.newRatio}
+                        onChange={(e) =>
+                          setRetRemaining((prev) =>
+                            prev.map((x, j) =>
+                              j === i ? { ...x, newRatio: e.target.value } : x,
+                            ),
+                          )
+                        }
+                      />
+                    </div>
+                  ))}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      setRetRemaining((p) => [
+                        ...p,
+                        { name: "", newRatio: "1" },
+                      ])
+                    }
+                    className="text-navy border-navy/20 text-xs"
+                  >
+                    + Add Partner
+                  </Button>
+                </div>
+              )}
             </div>
           )}
 
@@ -1365,46 +2475,141 @@ export function ProblemSolver({ activeTopic }: ProblemSolverProps) {
           )}
 
           {activeTopic === "company" && (
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label className="text-xs text-muted-foreground">
-                  Number of Shares *
-                </Label>
-                <Input
-                  data-ocid="solver.input"
-                  placeholder="e.g. 10000"
-                  value={siForm.shares}
-                  onChange={(e) =>
-                    setSiForm((f) => ({ ...f, shares: e.target.value }))
-                  }
-                />
+            <div className="space-y-3">
+              <div className="flex gap-2 flex-wrap">
+                {(["shareIssue", "shareForfeiture"] as const).map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setCompSubType(t)}
+                    className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${compSubType === t ? "bg-navy text-white" : "bg-navy/10 text-navy hover:bg-navy/20"}`}
+                  >
+                    {t === "shareIssue"
+                      ? "Share Issue"
+                      : "Share Forfeiture & Reissue"}
+                  </button>
+                ))}
               </div>
-              <div>
-                <Label className="text-xs text-muted-foreground">
-                  Face Value per Share (₹) *
-                </Label>
-                <Input
-                  data-ocid="solver.input"
-                  placeholder="e.g. 10"
-                  value={siForm.faceValue}
-                  onChange={(e) =>
-                    setSiForm((f) => ({ ...f, faceValue: e.target.value }))
-                  }
-                />
-              </div>
-              <div>
-                <Label className="text-xs text-muted-foreground">
-                  Issue Price per Share (₹) *
-                </Label>
-                <Input
-                  data-ocid="solver.input"
-                  placeholder="e.g. 12"
-                  value={siForm.issuePrice}
-                  onChange={(e) =>
-                    setSiForm((f) => ({ ...f, issuePrice: e.target.value }))
-                  }
-                />
-              </div>
+
+              {compSubType === "shareIssue" && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="text-xs text-muted-foreground">
+                      Number of Shares *
+                    </Label>
+                    <Input
+                      data-ocid="solver.input"
+                      placeholder="e.g. 10000"
+                      value={siForm.shares}
+                      onChange={(e) =>
+                        setSiForm((f) => ({ ...f, shares: e.target.value }))
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground">
+                      Face Value per Share (₹) *
+                    </Label>
+                    <Input
+                      data-ocid="solver.input"
+                      placeholder="e.g. 10"
+                      value={siForm.faceValue}
+                      onChange={(e) =>
+                        setSiForm((f) => ({ ...f, faceValue: e.target.value }))
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground">
+                      Issue Price per Share (₹) *
+                    </Label>
+                    <Input
+                      data-ocid="solver.input"
+                      placeholder="e.g. 12"
+                      value={siForm.issuePrice}
+                      onChange={(e) =>
+                        setSiForm((f) => ({ ...f, issuePrice: e.target.value }))
+                      }
+                    />
+                  </div>
+                </div>
+              )}
+
+              {compSubType === "shareForfeiture" && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="text-xs text-muted-foreground">
+                      Shares Forfeited *
+                    </Label>
+                    <Input
+                      data-ocid="solver.input"
+                      placeholder="e.g. 100"
+                      value={sfForm.shares}
+                      onChange={(e) =>
+                        setSfForm((f) => ({ ...f, shares: e.target.value }))
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground">
+                      Face Value per Share (₹) *
+                    </Label>
+                    <Input
+                      data-ocid="solver.input"
+                      placeholder="e.g. 10"
+                      value={sfForm.faceValue}
+                      onChange={(e) =>
+                        setSfForm((f) => ({ ...f, faceValue: e.target.value }))
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground">
+                      Amount Paid Up per Share (₹) *
+                    </Label>
+                    <Input
+                      data-ocid="solver.input"
+                      placeholder="e.g. 7"
+                      value={sfForm.paidUpValue}
+                      onChange={(e) =>
+                        setSfForm((f) => ({
+                          ...f,
+                          paidUpValue: e.target.value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground">
+                      Reissue Price per Share (₹)
+                    </Label>
+                    <Input
+                      data-ocid="solver.input"
+                      placeholder="e.g. 8"
+                      value={sfForm.reissuePrice}
+                      onChange={(e) =>
+                        setSfForm((f) => ({
+                          ...f,
+                          reissuePrice: e.target.value,
+                        }))
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground">
+                      Shares Reissued
+                    </Label>
+                    <Input
+                      data-ocid="solver.input"
+                      placeholder="e.g. 100"
+                      value={sfForm.reissued}
+                      onChange={(e) =>
+                        setSfForm((f) => ({ ...f, reissued: e.target.value }))
+                      }
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
