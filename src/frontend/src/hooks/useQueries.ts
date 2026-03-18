@@ -50,7 +50,11 @@ export function useGetUserCount() {
     queryKey: ["userCount"],
     queryFn: async (): Promise<bigint | undefined> => {
       if (!actor || !identity) return undefined;
-      return actor.getUserCount();
+      try {
+        return await actor.getUserCount();
+      } catch {
+        return undefined;
+      }
     },
     enabled: !!actor && !isFetching && !!identity,
   });
@@ -63,10 +67,13 @@ export function useGetCustomerMessages() {
     queryKey: ["customerMessages"],
     queryFn: async (): Promise<CustomerMessageWithReply[]> => {
       if (!actor || !identity) return [];
-      // Backend now returns CustomerMessageWithReply[]; cast since d.ts not yet regenerated
-      return (actor as any).getCustomerMessages() as Promise<
-        CustomerMessageWithReply[]
-      >;
+      try {
+        return await ((actor as any).getCustomerMessages() as Promise<
+          CustomerMessageWithReply[]
+        >);
+      } catch {
+        return [];
+      }
     },
     enabled: !!actor && !isFetching && !!identity,
   });
@@ -79,9 +86,13 @@ export function useGetMyCustomerMessages() {
     queryKey: ["myCustomerMessages"],
     queryFn: async (): Promise<CustomerMessageWithReply[]> => {
       if (!actor || !identity) return [];
-      return (actor as any).getMyCustomerMessages() as Promise<
-        CustomerMessageWithReply[]
-      >;
+      try {
+        return await ((actor as any).getMyCustomerMessages() as Promise<
+          CustomerMessageWithReply[]
+        >);
+      } catch {
+        return [];
+      }
     },
     enabled: !!actor && !isFetching && !!identity,
   });

@@ -2,6 +2,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AdminPage } from "./components/AdminPage";
 import { CustomerCasePage } from "./components/CustomerCasePage";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import { HeroBanner } from "./components/HeroBanner";
 import { HistoryPage } from "./components/HistoryPage";
 import { LoginPage } from "./components/LoginPage";
@@ -208,7 +209,11 @@ export default function App() {
 
         {currentPage === "customerCase" && <CustomerCasePage />}
 
-        {currentPage === "admin" && isAdmin && <AdminPage />}
+        {currentPage === "admin" && isAdmin && (
+          <ErrorBoundary>
+            <AdminPage />
+          </ErrorBoundary>
+        )}
       </main>
 
       {/* Footer */}
