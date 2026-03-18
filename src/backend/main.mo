@@ -39,7 +39,7 @@ actor {
     userProfiles.get(user);
   };
 
-  public query ({ caller }) func saveCallerUserProfile(profile : UserProfile) : async () {
+  public shared ({ caller }) func saveCallerUserProfile(profile : UserProfile) : async () {
     if (not isUserOrAdmin(caller)) {
       Runtime.trap("Unauthorized: Must be user or admin");
     };
@@ -423,5 +423,396 @@ actor {
   func isAdmin(caller : Principal) : Bool {
     if (caller.isAnonymous()) { return false };
     AccessControl.hasPermission(accessControlState, caller, #admin);
+  };
+
+  // ── Quiz Mode ────────────────────────────────────────────────
+
+  public type QuizQuestion = {
+    id : Nat;
+    question : Text;
+    optionA : Text;
+    optionB : Text;
+    optionC : Text;
+    optionD : Text;
+    correctIndex : Nat;
+    topic : Text;
+    explanation : Text;
+    isAdminAdded : Bool;
+  };
+
+  public type QuizResult = {
+    id : Nat;
+    topic : Text;
+    score : Nat;
+    total : Nat;
+    timestamp : Time.Time;
+    wrongQuestionIds : [Nat];
+  };
+
+  let quizQuestions = Map.empty<Nat, QuizQuestion>();
+  var nextQuizQuestionId : Nat = 1;
+
+  let userQuizResults = Map.empty<Principal, [QuizResult]>();
+
+  // Initialize predefined questions at actor startup
+  let predefinedQuestions : [QuizQuestion] = [
+    {
+      id = 0;
+      question = "What is the primary objective of financial accounting?";
+      optionA = "To maximize profits";
+      optionB = "To provide information to stakeholders";
+      optionC = "To manage cash flow";
+      optionD = "To reduce taxes";
+      correctIndex = 1;
+      topic = "journal";
+      explanation = "Financial accounting aims to provide useful information to various stakeholders.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Which of the following is NOT a type of partnership?";
+      optionA = "General partnership";
+      optionB = "Limited partnership";
+      optionC = "Joint stock partnership";
+      optionD = "Sleeping partnership";
+      correctIndex = 2;
+      topic = "partnership";
+      explanation = "Joint stock partnership is not a recognized form of partnership.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Depreciation is related to which type of asset?";
+      optionA = "Current assets";
+      optionB = "Fixed assets";
+      optionC = "Intangible assets";
+      optionD = "Liabilities";
+      correctIndex = 1;
+      topic = "depreciation";
+      explanation = "Depreciation applies to fixed assets like machinery, buildings, etc.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "What does NPO stand for?";
+      optionA = "National Profit Organization";
+      optionB = "Non-Profit Organization";
+      optionC = "New Partner Organization";
+      optionD = "None of the above";
+      correctIndex = 1;
+      topic = "npo";
+      explanation = "NPO stands for Non-Profit Organization.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Which financial statement shows a company's financial position at a specific point in time?";
+      optionA = "Income Statement";
+      optionB = "Cash Flow Statement";
+      optionC = "Balance Sheet";
+      optionD = "Profit & Loss Account";
+      correctIndex = 2;
+      topic = "company";
+      explanation = "Balance Sheet provides a snapshot of a company's financial position.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Cash flow statement is primarily prepared for which purpose?";
+      optionA = "To calculate profits";
+      optionB = "To track cash inflows and outflows";
+      optionC = "To calculate depreciation";
+      optionD = "To analyze equity";
+      correctIndex = 1;
+      topic = "cashflow";
+      explanation = "Cash flow statement tracks the movement of cash in and out of business.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "In a balance sheet, assets are equal to:";
+      optionA = "Liabilities minus owner's equity";
+      optionB = "Income plus expenses";
+      optionC = "Liabilities plus owner's equity";
+      optionD = "Cash flow plus liabilities";
+      correctIndex = 2;
+      topic = "balance";
+      explanation = "Assets = Liabilities + Owner's Equity is the basic accounting equation.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Ledger is:";
+      optionA = "A book of original entry";
+      optionB = "A book of final entry";
+      optionC = "A balance sheet";
+      optionD = "A trial balance";
+      correctIndex = 1;
+      topic = "ledger";
+      explanation = "Ledger is a book of final entry where accounts are maintained.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Appropriation account is prepared in case of:";
+      optionA = "Sole proprietorship";
+      optionB = "Non-profit organization";
+      optionC = "Partnership firm";
+      optionD = "Government companies";
+      correctIndex = 2;
+      topic = "appropriation";
+      explanation = "Appropriation account is prepared to distribute profits among partners.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Which account is debited when goods are sold for cash?";
+      optionA = "Sales Account";
+      optionB = "Cash Account";
+      optionC = "Capital Account";
+      optionD = "Purchases Account";
+      correctIndex = 1;
+      topic = "journal";
+      explanation = "Cash account is debited because cash is coming in.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Goodwill is classified as:";
+      optionA = "Current asset";
+      optionB = "Intangible asset";
+      optionC = "Liability";
+      optionD = "Equity";
+      correctIndex = 1;
+      topic = "partnership";
+      explanation = "Goodwill is an intangible asset.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Straight-line method of depreciation is also known as:";
+      optionA = "Written-down value method";
+      optionB = "Reducing balance method";
+      optionC = "Fixed installment method";
+      optionD = "Depletion method";
+      correctIndex = 2;
+      topic = "depreciation";
+      explanation = "Straight-line method = Fixed installment method.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Which of the following is a source of income for NPO?";
+      optionA = "Dividends";
+      optionB = "Subscription";
+      optionC = "Interest income";
+      optionD = "Rental income";
+      correctIndex = 1;
+      topic = "npo";
+      explanation = "Subscription fees collected from members are primary source for NPOs.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Equity share capital appears on which side of balance sheet?";
+      optionA = "Assets";
+      optionB = "Liability";
+      optionC = "Both";
+      optionD = "None";
+      correctIndex = 1;
+      topic = "company";
+      explanation = "Equity share capital is a liability for company.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Cash flow from investing activities includes:";
+      optionA = "Issuing shares";
+      optionB = "Purchasing machinery";
+      optionC = "Repayment of loan";
+      optionD = "Payment of wages";
+      correctIndex = 1;
+      topic = "cashflow";
+      explanation = "Investing activities include purchase or sale of assets like machinery, land, etc.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Trial balance is prepared to:";
+      optionA = "Check arithmetical accuracy";
+      optionB = "Calculate profit";
+      optionC = "Prepare cash book";
+      optionD = "Analyze ratio";
+      correctIndex = 1;
+      topic = "balance";
+      explanation = "Trial balance is used to ensure correct totals of debits and credits.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Which account records all daily monetary transactions permanently?";
+      optionA = "Ledger";
+      optionB = "Cash book";
+      optionC = "Trial balance";
+      optionD = "Balance sheet";
+      correctIndex = 0;
+      topic = "ledger";
+      explanation = "Ledger keeps permanent records after entering in cash book.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Profit appropriation takes place after:";
+      optionA = "Distribution of shares";
+      optionB = "Preparation of income statement";
+      optionC = "Calculation of cash flow";
+      optionD = "Adjustment entries";
+      correctIndex = 1;
+      topic = "appropriation";
+      explanation = "After preparing income statement, profits are appropriated.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Debit entry in cash book means:";
+      optionA = "Cash coming in";
+      optionB = "Cash going out";
+      optionC = "Issue of shares";
+      optionD = "Loss incurred";
+      correctIndex = 0;
+      topic = "journal";
+      explanation = "Debit entries show increase in assets or expense.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Revaluation account is prepared during:";
+      optionA = "Formation of company";
+      optionB = "Change in partnership";
+      optionC = "Admission of new member in NPO";
+      optionD = "Issuing shares";
+      correctIndex = 1;
+      topic = "partnership";
+      explanation = "Revaluation account is used during changes in partnership structure.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Depreciation arises due to:";
+      optionA = "Obsolescence";
+      optionB = "Working conditions";
+      optionC = "Economic factors";
+      optionD = "All of above";
+      correctIndex = 3;
+      topic = "depreciation";
+      explanation = "Depreciation is caused by all given factors.";
+      isAdminAdded = false;
+    },
+  ];
+
+  // Initialize questions on first deployment
+  for (q in predefinedQuestions.values()) {
+    let newQuestion = { q with id = nextQuizQuestionId };
+    quizQuestions.add(nextQuizQuestionId, newQuestion);
+    nextQuizQuestionId += 1;
+  };
+
+  public shared ({ caller }) func addAdminQuestion(
+    question : Text,
+    optionA : Text,
+    optionB : Text,
+    optionC : Text,
+    optionD : Text,
+    correctIndex : Nat,
+    topic : Text,
+    explanation : Text,
+  ) : async () {
+    if (not isAdmin(caller)) {
+      Runtime.trap("Unauthorized: Admin only");
+    };
+
+    let newQuestion : QuizQuestion = {
+      id = nextQuizQuestionId;
+      question;
+      optionA;
+      optionB;
+      optionC;
+      optionD;
+      correctIndex;
+      topic;
+      explanation;
+      isAdminAdded = true;
+    };
+
+    quizQuestions.add(nextQuizQuestionId, newQuestion);
+    nextQuizQuestionId += 1;
+  };
+
+  public query ({ caller }) func getQuizQuestions(topic : ?Text) : async [QuizQuestion] {
+    if (not isUserOrAdmin(caller)) {
+      Runtime.trap("Unauthorized: Must be user or admin");
+    };
+
+    switch (topic) {
+      case (null) {
+        quizQuestions.values().toArray();
+      };
+      case (?topicText) {
+        quizQuestions.values().toArray().filter(
+          func(q) {
+            q.topic.toLower().contains(#text(topicText.toLower()));
+          }
+        );
+      };
+    };
+  };
+
+  public shared ({ caller }) func deleteQuizQuestion(id : Nat) : async () {
+    if (not isAdmin(caller)) {
+      Runtime.trap("Unauthorized: Admin only");
+    };
+    if (not quizQuestions.containsKey(id)) {
+      Runtime.trap("Question not found");
+    };
+    quizQuestions.remove(id);
+  };
+
+  public shared ({ caller }) func saveQuizResult(
+    topic : Text,
+    score : Nat,
+    total : Nat,
+    wrongQuestionIds : [Nat],
+  ) : async () {
+    if (not isUserOrAdmin(caller)) {
+      Runtime.trap("Unauthorized: Must be user or admin");
+    };
+
+    let userResults = switch (userQuizResults.get(caller)) {
+      case (null) { [] };
+      case (?results) { results };
+    };
+
+    let newResult : QuizResult = {
+      id = userResults.size() + 1;
+      topic;
+      score;
+      total;
+      timestamp = Time.now();
+      wrongQuestionIds;
+    };
+
+    let updatedResults = [newResult].concat(userResults);
+    userQuizResults.add(caller, updatedResults);
+  };
+
+  public query ({ caller }) func getQuizHistory() : async [QuizResult] {
+    if (not isUserOrAdmin(caller)) {
+      Runtime.trap("Unauthorized: Must be user or admin");
+    };
+
+    switch (userQuizResults.get(caller)) {
+      case (null) { [] };
+      case (?results) { results };
+    };
   };
 };

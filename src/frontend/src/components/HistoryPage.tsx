@@ -12,21 +12,26 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQueryClient } from "@tanstack/react-query";
 import {
+  CheckCircle2,
   ChevronDown,
   ChevronUp,
   Flag,
   History,
+  Microscope,
   Search,
   Trash2,
+  Trophy,
+  XCircle,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
 import type { Problem } from "../backend.d";
 import { useActor } from "../hooks/useActor";
-import { useProblemHistory } from "../hooks/useQueries";
+import { useProblemHistory, useQuizHistory } from "../hooks/useQueries";
 
 const TYPE_LABELS: Record<string, string> = {
   journalEntry: "Journal Entry",
@@ -37,22 +42,88 @@ const TYPE_LABELS: Record<string, string> = {
   trialBalance: "Partnership",
 };
 
+const TOPIC_LABELS: Record<string, string> = {
+  all: "All Topics",
+  journal: "Journal Entry",
+  partnership: "Partnership",
+  depreciation: "Depreciation",
+  npo: "NPO",
+  company: "Company Accounts",
+  cashflow: "Cash Flow",
+  balance: "Balance Sheet",
+  ledger: "Ledger",
+  appropriation: "Appropriation",
+};
+
+interface ScienceMeta {
+  subject: string;
+  chapter: string;
+  classLevel: number;
+  question: string;
+  problemType: string;
+}
+
+function parseScienceMeta(jsonInput: string): ScienceMeta | null {
+  try {
+    const parsed = JSON.parse(jsonInput);
+    if (parsed.type === "science") {
+      return {
+        subject: parsed.subject ?? "",
+        chapter: parsed.chapter ?? "",
+        classLevel: parsed.classLevel ?? 11,
+        question: parsed.question ?? "",
+        problemType: parsed.problemType ?? "theory",
+      };
+    }
+  } catch {
+    // not JSON
+  }
+  return null;
+}
+
+const SUBJECT_LABELS: Record<string, string> = {
+  physics: "Physics (পদার্থবিজ্ঞান)",
+  chemistry: "Chemistry (রসায়নবিজ্ঞান)",
+  biology: "Biology (জীববিজ্ঞান)",
+  mathematics: "Mathematics (গণিত)",
+};
+
+function formatDate(ts: bigint) {
+  const ms = Number(ts) / 1_000_000;
+  return new Date(ms).toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function ScoreBadge({ score, total }: { score: bigint; total: bigint }) {
+  const s = Number(score);
+  const t = Number(total);
+  const pct = t > 0 ? Math.round((s / t) * 100) : 0;
+  const color =
+    pct >= 70
+      ? "bg-green-100 text-green-700 border-green-200"
+      : pct >= 50
+        ? "bg-amber-100 text-amber-700 border-amber-200"
+        : "bg-red-100 text-red-700 border-red-200";
+  return (
+    <span
+      className={`inline-flex items-center px-2 py-0.5 rounded-full border text-xs font-bold ${color}`}
+    >
+      {pct}%
+    </span>
+  );
+}
+
 export function HistoryPage() {
   const { data: problems, isLoading } = useProblemHistory();
+  const { data: quizResults, isLoading: quizLoading } = useQuizHistory();
   const { actor } = useActor();
   const queryClient = useQueryClient();
   const [expanded, setExpanded] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [reportTarget, setReportTarget] = useState<bigint | null>(null);
-
-  function formatDate(ts: bigint) {
-    const ms = Number(ts) / 1_000_000;
-    return new Date(ms).toLocaleDateString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
-  }
 
   async function handleDelete(id: bigint) {
     if (!actor) return;
@@ -79,7 +150,15 @@ export function HistoryPage() {
   }
 
   const filtered = (problems ?? []).filter((p: Problem) => {
-    const label = TYPE_LABELS[p.type] ?? p.type;
+    const sciMeta = parseScienceMeta(p.jsonInput);
+    if (sciMeta) {
+      const label = SUBJECT_LABELS[sciMeta.subject] ?? sciMeta.subject;
+      return (
+        label.toLowerCase().includes(search.toLowerCase()) ||
+        sciMeta.chapter.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+    const label = TYPE_LABELS[String(p.type)] ?? String(p.type);
     return label.toLowerCase().includes(search.toLowerCase());
   });
 
@@ -97,137 +176,312 @@ export function HistoryPage() {
         <History className="w-8 h-8 text-navy/30" />
       </div>
 
-      <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-        <Input
-          data-ocid="history.search_input"
-          className="pl-9"
-          placeholder="Search by topic..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </div>
-
-      {isLoading && (
-        <div className="space-y-3" data-ocid="history.loading_state">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-16 w-full rounded-xl" />
-          ))}
-        </div>
-      )}
-
-      {!isLoading && filtered.length === 0 && (
-        <div className="text-center py-16" data-ocid="history.empty_state">
-          <div className="w-16 h-16 rounded-full bg-navy/5 flex items-center justify-center mx-auto mb-4">
-            <History className="w-8 h-8 text-navy/30" />
-          </div>
-          <p className="text-muted-foreground font-medium">
-            No saved problems yet.
-          </p>
-          <p className="text-sm text-muted-foreground mt-1">
-            Solve a problem and click "Save" to see it here.
-          </p>
-        </div>
-      )}
-
-      <div className="space-y-3">
-        {filtered.map((problem: Problem, idx: number) => (
-          <motion.div
-            key={problem.id.toString()}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.04 }}
-            className="bg-card rounded-xl border border-border shadow-xs overflow-hidden"
-            data-ocid={`history.item.${idx + 1}`}
+      <Tabs defaultValue="problems">
+        <TabsList
+          className="mb-6 bg-navy/5 border border-navy/10"
+          data-ocid="history.tab"
+        >
+          <TabsTrigger
+            value="problems"
+            className="data-[state=active]:bg-navy data-[state=active]:text-white text-navy"
+            data-ocid="history.tab"
           >
-            <button
-              className="flex w-full items-center justify-between p-4 cursor-pointer hover:bg-secondary/30 transition-colors text-left"
-              type="button"
-              onClick={() =>
-                setExpanded((e) =>
-                  e === problem.id.toString() ? null : problem.id.toString(),
-                )
-              }
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-navy/10 flex items-center justify-center">
-                  <History className="w-4 h-4 text-navy" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <Badge
-                      variant="secondary"
-                      className="text-xs bg-navy/10 text-navy border-0"
-                    >
-                      {TYPE_LABELS[String(problem.type)] ??
-                        String(problem.type)}
-                    </Badge>
-                    <span className="text-xs text-muted-foreground">
-                      {formatDate(problem.timestamp)}
-                    </span>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-0.5 truncate max-w-xs">
-                    {problem.jsonInput.slice(0, 80)}...
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-1">
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setReportTarget(problem.id);
-                  }}
-                  data-ocid={`history.secondary_button.${idx + 1}`}
-                  className="text-amber-600 hover:bg-amber-50 h-8 w-8 p-0"
-                  title="Report this content"
-                >
-                  <Flag className="w-4 h-4" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDelete(problem.id);
-                  }}
-                  data-ocid={`history.delete_button.${idx + 1}`}
-                  className="text-destructive hover:bg-destructive/10 h-8 w-8 p-0"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-                {expanded === problem.id.toString() ? (
-                  <ChevronUp className="w-4 h-4 text-muted-foreground" />
-                ) : (
-                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                )}
-              </div>
-            </button>
+            <History className="w-3.5 h-3.5 mr-1.5" />
+            Problems
+          </TabsTrigger>
+          <TabsTrigger
+            value="quiz"
+            className="data-[state=active]:bg-navy data-[state=active]:text-white text-navy"
+            data-ocid="history.tab"
+          >
+            <Trophy className="w-3.5 h-3.5 mr-1.5" />
+            Quiz Results
+          </TabsTrigger>
+        </TabsList>
 
-            <AnimatePresence>
-              {expanded === problem.id.toString() && (
+        {/* Problems Tab */}
+        <TabsContent value="problems">
+          <div className="relative mb-4">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              data-ocid="history.search_input"
+              className="pl-9"
+              placeholder="Search by topic..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+
+          {isLoading && (
+            <div className="space-y-3" data-ocid="history.loading_state">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-16 w-full rounded-xl" />
+              ))}
+            </div>
+          )}
+
+          {!isLoading && filtered.length === 0 && (
+            <div className="text-center py-16" data-ocid="history.empty_state">
+              <div className="w-16 h-16 rounded-full bg-navy/5 flex items-center justify-center mx-auto mb-4">
+                <History className="w-8 h-8 text-navy/30" />
+              </div>
+              <p className="text-muted-foreground font-medium">
+                No saved problems yet.
+              </p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Solve a problem and click "Save" to see it here.
+              </p>
+            </div>
+          )}
+
+          <div className="space-y-3">
+            {filtered.map((problem: Problem, idx: number) => {
+              const sciMeta = parseScienceMeta(problem.jsonInput);
+              return (
                 <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="overflow-hidden"
+                  key={problem.id.toString()}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.04 }}
+                  className="bg-card rounded-xl border border-border shadow-xs overflow-hidden"
+                  data-ocid={`history.item.${idx + 1}`}
                 >
-                  <div className="border-t border-border p-4 bg-secondary/20">
-                    <p className="text-xs font-bold text-navy uppercase tracking-wide mb-2">
-                      Saved Solution
-                    </p>
-                    <pre className="text-xs text-foreground whitespace-pre-wrap font-mono bg-card rounded-lg p-3 border border-border overflow-x-auto">
-                      {problem.solution}
-                    </pre>
+                  <button
+                    className="flex w-full items-center justify-between p-4 cursor-pointer hover:bg-secondary/30 transition-colors text-left"
+                    type="button"
+                    onClick={() =>
+                      setExpanded((e) =>
+                        e === problem.id.toString()
+                          ? null
+                          : problem.id.toString(),
+                      )
+                    }
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`w-9 h-9 rounded-lg flex items-center justify-center ${
+                          sciMeta ? "bg-emerald-100" : "bg-navy/10"
+                        }`}
+                      >
+                        {sciMeta ? (
+                          <Microscope className="w-4 h-4 text-emerald-600" />
+                        ) : (
+                          <History className="w-4 h-4 text-navy" />
+                        )}
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          {sciMeta ? (
+                            <>
+                              <Badge
+                                variant="secondary"
+                                className="text-xs bg-emerald-100 text-emerald-700 border-0"
+                              >
+                                🔬 Science
+                              </Badge>
+                              <Badge
+                                variant="secondary"
+                                className="text-xs bg-blue-50 text-blue-600 border-0"
+                              >
+                                {sciMeta.subject.charAt(0).toUpperCase() +
+                                  sciMeta.subject.slice(1)}{" "}
+                                · Class {sciMeta.classLevel}
+                              </Badge>
+                            </>
+                          ) : (
+                            <Badge
+                              variant="secondary"
+                              className="text-xs bg-navy/10 text-navy border-0"
+                            >
+                              {TYPE_LABELS[String(problem.type)] ??
+                                String(problem.type)}
+                            </Badge>
+                          )}
+                          <span className="text-xs text-muted-foreground">
+                            {formatDate(problem.timestamp)}
+                          </span>
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-0.5 truncate max-w-xs">
+                          {sciMeta
+                            ? `${sciMeta.chapter} — ${sciMeta.question.slice(0, 50)}${sciMeta.question.length > 50 ? "..." : ""}`
+                            : `${problem.jsonInput.slice(0, 80)}...`}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setReportTarget(problem.id);
+                        }}
+                        data-ocid={`history.secondary_button.${idx + 1}`}
+                        className="text-amber-600 hover:bg-amber-50 h-8 w-8 p-0"
+                        title="Report this content"
+                      >
+                        <Flag className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(problem.id);
+                        }}
+                        data-ocid={`history.delete_button.${idx + 1}`}
+                        className="text-destructive hover:bg-destructive/10 h-8 w-8 p-0"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                      {expanded === problem.id.toString() ? (
+                        <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                      ) : (
+                        <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                      )}
+                    </div>
+                  </button>
+
+                  <AnimatePresence>
+                    {expanded === problem.id.toString() && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="border-t border-border p-4 bg-secondary/20">
+                          {sciMeta && (
+                            <div className="mb-3 p-3 bg-emerald-50 rounded-lg border border-emerald-100">
+                              <p className="text-xs font-bold text-emerald-700 mb-1">
+                                📚 Science Details
+                              </p>
+                              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                                <span>
+                                  <strong>Subject:</strong>{" "}
+                                  {SUBJECT_LABELS[sciMeta.subject] ??
+                                    sciMeta.subject}
+                                </span>
+                                <span>
+                                  <strong>Class:</strong> {sciMeta.classLevel}
+                                </span>
+                                <span>
+                                  <strong>Chapter:</strong> {sciMeta.chapter}
+                                </span>
+                                <span>
+                                  <strong>Type:</strong>{" "}
+                                  {sciMeta.problemType === "theory"
+                                    ? "Theory"
+                                    : "Numerical"}
+                                </span>
+                              </div>
+                              <p className="text-xs mt-2">
+                                <strong>Question:</strong> {sciMeta.question}
+                              </p>
+                            </div>
+                          )}
+                          <p className="text-xs font-bold text-navy uppercase tracking-wide mb-2">
+                            Saved Solution
+                          </p>
+                          <pre className="text-xs text-foreground whitespace-pre-wrap font-mono bg-card rounded-lg p-3 border border-border overflow-x-auto">
+                            {problem.solution}
+                          </pre>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              );
+            })}
+          </div>
+        </TabsContent>
+
+        {/* Quiz Results Tab */}
+        <TabsContent value="quiz">
+          {quizLoading && (
+            <div className="space-y-3" data-ocid="history.loading_state">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-16 w-full rounded-xl" />
+              ))}
+            </div>
+          )}
+
+          {!quizLoading && (!quizResults || quizResults.length === 0) && (
+            <div className="text-center py-16" data-ocid="history.empty_state">
+              <div className="w-16 h-16 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-4">
+                <Trophy className="w-8 h-8 text-gold" />
+              </div>
+              <p className="text-muted-foreground font-medium">
+                কোনো Quiz ইতিহাস নেই
+              </p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Quiz দিন এবং Save করলে এখানে দেখা যাবে।
+              </p>
+            </div>
+          )}
+
+          <div className="space-y-3">
+            {(quizResults ?? []).map((result, idx) => {
+              const s = Number(result.score);
+              const t = Number(result.total);
+              const pct = t > 0 ? Math.round((s / t) * 100) : 0;
+              return (
+                <motion.div
+                  key={result.id.toString()}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.04 }}
+                  className="bg-card rounded-xl border border-border shadow-xs p-4 flex items-center gap-4"
+                  data-ocid={`history.item.${idx + 1}`}
+                >
+                  <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center shrink-0">
+                    <Trophy className="w-5 h-5 text-gold" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Badge
+                        variant="secondary"
+                        className="text-xs bg-navy/10 text-navy border-0"
+                      >
+                        {TOPIC_LABELS[result.topic] ?? result.topic}
+                      </Badge>
+                      <ScoreBadge score={result.score} total={result.total} />
+                      <span className="text-xs text-muted-foreground">
+                        {formatDate(result.timestamp)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3 mt-1">
+                      <span className="text-sm font-semibold text-navy">
+                        {s} / {t} সঠিক
+                      </span>
+                      <span className="flex items-center gap-1 text-xs text-green-600">
+                        <CheckCircle2 className="w-3 h-3" /> {s}
+                      </span>
+                      <span className="flex items-center gap-1 text-xs text-red-500">
+                        <XCircle className="w-3 h-3" /> {t - s}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <div
+                      className={`text-2xl font-display font-bold ${
+                        pct >= 70
+                          ? "text-green-600"
+                          : pct >= 50
+                            ? "text-amber-600"
+                            : "text-red-600"
+                      }`}
+                    >
+                      {pct}%
+                    </div>
                   </div>
                 </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-        ))}
-      </div>
+              );
+            })}
+          </div>
+        </TabsContent>
+      </Tabs>
 
       {/* Report AlertDialog */}
       <AlertDialog

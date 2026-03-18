@@ -10,8 +10,9 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
-export interface CustomerMessage {
+export interface CustomerMessageWithReply {
   'id' : bigint,
+  'adminReply' : [] | [string],
   'sender' : Principal,
   'message' : string,
   'timestamp' : Time,
@@ -31,6 +32,26 @@ export type ProblemType = { 'trialBalance' : null } |
   { 'journalEntry' : null } |
   { 'incomeStatement' : null } |
   { 'ledgerPostings' : null };
+export interface QuizQuestion {
+  'id' : bigint,
+  'topic' : string,
+  'question' : string,
+  'isAdminAdded' : boolean,
+  'correctIndex' : bigint,
+  'explanation' : string,
+  'optionA' : string,
+  'optionB' : string,
+  'optionC' : string,
+  'optionD' : string,
+}
+export interface QuizResult {
+  'id' : bigint,
+  'topic' : string,
+  'total' : bigint,
+  'wrongQuestionIds' : Array<bigint>,
+  'score' : bigint,
+  'timestamp' : Time,
+}
 export type Time = bigint;
 export interface UserProfile {
   'studentId' : [] | [string],
@@ -42,24 +63,38 @@ export type UserRole = { 'admin' : null } |
   { 'guest' : null };
 export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'addAdminQuestion' : ActorMethod<
+    [string, string, string, string, string, bigint, string, string],
+    undefined
+  >,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'deleteCustomerMessage' : ActorMethod<[bigint], undefined>,
   'deleteProblem' : ActorMethod<[ProblemId], undefined>,
+  'deleteQuizQuestion' : ActorMethod<[bigint], undefined>,
   'findProblemsByKeyword' : ActorMethod<[string], Array<Problem>>,
   'findProblemsByType' : ActorMethod<[ProblemType], Array<Problem>>,
   'forceClaimAdmin' : ActorMethod<[], boolean>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
-  'getCustomerMessages' : ActorMethod<[], Array<CustomerMessage>>,
+  'getCustomerMessages' : ActorMethod<[], Array<CustomerMessageWithReply>>,
   'getIsAdmin' : ActorMethod<[], boolean>,
+  'getMyCustomerMessages' : ActorMethod<[], Array<CustomerMessageWithReply>>,
   'getProblem' : ActorMethod<[ProblemId], Array<Problem>>,
   'getProblemHistory' : ActorMethod<[], Array<Problem>>,
+  'getQuizHistory' : ActorMethod<[], Array<QuizResult>>,
+  'getQuizQuestions' : ActorMethod<[[] | [string]], Array<QuizQuestion>>,
   'getUserCount' : ActorMethod<[], bigint>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'listProblemTypes' : ActorMethod<[], Array<string>>,
   'registerUser' : ActorMethod<[], undefined>,
+  'replyToCustomerMessage' : ActorMethod<[bigint, string], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'saveProblem' : ActorMethod<[ProblemType, string, string], undefined>,
+  'saveQuizResult' : ActorMethod<
+    [string, bigint, bigint, Array<bigint>],
+    undefined
+  >,
   'submitCustomerMessage' : ActorMethod<[string, string], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;

@@ -299,7 +299,9 @@ export function CustomerCasePage() {
             {myMessages.map((msg, idx) => {
               // adminReply is Candid optional: [] | [string]
               const adminReply =
-                msg.adminReply.length > 0 ? msg.adminReply[0] : null;
+                msg.adminReply && msg.adminReply.length > 0
+                  ? msg.adminReply[0]
+                  : null;
 
               return (
                 <Card

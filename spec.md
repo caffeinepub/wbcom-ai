@@ -1,31 +1,27 @@
 # WBCom AI
 
 ## Current State
-App has 9 accounting topics with client-side solvers. Depreciation topic exists with basic SLM/WDV schedule. Other topics (partnership, balance sheet, cash flow, journal, company, NPO, appropriation) have basic solvers. User reports advanced math problems are not being solved properly.
+Science theory answer generation uses keyword-based detection in `scienceSolver.ts`. The `detectKeywords` function uses regex patterns to identify topics. The meiosis pattern is `meiosis|মিয়োসিস|হ্রাসমূলক বিভাজন|হ্রাস বিভাজন`, which doesn't match common romanized Bengali spellings like "miyosis", "meyosis", "miosis", or "mayosis".
 
 ## Requested Changes (Diff)
 
 ### Add
-- Advanced Depreciation solver: Asset Account format (Machinery A/c + Provision for Depreciation A/c + Depreciation A/c) as used in WBCHSE exams
-- Depreciation: Sale/Disposal of asset mid-year calculation
-- Partnership: Revaluation of assets scenario (Revaluation A/c format)
-- Partnership: Retirement/Death of partner with goodwill adjustment
-- Company Accounts: Share forfeiture and reissue
-- Enhanced NPO: Receipt & Payment Account format alongside I&E
+- Spelling variants for meiosis: `miyosis|meyosis|miosis|mayosis`
+- Spelling variants for mitosis: `maytosis|maeitosis|maitoysis`
+- Spelling variants for photosynthesis: `saloksangshleshan|shaloksangshleshan`
+- Chapter-name-based topic detection as a secondary fallback (if chapter name contains topic keywords, use that topic's content)
+- More Bengali romanization variants for physics, chemistry, biology keywords
 
 ### Modify
-- Depreciation form: Add "Format" selector (Schedule / Asset Account Format)
-- Depreciation form: Add sale of asset option with sale price and year of sale
-- Partnership form: Add sub-type selector (Goodwill, Sacrifice Ratio, Revaluation, Retirement)
-- solver.ts: Add solveDepreciationAccounts(), solveRevaluation(), solveRetirement(), solveShareForfeiture()
-- ProblemSolver.tsx: Update forms to show more advanced scenarios with proper WBCHSE format output
+- `detectKeywords` function: extend all biology patterns with common romanized Bengali spelling variants
+- `solveTheory` function: add chapter-name based detection as additional signal when keyword detection fails
 
 ### Remove
-- Nothing
+- Nothing removed
 
 ## Implementation Plan
-1. Update solver.ts with new advanced solver functions
-2. Update ProblemSolver.tsx depreciation section to support Account Format and Sale scenarios
-3. Update Partnership section to support Revaluation and Retirement sub-types
-4. Update Company section to support Share Forfeiture and Reissue
-5. Ensure all outputs are in proper WBCHSE exam table/account format
+1. Extend meiosis pattern with: `miyosis|meyosis|miosis|mayosis|মিয়সিস`
+2. Extend mitosis pattern with: `maytosis|mytosis`
+3. Extend photosynthesis pattern with romanized variants
+4. Add chapter-name fallback in `solveTheory` - check if `chapter.toLowerCase()` contains topic keywords
+5. Improve generic biology fallback to also scan question for topic clues more broadly

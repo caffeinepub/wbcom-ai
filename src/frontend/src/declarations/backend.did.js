@@ -35,27 +35,79 @@ export const UserProfile = IDL.Record({
   'institution' : IDL.Opt(IDL.Text),
   'name' : IDL.Text,
 });
-export const CustomerMessage = IDL.Record({
+export const CustomerMessageWithReply = IDL.Record({
   'id' : IDL.Nat,
+  'adminReply' : IDL.Opt(IDL.Text),
   'sender' : IDL.Principal,
   'message' : IDL.Text,
   'timestamp' : Time,
   'senderName' : IDL.Text,
 });
+export const QuizResult = IDL.Record({
+  'id' : IDL.Nat,
+  'topic' : IDL.Text,
+  'total' : IDL.Nat,
+  'wrongQuestionIds' : IDL.Vec(IDL.Nat),
+  'score' : IDL.Nat,
+  'timestamp' : Time,
+});
+export const QuizQuestion = IDL.Record({
+  'id' : IDL.Nat,
+  'topic' : IDL.Text,
+  'question' : IDL.Text,
+  'isAdminAdded' : IDL.Bool,
+  'correctIndex' : IDL.Nat,
+  'explanation' : IDL.Text,
+  'optionA' : IDL.Text,
+  'optionB' : IDL.Text,
+  'optionC' : IDL.Text,
+  'optionD' : IDL.Text,
+});
 
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'addAdminQuestion' : IDL.Func(
+      [
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Nat,
+        IDL.Text,
+        IDL.Text,
+      ],
+      [],
+      [],
+    ),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'deleteCustomerMessage' : IDL.Func([IDL.Nat], [], []),
   'deleteProblem' : IDL.Func([ProblemId], [], []),
+  'deleteQuizQuestion' : IDL.Func([IDL.Nat], [], []),
   'findProblemsByKeyword' : IDL.Func([IDL.Text], [IDL.Vec(Problem)], ['query']),
   'findProblemsByType' : IDL.Func([ProblemType], [IDL.Vec(Problem)], ['query']),
   'forceClaimAdmin' : IDL.Func([], [IDL.Bool], []),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-  'getCustomerMessages' : IDL.Func([], [IDL.Vec(CustomerMessage)], ['query']),
+  'getCustomerMessages' : IDL.Func(
+      [],
+      [IDL.Vec(CustomerMessageWithReply)],
+      ['query'],
+    ),
   'getIsAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'getMyCustomerMessages' : IDL.Func(
+      [],
+      [IDL.Vec(CustomerMessageWithReply)],
+      ['query'],
+    ),
   'getProblem' : IDL.Func([ProblemId], [IDL.Vec(Problem)], ['query']),
   'getProblemHistory' : IDL.Func([], [IDL.Vec(Problem)], ['query']),
+  'getQuizHistory' : IDL.Func([], [IDL.Vec(QuizResult)], ['query']),
+  'getQuizQuestions' : IDL.Func(
+      [IDL.Opt(IDL.Text)],
+      [IDL.Vec(QuizQuestion)],
+      ['query'],
+    ),
   'getUserCount' : IDL.Func([], [IDL.Nat], ['query']),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
@@ -65,8 +117,14 @@ export const idlService = IDL.Service({
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'listProblemTypes' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
   'registerUser' : IDL.Func([], [], []),
-  'saveCallerUserProfile' : IDL.Func([UserProfile], [], ['query']),
+  'replyToCustomerMessage' : IDL.Func([IDL.Nat, IDL.Text], [], []),
+  'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'saveProblem' : IDL.Func([ProblemType, IDL.Text, IDL.Text], [], []),
+  'saveQuizResult' : IDL.Func(
+      [IDL.Text, IDL.Nat, IDL.Nat, IDL.Vec(IDL.Nat)],
+      [],
+      [],
+    ),
   'submitCustomerMessage' : IDL.Func([IDL.Text, IDL.Text], [], []),
 });
 
@@ -100,18 +158,55 @@ export const idlFactory = ({ IDL }) => {
     'institution' : IDL.Opt(IDL.Text),
     'name' : IDL.Text,
   });
-  const CustomerMessage = IDL.Record({
+  const CustomerMessageWithReply = IDL.Record({
     'id' : IDL.Nat,
+    'adminReply' : IDL.Opt(IDL.Text),
     'sender' : IDL.Principal,
     'message' : IDL.Text,
     'timestamp' : Time,
     'senderName' : IDL.Text,
   });
+  const QuizResult = IDL.Record({
+    'id' : IDL.Nat,
+    'topic' : IDL.Text,
+    'total' : IDL.Nat,
+    'wrongQuestionIds' : IDL.Vec(IDL.Nat),
+    'score' : IDL.Nat,
+    'timestamp' : Time,
+  });
+  const QuizQuestion = IDL.Record({
+    'id' : IDL.Nat,
+    'topic' : IDL.Text,
+    'question' : IDL.Text,
+    'isAdminAdded' : IDL.Bool,
+    'correctIndex' : IDL.Nat,
+    'explanation' : IDL.Text,
+    'optionA' : IDL.Text,
+    'optionB' : IDL.Text,
+    'optionC' : IDL.Text,
+    'optionD' : IDL.Text,
+  });
   
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'addAdminQuestion' : IDL.Func(
+        [
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Nat,
+          IDL.Text,
+          IDL.Text,
+        ],
+        [],
+        [],
+      ),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'deleteCustomerMessage' : IDL.Func([IDL.Nat], [], []),
     'deleteProblem' : IDL.Func([ProblemId], [], []),
+    'deleteQuizQuestion' : IDL.Func([IDL.Nat], [], []),
     'findProblemsByKeyword' : IDL.Func(
         [IDL.Text],
         [IDL.Vec(Problem)],
@@ -125,10 +220,25 @@ export const idlFactory = ({ IDL }) => {
     'forceClaimAdmin' : IDL.Func([], [IDL.Bool], []),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-    'getCustomerMessages' : IDL.Func([], [IDL.Vec(CustomerMessage)], ['query']),
+    'getCustomerMessages' : IDL.Func(
+        [],
+        [IDL.Vec(CustomerMessageWithReply)],
+        ['query'],
+      ),
     'getIsAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'getMyCustomerMessages' : IDL.Func(
+        [],
+        [IDL.Vec(CustomerMessageWithReply)],
+        ['query'],
+      ),
     'getProblem' : IDL.Func([ProblemId], [IDL.Vec(Problem)], ['query']),
     'getProblemHistory' : IDL.Func([], [IDL.Vec(Problem)], ['query']),
+    'getQuizHistory' : IDL.Func([], [IDL.Vec(QuizResult)], ['query']),
+    'getQuizQuestions' : IDL.Func(
+        [IDL.Opt(IDL.Text)],
+        [IDL.Vec(QuizQuestion)],
+        ['query'],
+      ),
     'getUserCount' : IDL.Func([], [IDL.Nat], ['query']),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
@@ -138,8 +248,14 @@ export const idlFactory = ({ IDL }) => {
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'listProblemTypes' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
     'registerUser' : IDL.Func([], [], []),
-    'saveCallerUserProfile' : IDL.Func([UserProfile], [], ['query']),
+    'replyToCustomerMessage' : IDL.Func([IDL.Nat, IDL.Text], [], []),
+    'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'saveProblem' : IDL.Func([ProblemType, IDL.Text, IDL.Text], [], []),
+    'saveQuizResult' : IDL.Func(
+        [IDL.Text, IDL.Nat, IDL.Nat, IDL.Vec(IDL.Nat)],
+        [],
+        [],
+      ),
     'submitCustomerMessage' : IDL.Func([IDL.Text, IDL.Text], [], []),
   });
 };

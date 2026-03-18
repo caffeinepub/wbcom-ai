@@ -8,13 +8,23 @@ import { HistoryPage } from "./components/HistoryPage";
 import { LoginPage } from "./components/LoginPage";
 import { Navbar } from "./components/Navbar";
 import { ProblemSolver } from "./components/ProblemSolver";
+import { QuizPage } from "./components/QuizPage";
+import { ScienceHomePage } from "./components/ScienceHomePage";
+import { ScienceSolver } from "./components/ScienceSolver";
 import { TermsModal } from "./components/TermsPage";
 import { TopicGrid } from "./components/TopicGrid";
 import { UsernameModal } from "./components/UsernameModal";
 import { useActor } from "./hooks/useActor";
 import { useInternetIdentity } from "./hooks/useInternetIdentity";
 
-type Page = "home" | "history" | "customerCase" | "admin";
+type Page =
+  | "home"
+  | "history"
+  | "customerCase"
+  | "admin"
+  | "quiz"
+  | "science"
+  | "scienceSolver";
 
 function getLocalStorageKey(principalId: string) {
   return `wbcom_username_${principalId}`;
@@ -26,6 +36,8 @@ export default function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [username, setUsername] = useState("");
   const [showUsernameModal, setShowUsernameModal] = useState(false);
+  const [scienceSubject, setScienceSubject] = useState("");
+  const [scienceClass, setScienceClass] = useState(11);
   const { identity } = useInternetIdentity();
   const { actor, isFetching } = useActor();
   const adminCheckDone = useRef(false);
@@ -64,14 +76,12 @@ export default function App() {
     const localKey = getLocalStorageKey(principalId);
     const savedName = localStorage.getItem(localKey);
 
-    // If we already have the name in localStorage, use it immediately — no backend call needed
     if (savedName?.trim()) {
       setUsername(savedName.trim());
       setShowUsernameModal(false);
       return;
     }
 
-    // Otherwise, try backend
     try {
       const profile = await actor.getCallerUserProfile();
       if (profile?.name?.trim()) {
@@ -115,7 +125,6 @@ export default function App() {
     }
   }, [identity, actor, isFetching, checkAdmin, checkProfile]);
 
-  // When identity is cleared (logout), reset username state but keep localStorage intact
   useEffect(() => {
     if (!identity) {
       setUsername("");
@@ -123,19 +132,28 @@ export default function App() {
     }
   }, [identity]);
 
-  function handleNavigate(page: Page) {
+  function handleNavigate(page: string) {
+    const p = page as Page;
     if (
-      (page === "history" || page === "customerCase" || page === "admin") &&
+      (p === "history" ||
+        p === "customerCase" ||
+        p === "admin" ||
+        p === "quiz") &&
       !identity
     )
       return;
-    setCurrentPage(page);
+    setCurrentPage(p);
+  }
+
+  function handleScienceSelect(subject: string, classLevel: number) {
+    setScienceSubject(subject);
+    setScienceClass(classLevel);
+    setCurrentPage("scienceSolver");
   }
 
   function handleUsernameSaved(name: string) {
     setUsername(name);
     setShowUsernameModal(false);
-    // Persist to localStorage so modal never reappears for this identity
     if (identity) {
       const principalId = identity.getPrincipal().toString();
       localStorage.setItem(getLocalStorageKey(principalId), name);
@@ -169,14 +187,11 @@ export default function App() {
             <HeroBanner />
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Left: Topic Grid */}
                 <div>
                   <TopicGrid
                     activeTopic={activeTopic}
                     onSelect={setActiveTopic}
                   />
-
-                  {/* Quick Tips */}
                   <div className="mt-6 bg-navy rounded-xl p-5 text-white">
                     <h3 className="font-display font-bold text-base mb-3">
                       Quick Tips 💡
@@ -191,14 +206,18 @@ export default function App() {
                     </ul>
                   </div>
                 </div>
-
-                {/* Right: Problem Solver */}
                 <div>
                   <ProblemSolver activeTopic={activeTopic} />
                 </div>
               </div>
             </div>
           </>
+        )}
+
+        {currentPage === "quiz" && (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <QuizPage onNavigate={handleNavigate} />
+          </div>
         )}
 
         {currentPage === "history" && (
@@ -214,9 +233,20 @@ export default function App() {
             <AdminPage />
           </ErrorBoundary>
         )}
+
+        {currentPage === "science" && (
+          <ScienceHomePage onSelect={handleScienceSelect} />
+        )}
+
+        {currentPage === "scienceSolver" && (
+          <ScienceSolver
+            subject={scienceSubject}
+            classLevel={scienceClass}
+            onBack={() => setCurrentPage("science")}
+          />
+        )}
       </main>
 
-      {/* Footer */}
       <footer className="bg-navy text-white mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -228,7 +258,7 @@ export default function App() {
                 পশ্চিমবঙ্গের হিসাবরক্ষণ শিক্ষক
               </p>
               <p className="text-white/50 text-xs mt-2">
-                WBCHSE &amp; Calcutta University Accountancy Tutor
+                WBCHSE &amp; Calcutta University Accountancy &amp; Science Tutor
               </p>
               <p className="text-gold font-semibold text-xs mt-2">
                 Founder &amp; CEO: Bikram Mandal | C.R.G.S

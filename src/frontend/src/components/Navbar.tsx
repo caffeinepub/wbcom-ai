@@ -8,17 +8,26 @@ import {
   LogIn,
   LogOut,
   Menu,
+  Microscope,
   ShieldCheck,
+  Trophy,
   UserCircle,
 } from "lucide-react";
 import { useState } from "react";
 import { useInternetIdentity } from "../hooks/useInternetIdentity";
 
-type Page = "home" | "history" | "customerCase" | "admin";
+type Page =
+  | "home"
+  | "history"
+  | "customerCase"
+  | "admin"
+  | "quiz"
+  | "science"
+  | "scienceSolver";
 
 interface NavbarProps {
-  currentPage: Page;
-  onNavigate: (page: Page) => void;
+  currentPage: string;
+  onNavigate: (page: string) => void;
   isAdmin?: boolean;
   username?: string;
 }
@@ -34,37 +43,52 @@ export function Navbar({
   const isLoggedIn = !!identity;
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const navItems = [
-    { page: "home" as Page, label: "Home", icon: <Home className="w-4 h-4" /> },
-    ...(isLoggedIn
-      ? [
-          {
-            page: "history" as Page,
-            label: "History",
-            icon: <History className="w-4 h-4" />,
-          },
-          {
-            page: "customerCase" as Page,
-            label: "Customer Support",
-            icon: <Briefcase className="w-4 h-4" />,
-          },
-          ...(isAdmin
-            ? [
-                {
-                  page: "admin" as Page,
-                  label: "Admin",
-                  icon: <ShieldCheck className="w-4 h-4" />,
-                },
-              ]
-            : []),
-        ]
-      : []),
-  ];
+  const navItems: Array<{ page: Page; label: string; icon: React.ReactNode }> =
+    [
+      { page: "home", label: "Home", icon: <Home className="w-4 h-4" /> },
+      {
+        page: "science",
+        label: "Science",
+        icon: <Microscope className="w-4 h-4" />,
+      },
+      ...(isLoggedIn
+        ? [
+            {
+              page: "quiz" as Page,
+              label: "Quiz",
+              icon: <Trophy className="w-4 h-4" />,
+            },
+            {
+              page: "history" as Page,
+              label: "History",
+              icon: <History className="w-4 h-4" />,
+            },
+            {
+              page: "customerCase" as Page,
+              label: "Customer Support",
+              icon: <Briefcase className="w-4 h-4" />,
+            },
+            ...(isAdmin
+              ? [
+                  {
+                    page: "admin" as Page,
+                    label: "Admin",
+                    icon: <ShieldCheck className="w-4 h-4" />,
+                  },
+                ]
+              : []),
+          ]
+        : []),
+    ];
 
   const handleNavigate = (page: Page) => {
     onNavigate(page);
     setMobileOpen(false);
   };
+
+  const isActivePage = (page: Page) =>
+    currentPage === page ||
+    (page === "science" && currentPage === "scienceSolver");
 
   return (
     <header className="bg-white border-b border-border shadow-xs sticky top-0 z-50">
@@ -85,7 +109,7 @@ export function Navbar({
                 WBCom AI
               </span>
               <span className="hidden sm:block text-[9px] text-muted-foreground leading-none mt-0.5">
-                পশ্চিমবঙ্গের হিসাবরক্ষণ শিক্ষক
+                পশ্চিমবঙ্গের শিক্ষক
               </span>
             </div>
           </button>
@@ -99,13 +123,21 @@ export function Navbar({
                 onClick={() => onNavigate(page)}
                 data-ocid={`${page}.link`}
                 className={`flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
-                  currentPage === page
+                  isActivePage(page)
                     ? page === "admin"
                       ? "bg-gold/20 text-gold border border-gold/30"
-                      : "bg-navy/10 text-navy"
+                      : page === "quiz"
+                        ? "bg-gold/15 text-gold border border-gold/20"
+                        : page === "science"
+                          ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
+                          : "bg-navy/10 text-navy"
                     : page === "admin"
                       ? "text-muted-foreground hover:text-gold hover:bg-gold/10"
-                      : "text-muted-foreground hover:text-navy hover:bg-navy/5"
+                      : page === "quiz"
+                        ? "text-muted-foreground hover:text-gold hover:bg-gold/10"
+                        : page === "science"
+                          ? "text-muted-foreground hover:text-emerald-700 hover:bg-emerald-50"
+                          : "text-muted-foreground hover:text-navy hover:bg-navy/5"
                 }`}
               >
                 {icon}
@@ -116,7 +148,6 @@ export function Navbar({
 
           {/* Auth + Username + Mobile Menu */}
           <div className="flex items-center gap-2">
-            {/* Desktop: Hi [name] */}
             {isLoggedIn && username && (
               <div className="hidden sm:flex items-center gap-1.5 text-xs font-medium text-navy bg-navy/5 px-2.5 py-1.5 rounded-md">
                 <UserCircle className="w-3.5 h-3.5 text-gold" />
@@ -148,7 +179,6 @@ export function Navbar({
               </Button>
             )}
 
-            {/* Mobile hamburger */}
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
                 <Button
@@ -162,7 +192,6 @@ export function Navbar({
               </SheetTrigger>
               <SheetContent side="right" className="w-64">
                 <div className="flex flex-col gap-1 mt-6">
-                  {/* Mobile: Hi [name] */}
                   {isLoggedIn && username && (
                     <div className="flex items-center gap-2 px-3 py-2.5 mb-1 rounded-md bg-navy/5">
                       <UserCircle className="w-4 h-4 text-gold" />
@@ -181,10 +210,12 @@ export function Navbar({
                       onClick={() => handleNavigate(page)}
                       data-ocid={`${page}.link`}
                       className={`flex items-center gap-2 px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
-                        currentPage === page
-                          ? page === "admin"
+                        isActivePage(page)
+                          ? page === "admin" || page === "quiz"
                             ? "bg-gold/20 text-gold"
-                            : "bg-navy/10 text-navy"
+                            : page === "science"
+                              ? "bg-emerald-100 text-emerald-700"
+                              : "bg-navy/10 text-navy"
                           : "text-muted-foreground hover:text-navy hover:bg-navy/5"
                       }`}
                     >

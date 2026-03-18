@@ -7,14 +7,19 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
-export interface CustomerMessage {
-    id: bigint;
-    sender: Principal;
-    message: string;
-    timestamp: Time;
-    senderName: string;
-}
 export type Time = bigint;
+export interface QuizQuestion {
+    id: bigint;
+    topic: string;
+    question: string;
+    isAdminAdded: boolean;
+    correctIndex: bigint;
+    explanation: string;
+    optionA: string;
+    optionB: string;
+    optionC: string;
+    optionD: string;
+}
 export interface Problem {
     id: ProblemId;
     type: ProblemType;
@@ -22,7 +27,23 @@ export interface Problem {
     solution: string;
     timestamp: Time;
 }
+export interface QuizResult {
+    id: bigint;
+    topic: string;
+    total: bigint;
+    wrongQuestionIds: Array<bigint>;
+    score: bigint;
+    timestamp: Time;
+}
 export type ProblemId = bigint;
+export interface CustomerMessageWithReply {
+    id: bigint;
+    adminReply?: string;
+    sender: Principal;
+    message: string;
+    timestamp: Time;
+    senderName: string;
+}
 export interface UserProfile {
     studentId?: string;
     institution?: string;
@@ -42,23 +63,31 @@ export enum UserRole {
     guest = "guest"
 }
 export interface backendInterface {
+    addAdminQuestion(question: string, optionA: string, optionB: string, optionC: string, optionD: string, correctIndex: bigint, topic: string, explanation: string): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    deleteCustomerMessage(messageId: bigint): Promise<void>;
     deleteProblem(problemId: ProblemId): Promise<void>;
+    deleteQuizQuestion(id: bigint): Promise<void>;
     findProblemsByKeyword(keyword: string): Promise<Array<Problem>>;
     findProblemsByType(type: ProblemType): Promise<Array<Problem>>;
     forceClaimAdmin(): Promise<boolean>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
-    getCustomerMessages(): Promise<Array<CustomerMessage>>;
+    getCustomerMessages(): Promise<Array<CustomerMessageWithReply>>;
     getIsAdmin(): Promise<boolean>;
+    getMyCustomerMessages(): Promise<Array<CustomerMessageWithReply>>;
     getProblem(problemId: ProblemId): Promise<Array<Problem>>;
     getProblemHistory(): Promise<Array<Problem>>;
+    getQuizHistory(): Promise<Array<QuizResult>>;
+    getQuizQuestions(topic: string | null): Promise<Array<QuizQuestion>>;
     getUserCount(): Promise<bigint>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
     listProblemTypes(): Promise<Array<string>>;
     registerUser(): Promise<void>;
+    replyToCustomerMessage(messageId: bigint, replyText: string): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     saveProblem(type: ProblemType, jsonInput: string, solution: string): Promise<void>;
+    saveQuizResult(topic: string, score: bigint, total: bigint, wrongQuestionIds: Array<bigint>): Promise<void>;
     submitCustomerMessage(senderName: string, message: string): Promise<void>;
 }

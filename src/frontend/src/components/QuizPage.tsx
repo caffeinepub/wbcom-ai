@@ -1,0 +1,580 @@
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  BookOpen,
+  CheckCircle2,
+  ChevronRight,
+  RotateCcw,
+  Star,
+  Trophy,
+  XCircle,
+} from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { useState } from "react";
+import { toast } from "sonner";
+import type { QuizQuestion } from "../hooks/useQueries";
+import { useQuizQuestions, useSaveQuizResult } from "../hooks/useQueries";
+
+const TOPICS = [
+  { label: "All Topics", value: null, bengali: "সব বিষয়" },
+  { label: "Journal Entry", value: "journal", bengali: "জার্নাল এন্ট্রি" },
+  { label: "Partnership", value: "partnership", bengali: "অংশীদারিত্ব" },
+  { label: "Depreciation", value: "depreciation", bengali: "অবচয়" },
+  { label: "NPO", value: "npo", bengali: "এনপিও" },
+  { label: "Company Accounts", value: "company", bengali: "কোম্পানি" },
+  { label: "Cash Flow", value: "cashflow", bengali: "নগদ প্রবাহ" },
+  { label: "Balance Sheet", value: "balance", bengali: "ব্যালেন্স শিট" },
+  { label: "Ledger", value: "ledger", bengali: "খাতা" },
+  { label: "Appropriation", value: "appropriation", bengali: "বরাদ্দ" },
+];
+
+const OPTIONS: Array<{
+  key: "optionA" | "optionB" | "optionC" | "optionD";
+  label: string;
+}> = [
+  { key: "optionA", label: "A" },
+  { key: "optionB", label: "B" },
+  { key: "optionC", label: "C" },
+  { key: "optionD", label: "D" },
+];
+
+type QuizPhase = "select" | "quiz" | "result";
+
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function ScoreRing({ score, total }: { score: number; total: number }) {
+  const pct = total > 0 ? Math.round((score / total) * 100) : 0;
+  const circumference = 2 * Math.PI * 42;
+  const strokeDash = (pct / 100) * circumference;
+  const color = pct >= 70 ? "#16a34a" : pct >= 50 ? "#d97706" : "#dc2626";
+
+  return (
+    <div className="relative w-32 h-32 mx-auto">
+      <svg
+        viewBox="0 0 100 100"
+        className="w-full h-full -rotate-90"
+        role="img"
+        aria-label="Score ring"
+      >
+        <circle
+          cx="50"
+          cy="50"
+          r="42"
+          fill="none"
+          stroke="#e2e8f0"
+          strokeWidth="10"
+        />
+        <circle
+          cx="50"
+          cy="50"
+          r="42"
+          fill="none"
+          stroke={color}
+          strokeWidth="10"
+          strokeDasharray={`${strokeDash} ${circumference}`}
+          strokeLinecap="round"
+          style={{ transition: "stroke-dasharray 1s ease" }}
+        />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="text-2xl font-bold" style={{ color }}>
+          {pct}%
+        </span>
+        <span className="text-xs text-muted-foreground">
+          {score}/{total}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+export function QuizPage({
+  onNavigate,
+}: { onNavigate?: (page: string) => void }) {
+  const [phase, setPhase] = useState<QuizPhase>("select");
+  const [selectedTopic, setSelectedTopic] = useState<{
+    label: string;
+    value: string | null;
+  }>(TOPICS[0]);
+  const [fetchEnabled, setFetchEnabled] = useState(false);
+  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
+  const [currentIdx, setCurrentIdx] = useState(0);
+  const [chosenIndex, setChosenIndex] = useState<number | null>(null);
+  const [answered, setAnswered] = useState(false);
+  const [wrongIds, setWrongIds] = useState<bigint[]>([]);
+  const [score, setScore] = useState(0);
+  const [saving, setSaving] = useState(false);
+
+  const { data: rawQuestions, isLoading } = useQuizQuestions(
+    selectedTopic.value,
+    fetchEnabled,
+  );
+  const saveQuizResult = useSaveQuizResult();
+
+  function handleStartClick() {
+    setFetchEnabled(true);
+    // If already loaded, start immediately
+    if (rawQuestions && rawQuestions.length > 0) {
+      const picked = shuffle(rawQuestions).slice(0, 10);
+      setQuestions(picked);
+      setCurrentIdx(0);
+      setChosenIndex(null);
+      setAnswered(false);
+      setWrongIds([]);
+      setScore(0);
+      setPhase("quiz");
+    } else if (!isLoading) {
+      // trigger re-check after fetch
+      toast.info("প্রশ্ন লোড হচ্ছে...");
+    }
+  }
+
+  // When questions load after clicking start
+  if (
+    fetchEnabled &&
+    !isLoading &&
+    rawQuestions &&
+    rawQuestions.length > 0 &&
+    phase === "select" &&
+    questions.length === 0
+  ) {
+    const picked = shuffle(rawQuestions).slice(0, 10);
+    setQuestions(picked);
+    setCurrentIdx(0);
+    setChosenIndex(null);
+    setAnswered(false);
+    setWrongIds([]);
+    setScore(0);
+    setPhase("quiz");
+  }
+
+  function handleAnswer(idx: number) {
+    if (answered) return;
+    setChosenIndex(idx);
+    setAnswered(true);
+    const q = questions[currentIdx];
+    const correct = Number(q.correctIndex);
+    if (idx === correct) {
+      setScore((s) => s + 1);
+    } else {
+      setWrongIds((w) => [...w, q.id]);
+    }
+  }
+
+  function handleNext() {
+    if (currentIdx + 1 >= questions.length) {
+      setPhase("result");
+    } else {
+      setCurrentIdx((i) => i + 1);
+      setChosenIndex(null);
+      setAnswered(false);
+    }
+  }
+
+  async function handleSaveAndFinish() {
+    setSaving(true);
+    try {
+      await saveQuizResult.mutateAsync({
+        topic: selectedTopic.value ?? "all",
+        score: BigInt(score),
+        total: BigInt(questions.length),
+        wrongQuestionIds: wrongIds,
+      });
+      toast.success("ফলাফল সংরক্ষিত হয়েছে!");
+      if (onNavigate) onNavigate("history");
+    } catch {
+      toast.error("সংরক্ষণ ব্যর্থ হয়েছে।");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  function handleRetry() {
+    const picked = shuffle(rawQuestions ?? []).slice(0, 10);
+    setQuestions(picked);
+    setCurrentIdx(0);
+    setChosenIndex(null);
+    setAnswered(false);
+    setWrongIds([]);
+    setScore(0);
+    setPhase(picked.length > 0 ? "quiz" : "select");
+  }
+
+  // ── SELECT PHASE ──
+  if (phase === "select") {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-8">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-11 h-11 rounded-xl bg-navy flex items-center justify-center">
+              <Trophy className="w-6 h-6 text-gold" />
+            </div>
+            <div>
+              <h1 className="font-display font-bold text-2xl text-navy">
+                Quiz Mode
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                একটি বিষয় বেছে নিন এবং পরীক্ষা দিন
+              </p>
+            </div>
+          </div>
+
+          <Card className="border-navy/20 shadow-sm mb-6">
+            <CardContent className="pt-6">
+              <p className="text-sm font-semibold text-navy mb-3">
+                বিষয় বেছে নিন / Select Topic
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {TOPICS.map((t) => (
+                  <button
+                    key={t.label}
+                    type="button"
+                    data-ocid="quiz.tab"
+                    onClick={() => {
+                      setSelectedTopic(t);
+                      setFetchEnabled(false);
+                      setQuestions([]);
+                    }}
+                    className={`flex flex-col items-start gap-0.5 px-3 py-2.5 rounded-lg border text-left text-sm transition-all ${
+                      selectedTopic.value === t.value
+                        ? "border-navy bg-navy text-white"
+                        : "border-border bg-card text-foreground hover:border-navy/40 hover:bg-navy/5"
+                    }`}
+                  >
+                    <span className="font-semibold text-xs">{t.label}</span>
+                    <span
+                      className={`text-[10px] ${selectedTopic.value === t.value ? "text-white/70" : "text-muted-foreground"}`}
+                    >
+                      {t.bengali}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="bg-navy/5 rounded-xl p-4 mb-6 text-sm text-navy/80">
+            <p className="font-semibold mb-1 text-navy">📋 Quiz সম্পর্কে</p>
+            <ul className="space-y-1 text-xs">
+              <li>• প্রতিটি quiz-এ সর্বোচ্চ ১০টি MCQ প্রশ্ন থাকবে</li>
+              <li>• প্রতিটি প্রশ্নের উত্তরের পরে ব্যাখ্যা দেখাবে</li>
+              <li>• শেষে ফলাফল বিশ্লেষণ ও History-তে save করতে পারবেন</li>
+            </ul>
+          </div>
+
+          {isLoading && fetchEnabled ? (
+            <div className="space-y-2" data-ocid="quiz.loading_state">
+              <Skeleton className="h-12 w-full rounded-lg" />
+              <Skeleton className="h-12 w-3/4 rounded-lg" />
+            </div>
+          ) : (
+            <Button
+              data-ocid="quiz.primary_button"
+              className="w-full bg-navy text-white hover:bg-navy/90 h-12 text-base font-semibold"
+              onClick={handleStartClick}
+              disabled={isLoading && fetchEnabled}
+            >
+              <BookOpen className="w-5 h-5 mr-2" />
+              Quiz শুরু করুন / Start Quiz
+            </Button>
+          )}
+        </motion.div>
+      </div>
+    );
+  }
+
+  // ── QUIZ PHASE ──
+  if (phase === "quiz" && questions.length > 0) {
+    const q = questions[currentIdx];
+    const correct = Number(q.correctIndex);
+    const progress =
+      ((currentIdx + (answered ? 1 : 0)) / questions.length) * 100;
+
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Trophy className="w-5 h-5 text-gold" />
+            <span className="font-display font-bold text-navy text-sm">
+              {selectedTopic.label}
+            </span>
+          </div>
+          <Badge variant="outline" className="border-navy/20 text-navy text-xs">
+            প্রশ্ন {currentIdx + 1} / {questions.length}
+          </Badge>
+        </div>
+
+        <Progress value={progress} className="h-2 mb-6" />
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentIdx}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.25 }}
+          >
+            <Card className="border-navy/20 shadow-sm mb-4">
+              <CardContent className="pt-6">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+                  প্রশ্ন / Question
+                </p>
+                <p className="text-base font-medium text-foreground leading-relaxed">
+                  {q.question}
+                </p>
+              </CardContent>
+            </Card>
+
+            <div className="space-y-2 mb-4">
+              {OPTIONS.map((opt, idx) => {
+                const optVal = q[opt.key];
+                let extraClass =
+                  "border-border hover:border-navy/40 hover:bg-navy/5 text-foreground";
+
+                if (answered) {
+                  if (idx === correct) {
+                    extraClass =
+                      "border-green-500 bg-green-50 text-green-800 hover:bg-green-50";
+                  } else if (idx === chosenIndex && idx !== correct) {
+                    extraClass =
+                      "border-red-400 bg-red-50 text-red-800 hover:bg-red-50";
+                  } else {
+                    extraClass =
+                      "border-border text-muted-foreground opacity-60";
+                  }
+                }
+
+                return (
+                  <button
+                    key={opt.key}
+                    type="button"
+                    data-ocid={`quiz.radio.${idx + 1}`}
+                    onClick={() => handleAnswer(idx)}
+                    disabled={answered}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg border text-left transition-all ${
+                      answered ? "cursor-default" : "cursor-pointer"
+                    } ${extraClass}`}
+                  >
+                    <span
+                      className="w-7 h-7 rounded-full border-2 flex items-center justify-center text-xs font-bold shrink-0
+                      border-current"
+                    >
+                      {opt.label}
+                    </span>
+                    <span className="text-sm">{optVal}</span>
+                    {answered && idx === correct && (
+                      <CheckCircle2 className="w-4 h-4 ml-auto text-green-600 shrink-0" />
+                    )}
+                    {answered && idx === chosenIndex && idx !== correct && (
+                      <XCircle className="w-4 h-4 ml-auto text-red-500 shrink-0" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            {answered && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                {chosenIndex === correct ? (
+                  <div className="rounded-lg bg-green-50 border border-green-200 px-4 py-3 mb-4">
+                    <p className="text-sm font-semibold text-green-700 mb-1">
+                      ✅ সঠিক উত্তর! / Correct!
+                    </p>
+                    {q.explanation && (
+                      <p className="text-xs text-green-800">{q.explanation}</p>
+                    )}
+                  </div>
+                ) : (
+                  <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 mb-4">
+                    <p className="text-sm font-semibold text-red-700 mb-1">
+                      ❌ ভুল উত্তর / Incorrect
+                    </p>
+                    <p className="text-xs text-red-600 mb-1">
+                      সঠিক উত্তর:{" "}
+                      <strong>
+                        {OPTIONS[correct].label}) {q[OPTIONS[correct].key]}
+                      </strong>
+                    </p>
+                    {q.explanation && (
+                      <p className="text-xs text-red-800">{q.explanation}</p>
+                    )}
+                  </div>
+                )}
+
+                <Button
+                  data-ocid="quiz.primary_button"
+                  onClick={handleNext}
+                  className="w-full bg-navy text-white hover:bg-navy/90"
+                >
+                  {currentIdx + 1 >= questions.length ? (
+                    <>
+                      ফলাফল দেখুন / See Results{" "}
+                      <Trophy className="w-4 h-4 ml-2" />
+                    </>
+                  ) : (
+                    <>
+                      পরবর্তী / Next <ChevronRight className="w-4 h-4 ml-1" />
+                    </>
+                  )}
+                </Button>
+              </motion.div>
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    );
+  }
+
+  // ── RESULT PHASE ──
+  if (phase === "result") {
+    const total = questions.length;
+    const pct = total > 0 ? Math.round((score / total) * 100) : 0;
+    const grade =
+      pct >= 70
+        ? {
+            label: "ভালো! / Good",
+            color: "text-green-600",
+            bg: "bg-green-50 border-green-200",
+          }
+        : pct >= 50
+          ? {
+              label: "মোটামুটি / Fair",
+              color: "text-amber-600",
+              bg: "bg-amber-50 border-amber-200",
+            }
+          : {
+              label: "আরো পড়ো / Needs Improvement",
+              color: "text-red-600",
+              bg: "bg-red-50 border-red-200",
+            };
+
+    const wrongQuestions = questions.filter((q) => wrongIds.includes(q.id));
+
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-8">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <Trophy className="w-8 h-8 text-gold" />
+            <h1 className="font-display font-bold text-2xl text-navy">
+              ফলাফল / Result
+            </h1>
+          </div>
+
+          {/* Score card */}
+          <Card className="border-navy/20 shadow-sm mb-6">
+            <CardContent className="pt-6">
+              <div className="flex flex-col sm:flex-row items-center gap-6">
+                <ScoreRing score={score} total={total} />
+                <div className="flex-1 text-center sm:text-left">
+                  <div
+                    className={`inline-block px-3 py-1 rounded-full border text-sm font-semibold mb-2 ${grade.bg} ${grade.color}`}
+                  >
+                    {grade.label}
+                  </div>
+                  <p className="text-3xl font-display font-bold text-navy mb-1">
+                    {score} / {total}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedTopic.label} Quiz
+                  </p>
+                  <div className="flex items-center gap-4 mt-3 text-sm">
+                    <span className="flex items-center gap-1 text-green-600">
+                      <CheckCircle2 className="w-4 h-4" /> {score} সঠিক
+                    </span>
+                    <span className="flex items-center gap-1 text-red-500">
+                      <XCircle className="w-4 h-4" /> {total - score} ভুল
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Wrong answers */}
+          {wrongQuestions.length > 0 && (
+            <Card className="border-red-200 shadow-sm mb-6">
+              <CardContent className="pt-4">
+                <p className="text-sm font-semibold text-red-700 mb-3 flex items-center gap-2">
+                  <XCircle className="w-4 h-4" /> ভুল উত্তরগুলো / Wrong Answers (
+                  {wrongQuestions.length})
+                </p>
+                <div className="space-y-3">
+                  {wrongQuestions.map((q, idx) => (
+                    <div
+                      key={q.id.toString()}
+                      className="rounded-lg bg-red-50/60 border border-red-100 p-3"
+                      data-ocid={`quiz.item.${idx + 1}`}
+                    >
+                      <p className="text-xs font-medium text-foreground mb-1">
+                        {idx + 1}. {q.question}
+                      </p>
+                      <p className="text-xs text-green-700">
+                        ✅ সঠিক উত্তর: {OPTIONS[Number(q.correctIndex)].label}){" "}
+                        {q[OPTIONS[Number(q.correctIndex)].key]}
+                      </p>
+                      {q.explanation && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {q.explanation}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Buttons */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button
+              data-ocid="quiz.primary_button"
+              className="flex-1 bg-navy text-white hover:bg-navy/90"
+              onClick={handleSaveAndFinish}
+              disabled={saving}
+            >
+              {saving ? (
+                "সংরক্ষণ হচ্ছে..."
+              ) : (
+                <>
+                  <Star className="w-4 h-4 mr-2" />
+                  সংরক্ষণ করুন / Save & Finish
+                </>
+              )}
+            </Button>
+            <Button
+              data-ocid="quiz.secondary_button"
+              variant="outline"
+              className="flex-1 border-navy/30 text-navy hover:bg-navy/5"
+              onClick={handleRetry}
+            >
+              <RotateCcw className="w-4 h-4 mr-2" />
+              আবার চেষ্টা / Try Again
+            </Button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
+  return null;
+}
