@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
+  BookOpen,
   Briefcase,
   GraduationCap,
   History,
@@ -9,6 +10,7 @@ import {
   LogOut,
   Menu,
   Microscope,
+  Scale,
   ShieldCheck,
   Trophy,
   UserCircle,
@@ -23,12 +25,15 @@ type Page =
   | "admin"
   | "quiz"
   | "science"
-  | "scienceSolver";
+  | "scienceSolver"
+  | "notes"
+  | "law";
 
 interface NavbarProps {
   currentPage: string;
   onNavigate: (page: string) => void;
   isAdmin?: boolean;
+  isAdminLoading?: boolean;
   username?: string;
 }
 
@@ -36,6 +41,7 @@ export function Navbar({
   currentPage,
   onNavigate,
   isAdmin,
+  isAdminLoading,
   username,
 }: NavbarProps) {
   const { identity, login, clear, isLoggingIn, isInitializing } =
@@ -54,9 +60,19 @@ export function Navbar({
       ...(isLoggedIn
         ? [
             {
+              page: "law" as Page,
+              label: "Law (আইন)",
+              icon: <Scale className="w-4 h-4" />,
+            },
+            {
               page: "quiz" as Page,
               label: "Quiz",
               icon: <Trophy className="w-4 h-4" />,
+            },
+            {
+              page: "notes" as Page,
+              label: "Notes",
+              icon: <BookOpen className="w-4 h-4" />,
             },
             {
               page: "history" as Page,
@@ -90,6 +106,50 @@ export function Navbar({
     currentPage === page ||
     (page === "science" && currentPage === "scienceSolver");
 
+  function getDesktopClass(page: Page) {
+    const active = isActivePage(page);
+    if (page === "admin") {
+      return active
+        ? "bg-gold/20 text-gold border border-gold/30"
+        : "text-muted-foreground hover:text-gold hover:bg-gold/10";
+    }
+    if (page === "quiz") {
+      return active
+        ? "bg-gold/15 text-gold border border-gold/20"
+        : "text-muted-foreground hover:text-gold hover:bg-gold/10";
+    }
+    if (page === "science") {
+      return active
+        ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
+        : "text-muted-foreground hover:text-emerald-700 hover:bg-emerald-50";
+    }
+    if (page === "notes") {
+      return active
+        ? "bg-purple-100 text-purple-700 border border-purple-200"
+        : "text-muted-foreground hover:text-purple-700 hover:bg-purple-50";
+    }
+    if (page === "law") {
+      return active
+        ? "bg-indigo-100 text-indigo-700 border border-indigo-200"
+        : "text-muted-foreground hover:text-indigo-700 hover:bg-indigo-50";
+    }
+    return active
+      ? "bg-navy/10 text-navy"
+      : "text-muted-foreground hover:text-navy hover:bg-navy/5";
+  }
+
+  function getMobileClass(page: Page) {
+    const active = isActivePage(page);
+    if (active) {
+      if (page === "admin" || page === "quiz") return "bg-gold/20 text-gold";
+      if (page === "science") return "bg-emerald-100 text-emerald-700";
+      if (page === "notes") return "bg-purple-100 text-purple-700";
+      if (page === "law") return "bg-indigo-100 text-indigo-700";
+      return "bg-navy/10 text-navy";
+    }
+    return "text-muted-foreground hover:text-navy hover:bg-navy/5";
+  }
+
   return (
     <header className="bg-white border-b border-border shadow-xs sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -122,28 +182,18 @@ export function Navbar({
                 type="button"
                 onClick={() => onNavigate(page)}
                 data-ocid={`${page}.link`}
-                className={`flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
-                  isActivePage(page)
-                    ? page === "admin"
-                      ? "bg-gold/20 text-gold border border-gold/30"
-                      : page === "quiz"
-                        ? "bg-gold/15 text-gold border border-gold/20"
-                        : page === "science"
-                          ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
-                          : "bg-navy/10 text-navy"
-                    : page === "admin"
-                      ? "text-muted-foreground hover:text-gold hover:bg-gold/10"
-                      : page === "quiz"
-                        ? "text-muted-foreground hover:text-gold hover:bg-gold/10"
-                        : page === "science"
-                          ? "text-muted-foreground hover:text-emerald-700 hover:bg-emerald-50"
-                          : "text-muted-foreground hover:text-navy hover:bg-navy/5"
-                }`}
+                className={`flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${getDesktopClass(page)}`}
               >
                 {icon}
                 {label}
               </button>
             ))}
+            {/* Admin loading indicator */}
+            {isLoggedIn && isAdminLoading && (
+              <span className="px-2.5 py-1.5 text-xs text-muted-foreground animate-pulse">
+                ...
+              </span>
+            )}
           </nav>
 
           {/* Auth + Username + Mobile Menu */}
@@ -209,20 +259,17 @@ export function Navbar({
                       type="button"
                       onClick={() => handleNavigate(page)}
                       data-ocid={`${page}.link`}
-                      className={`flex items-center gap-2 px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
-                        isActivePage(page)
-                          ? page === "admin" || page === "quiz"
-                            ? "bg-gold/20 text-gold"
-                            : page === "science"
-                              ? "bg-emerald-100 text-emerald-700"
-                              : "bg-navy/10 text-navy"
-                          : "text-muted-foreground hover:text-navy hover:bg-navy/5"
-                      }`}
+                      className={`flex items-center gap-2 px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${getMobileClass(page)}`}
                     >
                       {icon}
                       {label}
                     </button>
                   ))}
+                  {isLoggedIn && isAdminLoading && (
+                    <p className="text-xs text-muted-foreground px-3 py-2 animate-pulse">
+                      Checking permissions...
+                    </p>
+                  )}
                 </div>
               </SheetContent>
             </Sheet>

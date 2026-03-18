@@ -13,17 +13,22 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { Principal } from "@dfinity/principal";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   BookOpen,
+  CheckCircle,
+  FileText,
   Loader2,
   MessageSquare,
+  Pencil,
   Plus,
   Reply,
   ShieldCheck,
   Trash2,
   Trophy,
   Users,
+  XCircle,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -32,11 +37,14 @@ import {
   useAddAdminQuestion,
   useAdminQuizQuestions,
   useDeleteQuizQuestion,
+  useGetAllAccessRequests,
+  useGetAllNotesList,
   useGetCustomerMessages,
   useGetUserCount,
 } from "../hooks/useQueries";
 
 const QUIZ_TOPICS = [
+  // Accountancy
   { label: "Journal Entry", value: "journal" },
   { label: "Partnership", value: "partnership" },
   { label: "Depreciation", value: "depreciation" },
@@ -46,6 +54,15 @@ const QUIZ_TOPICS = [
   { label: "Balance Sheet", value: "balance" },
   { label: "Ledger", value: "ledger" },
   { label: "Appropriation", value: "appropriation" },
+  // Science
+  { label: "Physics - Class 11", value: "physics_11" },
+  { label: "Physics - Class 12", value: "physics_12" },
+  { label: "Chemistry - Class 11", value: "chemistry_11" },
+  { label: "Chemistry - Class 12", value: "chemistry_12" },
+  { label: "Biology - Class 11", value: "biology_11" },
+  { label: "Biology - Class 12", value: "biology_12" },
+  { label: "Mathematics - Class 11", value: "math_11" },
+  { label: "Mathematics - Class 12", value: "math_12" },
 ];
 
 function safeTimestamp(ts: unknown): number {
@@ -62,12 +79,21 @@ const CORRECT_OPTIONS = [
 
 const OPTION_KEYS = ["optionA", "optionB", "optionC", "optionD"] as const;
 
+const STATUS_COLORS: Record<string, string> = {
+  pending: "bg-amber-100 text-amber-700 border-amber-200",
+  approved: "bg-emerald-100 text-emerald-700 border-emerald-200",
+  rejected: "bg-red-100 text-red-600 border-red-200",
+};
+
 export function AdminPage() {
   const { data: userCount, isLoading: loadingCount } = useGetUserCount();
   const { data: messages, isLoading: loadingMessages } =
     useGetCustomerMessages();
   const { data: quizQuestions, isLoading: loadingQuiz } =
     useAdminQuizQuestions();
+  const { data: notesList, isLoading: loadingNotesList } = useGetAllNotesList();
+  const { data: accessRequests, isLoading: loadingRequests } =
+    useGetAllAccessRequests();
   const { actor, isFetching } = useActor();
   const actorRef = useRef(actor);
   useEffect(() => {
@@ -86,7 +112,6 @@ export function AdminPage() {
   const [replyTexts, setReplyTexts] = useState<Record<string, string>>({});
   const [sendingId, setSendingId] = useState<bigint | null>(null);
 
-  // New question form
   const [newQ, setNewQ] = useState({
     question: "",
     optionA: "",
@@ -98,6 +123,25 @@ export function AdminPage() {
     explanation: "",
   });
   const [addingQ, setAddingQ] = useState(false);
+
+  // Premium Notes state
+  const [newNote, setNewNote] = useState({
+    title: "",
+    subject: "",
+    content: "",
+  });
+  const [addingNote, setAddingNote] = useState(false);
+  const [editingNoteId, setEditingNoteId] = useState<bigint | null>(null);
+  const [editNote, setEditNote] = useState({
+    title: "",
+    subject: "",
+    content: "",
+  });
+  const [savingEdit, setSavingEdit] = useState(false);
+  const [deletingNoteId, setDeletingNoteId] = useState<bigint | null>(null);
+  const [processingRequestId, setProcessingRequestId] = useState<string | null>(
+    null,
+  );
 
   async function waitForActor() {
     for (let i = 0; i < 30; i++) {
@@ -198,6 +242,152 @@ export function AdminPage() {
       toast.success("প্রশ্ন মুছে ফেলা হয়েছে");
     } catch {
       toast.error("মুছতে পারা যায়নি");
+    }
+  }
+
+  async function handleAddNote() {
+    if (
+      !newNote.title.trim() ||
+      !newNote.subject.trim() ||
+      !newNote.content.trim()
+    ) {
+      toast.error("সব field পূরণ করুন");
+      return;
+    }
+    const readyActor = await waitForActor();
+    if (!readyActor) {
+      toast.error("সংযোগ নেই");
+      return;
+    }
+    setAddingNote(true);
+    try {
+      await readyActor.addPremiumNote(
+        newNote.title.trim(),
+        newNote.subject.trim(),
+        newNote.content.trim(),
+      );
+      toast.success("Note যোগ হয়েছে!");
+      setNewNote({ title: "", subject: "", content: "" });
+      queryClient.invalidateQueries({ queryKey: ["premiumNotesList"] });
+      queryClient.invalidateQueries({ queryKey: ["premiumNotesWithContent"] });
+    } catch {
+      toast.error("Note যোগ করা যায়নি");
+    } finally {
+      setAddingNote(false);
+    }
+  }
+
+  function startEditNote(note: { id: bigint; title: string; subject: string }) {
+    setEditingNoteId(note.id);
+    setEditNote({ title: note.title, subject: note.subject, content: "" });
+  }
+
+  async function handleSaveEdit() {
+    if (!editingNoteId) return;
+    if (!editNote.title.trim() || !editNote.subject.trim()) {
+      toast.error("শিরোনাম এবং বিষয় লিখুন");
+      return;
+    }
+    const readyActor = await waitForActor();
+    if (!readyActor) {
+      toast.error("সংযোগ নেই");
+      return;
+    }
+    setSavingEdit(true);
+    try {
+      await readyActor.editPremiumNote(
+        editingNoteId,
+        editNote.title.trim(),
+        editNote.subject.trim(),
+        editNote.content.trim(),
+      );
+      toast.success("Note আপডেট হয়েছে");
+      setEditingNoteId(null);
+      queryClient.invalidateQueries({ queryKey: ["premiumNotesList"] });
+      queryClient.invalidateQueries({ queryKey: ["premiumNotesWithContent"] });
+    } catch {
+      toast.error("Note আপডেট বিফল হয়েছে");
+    } finally {
+      setSavingEdit(false);
+    }
+  }
+
+  async function handleDeleteNote(id: bigint) {
+    const readyActor = await waitForActor();
+    if (!readyActor) {
+      toast.error("সংযোগ নেই");
+      return;
+    }
+    setDeletingNoteId(id);
+    try {
+      await readyActor.deletePremiumNote(id);
+      toast.success("Note মুছে ফেলা হয়েছে");
+      queryClient.invalidateQueries({ queryKey: ["premiumNotesList"] });
+      queryClient.invalidateQueries({ queryKey: ["premiumNotesWithContent"] });
+    } catch {
+      toast.error("Note মুছতে বিফল");
+    } finally {
+      setDeletingNoteId(null);
+    }
+  }
+
+  async function handleApproveRequest(userId: string) {
+    const readyActor = await waitForActor();
+    if (!readyActor) {
+      toast.error("সংযোগ নেই");
+      return;
+    }
+    setProcessingRequestId(userId);
+    try {
+      // userId is a Principal string — pass as-is; backend accepts Principal
+      await (readyActor as any).approveAccessRequest(
+        Principal.fromText(userId),
+      );
+      toast.success("Access approved!");
+      queryClient.invalidateQueries({ queryKey: ["allAccessRequests"] });
+    } catch (err) {
+      console.error(err);
+      toast.error("Approve বিফল হয়েছে");
+    } finally {
+      setProcessingRequestId(null);
+    }
+  }
+
+  async function handleRevokeAccess(userId: string) {
+    const readyActor = await waitForActor();
+    if (!readyActor) {
+      toast.error("সংযোগ নেই");
+      return;
+    }
+    setProcessingRequestId(userId);
+    try {
+      await (readyActor as any).revokeAccess(Principal.fromText(userId));
+      toast.success("Access revoked.");
+      queryClient.invalidateQueries({ queryKey: ["allAccessRequests"] });
+    } catch (err) {
+      console.error(err);
+      toast.error("Revoke বিফল হয়েছে");
+    } finally {
+      setProcessingRequestId(null);
+    }
+  }
+
+  async function handleRejectRequest(userId: string) {
+    const readyActor = await waitForActor();
+    if (!readyActor) {
+      toast.error("সংযোগ নেই");
+      return;
+    }
+    setProcessingRequestId(userId);
+    try {
+      await (readyActor as any).rejectAccessRequest(Principal.fromText(userId));
+      toast.success("Request rejected.");
+      queryClient.invalidateQueries({ queryKey: ["allAccessRequests"] });
+    } catch (err) {
+      console.error(err);
+      toast.error("Reject বিফল হয়েছে");
+    } finally {
+      setProcessingRequestId(null);
     }
   }
 
@@ -418,7 +608,7 @@ export function AdminPage() {
 
       {/* Tabs */}
       <Tabs defaultValue="messages">
-        <TabsList className="mb-6 bg-navy/5 border border-navy/10">
+        <TabsList className="mb-6 bg-navy/5 border border-navy/10 flex-wrap h-auto gap-1 p-1">
           <TabsTrigger
             value="messages"
             className="data-[state=active]:bg-navy data-[state=active]:text-white text-navy"
@@ -432,6 +622,14 @@ export function AdminPage() {
           >
             <Trophy className="w-3.5 h-3.5 mr-1.5" />
             Quiz Questions
+          </TabsTrigger>
+          <TabsTrigger
+            value="notes"
+            className="data-[state=active]:bg-navy data-[state=active]:text-white text-navy"
+            data-ocid="admin.tab"
+          >
+            <FileText className="w-3.5 h-3.5 mr-1.5" />
+            Premium Notes
           </TabsTrigger>
         </TabsList>
 
@@ -542,11 +740,34 @@ export function AdminPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {QUIZ_TOPICS.map((t) => (
-                        <SelectItem key={t.value} value={t.value}>
-                          {t.label}
-                        </SelectItem>
-                      ))}
+                      <SelectItem
+                        value="__acc_header__"
+                        disabled
+                        className="text-xs font-bold text-navy/50 uppercase"
+                      >
+                        — হিসাববিজ্ঞান (Accountancy) —
+                      </SelectItem>
+                      {QUIZ_TOPICS.filter((t) => !t.value.includes("_")).map(
+                        (t) => (
+                          <SelectItem key={t.value} value={t.value}>
+                            {t.label}
+                          </SelectItem>
+                        ),
+                      )}
+                      <SelectItem
+                        value="__sci_header__"
+                        disabled
+                        className="text-xs font-bold text-emerald-700/60 uppercase"
+                      >
+                        — বিজ্ঞান (Science) —
+                      </SelectItem>
+                      {QUIZ_TOPICS.filter((t) => t.value.includes("_")).map(
+                        (t) => (
+                          <SelectItem key={t.value} value={t.value}>
+                            {t.label}
+                          </SelectItem>
+                        ),
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -622,7 +843,11 @@ export function AdminPage() {
                           <div className="flex items-center gap-2 mb-1">
                             <Badge
                               variant="secondary"
-                              className="text-[10px] bg-navy/10 text-navy border-0"
+                              className={`text-[10px] border-0 ${
+                                q.topic.includes("_")
+                                  ? "bg-emerald-100 text-emerald-700"
+                                  : "bg-navy/10 text-navy"
+                              }`}
                             >
                               {QUIZ_TOPICS.find((t) => t.value === q.topic)
                                 ?.label ?? q.topic}
@@ -640,7 +865,11 @@ export function AdminPage() {
                             {OPTION_KEYS.map((k, i) => (
                               <p
                                 key={k}
-                                className={`text-xs ${i === Number(q.correctIndex) ? "text-green-700 font-semibold" : "text-muted-foreground"}`}
+                                className={`text-xs ${
+                                  i === Number(q.correctIndex)
+                                    ? "text-green-700 font-semibold"
+                                    : "text-muted-foreground"
+                                }`}
                               >
                                 {["A", "B", "C", "D"][i]}) {q[k]}
                                 {i === Number(q.correctIndex) ? " ✅" : ""}
@@ -665,6 +894,344 @@ export function AdminPage() {
                       </div>
                     </div>
                   ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Premium Notes Tab */}
+        <TabsContent value="notes">
+          {/* Add Note Form */}
+          <Card className="border-navy/20 shadow-sm mb-6">
+            <CardHeader>
+              <CardTitle className="text-base font-semibold text-navy flex items-center gap-2">
+                <Plus className="w-4 h-4" />
+                নতুন Note যোগ করুন
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-xs font-semibold text-navy mb-1 block">
+                    শিরোনাম / Title *
+                  </Label>
+                  <Input
+                    placeholder="Note-এর শিরোনাম..."
+                    className="text-sm border-navy/20"
+                    value={newNote.title}
+                    onChange={(e) =>
+                      setNewNote((p) => ({ ...p, title: e.target.value }))
+                    }
+                    data-ocid="admin.input"
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs font-semibold text-navy mb-1 block">
+                    বিষয় / Subject *
+                  </Label>
+                  <Input
+                    placeholder="যেমন: Accountancy, Physics, Biology..."
+                    className="text-sm border-navy/20"
+                    value={newNote.subject}
+                    onChange={(e) =>
+                      setNewNote((p) => ({ ...p, subject: e.target.value }))
+                    }
+                    data-ocid="admin.input"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <Label className="text-xs font-semibold text-navy mb-1 block">
+                    Content (Markdown supported) *
+                  </Label>
+                  <Textarea
+                    placeholder="Note-এর content লিখুন... (Markdown ব্যবহার করতে পারেন)"
+                    className="min-h-32 text-sm border-navy/20 font-mono"
+                    value={newNote.content}
+                    onChange={(e) =>
+                      setNewNote((p) => ({ ...p, content: e.target.value }))
+                    }
+                    data-ocid="admin.textarea"
+                  />
+                </div>
+              </div>
+              <Button
+                className="bg-navy text-white hover:bg-navy/90"
+                onClick={handleAddNote}
+                disabled={addingNote}
+                data-ocid="admin.submit_button"
+              >
+                {addingNote ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    যোগ হচ্ছে...
+                  </>
+                ) : (
+                  <>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Note যোগ করুন
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Notes List */}
+          <Card className="border-navy/20 shadow-sm mb-6">
+            <CardHeader>
+              <CardTitle className="text-base font-semibold text-navy flex items-center gap-2">
+                <BookOpen className="w-4 h-4" />
+                সব Notes ({notesList?.length ?? 0})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {loadingNotesList ? (
+                <div className="space-y-3">
+                  {[1, 2].map((i) => (
+                    <Skeleton key={i} className="h-16 w-full" />
+                  ))}
+                </div>
+              ) : !notesList || notesList.length === 0 ? (
+                <div
+                  className="text-center py-8 text-muted-foreground"
+                  data-ocid="admin.empty_state"
+                >
+                  <FileText className="w-8 h-8 mx-auto mb-2 opacity-30" />
+                  <p className="text-sm">কোনো note নেই — উপরে যোগ করুন।</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {notesList.map((note, idx) => (
+                    <div
+                      key={String(note.id)}
+                      className="border border-navy/15 rounded-lg p-3 bg-white/60"
+                      data-ocid={`admin.row.${idx + 1}`}
+                    >
+                      {editingNoteId === note.id ? (
+                        <div className="space-y-3">
+                          <Input
+                            className="text-sm border-navy/20"
+                            value={editNote.title}
+                            onChange={(e) =>
+                              setEditNote((p) => ({
+                                ...p,
+                                title: e.target.value,
+                              }))
+                            }
+                            placeholder="Title"
+                            data-ocid="admin.input"
+                          />
+                          <Input
+                            className="text-sm border-navy/20"
+                            value={editNote.subject}
+                            onChange={(e) =>
+                              setEditNote((p) => ({
+                                ...p,
+                                subject: e.target.value,
+                              }))
+                            }
+                            placeholder="Subject"
+                            data-ocid="admin.input"
+                          />
+                          <Textarea
+                            className="min-h-24 text-sm border-navy/20 font-mono"
+                            value={editNote.content}
+                            onChange={(e) =>
+                              setEditNote((p) => ({
+                                ...p,
+                                content: e.target.value,
+                              }))
+                            }
+                            placeholder="Content (leave empty to keep existing)"
+                            data-ocid="admin.textarea"
+                          />
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              className="bg-navy text-white hover:bg-navy/90"
+                              onClick={handleSaveEdit}
+                              disabled={savingEdit}
+                              data-ocid="admin.save_button"
+                            >
+                              {savingEdit ? (
+                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              ) : (
+                                "Save"
+                              )}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setEditingNoteId(null)}
+                              data-ocid="admin.cancel_button"
+                            >
+                              Cancel
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <Badge
+                              variant="outline"
+                              className="text-[10px] mb-1"
+                            >
+                              {note.subject}
+                            </Badge>
+                            <p className="text-sm font-semibold text-navy">
+                              {note.title}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-1 shrink-0">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-8 w-8 p-0 border-navy/20"
+                              onClick={() => startEditNote(note)}
+                              data-ocid={`admin.edit_button.${idx + 1}`}
+                            >
+                              <Pencil className="w-3.5 h-3.5 text-navy" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-8 w-8 p-0 text-destructive hover:bg-destructive/10"
+                              onClick={() => handleDeleteNote(note.id)}
+                              disabled={deletingNoteId === note.id}
+                              data-ocid={`admin.delete_button.${idx + 1}`}
+                            >
+                              {deletingNoteId === note.id ? (
+                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              ) : (
+                                <Trash2 className="w-3.5 h-3.5" />
+                              )}
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Access Requests */}
+          <Card className="border-navy/20 shadow-sm">
+            <CardHeader>
+              <CardTitle className="text-base font-semibold text-navy flex items-center gap-2">
+                <Users className="w-4 h-4" />
+                Access Requests ({accessRequests?.length ?? 0})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {loadingRequests ? (
+                <div className="space-y-3">
+                  {[1, 2].map((i) => (
+                    <Skeleton key={i} className="h-16 w-full" />
+                  ))}
+                </div>
+              ) : !accessRequests || accessRequests.length === 0 ? (
+                <div
+                  className="text-center py-8 text-muted-foreground"
+                  data-ocid="admin.empty_state"
+                >
+                  <Users className="w-8 h-8 mx-auto mb-2 opacity-30" />
+                  <p className="text-sm">কোনো access request নেই।</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {accessRequests.map((req, idx) => {
+                    const userIdStr = String(req.userId);
+                    const isProcessing = processingRequestId === userIdStr;
+                    return (
+                      <div
+                        key={String(req.id)}
+                        className="border border-navy/15 rounded-lg p-4 bg-white/60"
+                        data-ocid={`admin.row.${idx + 1}`}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="font-semibold text-navy text-sm">
+                                {req.userName || "Unknown"}
+                              </span>
+                              <Badge
+                                variant="outline"
+                                className={`text-[10px] ${STATUS_COLORS[req.status] ?? "bg-muted text-muted-foreground"}`}
+                              >
+                                {req.status === "pending"
+                                  ? "প্রতীক্ষারত"
+                                  : req.status === "approved"
+                                    ? "অনুমোদিত"
+                                    : "প্রত্যাখ্যাত"}
+                              </Badge>
+                              <span className="text-xs text-muted-foreground">
+                                {new Date(
+                                  safeTimestamp(req.requestedAt),
+                                ).toLocaleDateString("bn-IN")}
+                              </span>
+                            </div>
+                            {req.message && (
+                              <p className="text-sm text-muted-foreground italic">
+                                "{req.message}"
+                              </p>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-1 shrink-0">
+                            {req.status === "pending" && (
+                              <>
+                                <Button
+                                  size="sm"
+                                  className="h-8 bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3"
+                                  onClick={() =>
+                                    handleApproveRequest(userIdStr)
+                                  }
+                                  disabled={isProcessing}
+                                  data-ocid={`admin.confirm_button.${idx + 1}`}
+                                >
+                                  {isProcessing ? (
+                                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                  ) : (
+                                    <>
+                                      <CheckCircle className="w-3.5 h-3.5 mr-1" />
+                                      Approve
+                                    </>
+                                  )}
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-8 text-destructive hover:bg-destructive/10 text-xs px-2"
+                                  onClick={() => handleRejectRequest(userIdStr)}
+                                  disabled={isProcessing}
+                                  data-ocid={`admin.delete_button.${idx + 1}`}
+                                >
+                                  <XCircle className="w-3.5 h-3.5" />
+                                </Button>
+                              </>
+                            )}
+                            {req.status === "approved" && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-8 text-xs border-red-200 text-red-600 hover:bg-red-50"
+                                onClick={() => handleRevokeAccess(userIdStr)}
+                                disabled={isProcessing}
+                                data-ocid={`admin.delete_button.${idx + 1}`}
+                              >
+                                {isProcessing ? (
+                                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                ) : (
+                                  "Revoke Access"
+                                )}
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </CardContent>

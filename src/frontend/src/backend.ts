@@ -89,6 +89,13 @@ export class ExternalBlob {
         return this;
     }
 }
+export interface PremiumNote {
+    id: bigint;
+    title: string;
+    content: string;
+    subject: string;
+    createdAt: Time;
+}
 export type Time = bigint;
 export interface QuizQuestion {
     id: bigint;
@@ -101,6 +108,14 @@ export interface QuizQuestion {
     optionB: string;
     optionC: string;
     optionD: string;
+}
+export interface NoteAccessRequest {
+    id: bigint;
+    status: string;
+    userName: string;
+    userId: Principal;
+    message: string;
+    requestedAt: Time;
 }
 export interface Problem {
     id: ProblemId;
@@ -147,18 +162,26 @@ export enum UserRole {
 export interface backendInterface {
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
     addAdminQuestion(question: string, optionA: string, optionB: string, optionC: string, optionD: string, correctIndex: bigint, topic: string, explanation: string): Promise<void>;
+    addPremiumNote(title: string, subject: string, content: string): Promise<bigint>;
+    approveAccessRequest(userId: Principal): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     deleteCustomerMessage(messageId: bigint): Promise<void>;
+    deletePremiumNote(id: bigint): Promise<void>;
     deleteProblem(problemId: ProblemId): Promise<void>;
     deleteQuizQuestion(id: bigint): Promise<void>;
+    editPremiumNote(id: bigint, title: string, subject: string, content: string): Promise<void>;
     findProblemsByKeyword(keyword: string): Promise<Array<Problem>>;
     findProblemsByType(type: ProblemType): Promise<Array<Problem>>;
     forceClaimAdmin(): Promise<boolean>;
+    getAllAccessRequests(): Promise<Array<NoteAccessRequest>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getCustomerMessages(): Promise<Array<CustomerMessageWithReply>>;
     getIsAdmin(): Promise<boolean>;
+    getMyAccessStatus(): Promise<string>;
     getMyCustomerMessages(): Promise<Array<CustomerMessageWithReply>>;
+    getPremiumNotesList(): Promise<Array<PremiumNote>>;
+    getPremiumNotesWithContent(): Promise<Array<PremiumNote>>;
     getProblem(problemId: ProblemId): Promise<Array<Problem>>;
     getProblemHistory(): Promise<Array<Problem>>;
     getQuizHistory(): Promise<Array<QuizResult>>;
@@ -168,7 +191,10 @@ export interface backendInterface {
     isCallerAdmin(): Promise<boolean>;
     listProblemTypes(): Promise<Array<string>>;
     registerUser(): Promise<void>;
+    rejectAccessRequest(userId: Principal): Promise<void>;
     replyToCustomerMessage(messageId: bigint, replyText: string): Promise<void>;
+    requestNotesAccess(message: string): Promise<bigint>;
+    revokeAccess(userId: Principal): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     saveProblem(type: ProblemType, jsonInput: string, solution: string): Promise<void>;
     saveQuizResult(topic: string, score: bigint, total: bigint, wrongQuestionIds: Array<bigint>): Promise<void>;
@@ -205,6 +231,34 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async addPremiumNote(arg0: string, arg1: string, arg2: string): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addPremiumNote(arg0, arg1, arg2);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addPremiumNote(arg0, arg1, arg2);
+            return result;
+        }
+    }
+    async approveAccessRequest(arg0: Principal): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.approveAccessRequest(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.approveAccessRequest(arg0);
+            return result;
+        }
+    }
     async assignCallerUserRole(arg0: Principal, arg1: UserRole): Promise<void> {
         if (this.processError) {
             try {
@@ -233,6 +287,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async deletePremiumNote(arg0: bigint): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deletePremiumNote(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deletePremiumNote(arg0);
+            return result;
+        }
+    }
     async deleteProblem(arg0: ProblemId): Promise<void> {
         if (this.processError) {
             try {
@@ -258,6 +326,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.deleteQuizQuestion(arg0);
+            return result;
+        }
+    }
+    async editPremiumNote(arg0: bigint, arg1: string, arg2: string, arg3: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.editPremiumNote(arg0, arg1, arg2, arg3);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.editPremiumNote(arg0, arg1, arg2, arg3);
             return result;
         }
     }
@@ -300,6 +382,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.forceClaimAdmin();
+            return result;
+        }
+    }
+    async getAllAccessRequests(): Promise<Array<NoteAccessRequest>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllAccessRequests();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllAccessRequests();
             return result;
         }
     }
@@ -359,6 +455,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async getMyAccessStatus(): Promise<string> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getMyAccessStatus();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getMyAccessStatus();
+            return result;
+        }
+    }
     async getMyCustomerMessages(): Promise<Array<CustomerMessageWithReply>> {
         if (this.processError) {
             try {
@@ -371,6 +481,34 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.getMyCustomerMessages();
             return from_candid_vec_n16(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getPremiumNotesList(): Promise<Array<PremiumNote>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getPremiumNotesList();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getPremiumNotesList();
+            return result;
+        }
+    }
+    async getPremiumNotesWithContent(): Promise<Array<PremiumNote>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getPremiumNotesWithContent();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getPremiumNotesWithContent();
+            return result;
         }
     }
     async getProblem(arg0: ProblemId): Promise<Array<Problem>> {
@@ -499,6 +637,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async rejectAccessRequest(arg0: Principal): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.rejectAccessRequest(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.rejectAccessRequest(arg0);
+            return result;
+        }
+    }
     async replyToCustomerMessage(arg0: bigint, arg1: string): Promise<void> {
         if (this.processError) {
             try {
@@ -510,6 +662,34 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.replyToCustomerMessage(arg0, arg1);
+            return result;
+        }
+    }
+    async requestNotesAccess(arg0: string): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.requestNotesAccess(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.requestNotesAccess(arg0);
+            return result;
+        }
+    }
+    async revokeAccess(arg0: Principal): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.revokeAccess(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.revokeAccess(arg0);
             return result;
         }
     }

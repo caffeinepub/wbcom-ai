@@ -7,6 +7,13 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
+export interface PremiumNote {
+    id: bigint;
+    title: string;
+    content: string;
+    subject: string;
+    createdAt: Time;
+}
 export type Time = bigint;
 export interface QuizQuestion {
     id: bigint;
@@ -19,6 +26,14 @@ export interface QuizQuestion {
     optionB: string;
     optionC: string;
     optionD: string;
+}
+export interface NoteAccessRequest {
+    id: bigint;
+    status: string;
+    userName: string;
+    userId: Principal;
+    message: string;
+    requestedAt: Time;
 }
 export interface Problem {
     id: ProblemId;
@@ -64,18 +79,26 @@ export enum UserRole {
 }
 export interface backendInterface {
     addAdminQuestion(question: string, optionA: string, optionB: string, optionC: string, optionD: string, correctIndex: bigint, topic: string, explanation: string): Promise<void>;
+    addPremiumNote(title: string, subject: string, content: string): Promise<bigint>;
+    approveAccessRequest(userId: Principal): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     deleteCustomerMessage(messageId: bigint): Promise<void>;
+    deletePremiumNote(id: bigint): Promise<void>;
     deleteProblem(problemId: ProblemId): Promise<void>;
     deleteQuizQuestion(id: bigint): Promise<void>;
+    editPremiumNote(id: bigint, title: string, subject: string, content: string): Promise<void>;
     findProblemsByKeyword(keyword: string): Promise<Array<Problem>>;
     findProblemsByType(type: ProblemType): Promise<Array<Problem>>;
     forceClaimAdmin(): Promise<boolean>;
+    getAllAccessRequests(): Promise<Array<NoteAccessRequest>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getCustomerMessages(): Promise<Array<CustomerMessageWithReply>>;
     getIsAdmin(): Promise<boolean>;
+    getMyAccessStatus(): Promise<string>;
     getMyCustomerMessages(): Promise<Array<CustomerMessageWithReply>>;
+    getPremiumNotesList(): Promise<Array<PremiumNote>>;
+    getPremiumNotesWithContent(): Promise<Array<PremiumNote>>;
     getProblem(problemId: ProblemId): Promise<Array<Problem>>;
     getProblemHistory(): Promise<Array<Problem>>;
     getQuizHistory(): Promise<Array<QuizResult>>;
@@ -85,7 +108,10 @@ export interface backendInterface {
     isCallerAdmin(): Promise<boolean>;
     listProblemTypes(): Promise<Array<string>>;
     registerUser(): Promise<void>;
+    rejectAccessRequest(userId: Principal): Promise<void>;
     replyToCustomerMessage(messageId: bigint, replyText: string): Promise<void>;
+    requestNotesAccess(message: string): Promise<bigint>;
+    revokeAccess(userId: Principal): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     saveProblem(type: ProblemType, jsonInput: string, solution: string): Promise<void>;
     saveQuizResult(topic: string, score: bigint, total: bigint, wrongQuestionIds: Array<bigint>): Promise<void>;

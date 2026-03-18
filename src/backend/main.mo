@@ -1,29 +1,55 @@
 import Map "mo:core/Map";
+import Set "mo:core/Set";
 import Array "mo:core/Array";
 import Time "mo:core/Time";
 import Principal "mo:core/Principal";
+import Int "mo:core/Int";
 import Runtime "mo:core/Runtime";
 import List "mo:core/List";
 import Text "mo:core/Text";
 import Order "mo:core/Order";
-import Int "mo:core/Int";
 import Iter "mo:core/Iter";
+
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 
+
+
 actor {
-  // Authorization state
+  ///////////////////
+  // Stable Storage//
+  ///////////////////
+  stable var _stableUserRoles : [(Principal, {#admin; #user; #guest})] = [];
+  stable var _stableAdminAssigned : Bool = false;
+  stable var _stableUserProfiles : [(Principal, { name : Text; studentId : ?Text; institution : ?Text })] = [];
+  stable var _stableCustomerMessages : [{ id : Nat; sender : Principal; senderName : Text; message : Text; timestamp : Int }] = [];
+  stable var _stableMessageReplies : [(Nat, Text)] = [];
+  stable var _stableNextMessageId : Nat = 1;
+  stable var _stablePremiumNotes : [(Nat, { id : Nat; title : Text; subject : Text; content : Text; createdAt : Int })] = [];
+  stable var _stableNextNoteId : Nat = 1;
+  stable var _stableNoteAccessRequests : [(Nat, { id : Nat; userId : Principal; userName : Text; message : Text; requestedAt : Int; status : Text })] = [];
+  stable var _stableNextRequestId : Nat = 1;
+  stable var _stableApprovedNoteUsers : [Principal] = [];
+  stable var _stableQuizQuestions : [(Nat, { id : Nat; question : Text; optionA : Text; optionB : Text; optionC : Text; optionD : Text; correctIndex : Nat; topic : Text; explanation : Text; isAdminAdded : Bool })] = [];
+  stable var _stableNextQuizQuestionId : Nat = 1;
+  stable var _stableUserQuizResults : [(Principal, [{ id : Nat; topic : Text; score : Nat; total : Nat; timestamp : Int; wrongQuestionIds : [Nat] }])] = [];
+
+  ///////////////////
+  // Authorization //
+  ///////////////////
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
 
-  // User Profile Type
+  ////////////////////
+  // User Profiles  //
+  ////////////////////
   public type UserProfile = {
     name : Text;
     studentId : ?Text;
     institution : ?Text;
   };
 
-  let userProfiles = Map.empty<Principal, UserProfile>();
+  var userProfiles = Map.empty<Principal, UserProfile>();
 
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not isUserOrAdmin(caller)) {
@@ -46,7 +72,9 @@ actor {
     userProfiles.add(caller, profile);
   };
 
-  // Problem Types
+  //////////////////
+  // Problem Types//
+  //////////////////
   type ProblemType = {
     #journalEntry;
     #trialBalance;
@@ -110,29 +138,30 @@ actor {
     timestamp : Time.Time;
   };
 
+  type ProblemHistory = {
+    problemsEntries : [(ProblemId, Problem)];
+    nextId : ProblemId;
+  };
+
   module Problem {
     public func compare(problem1 : Problem, problem2 : Problem) : Order.Order {
       Int.compare(problem1.id, problem2.id);
     };
   };
 
-  type ProblemHistory = {
-    problemsEntries : [(ProblemId, Problem)];
-    nextId : ProblemId;
-  };
-
   let emptyProblems : [(ProblemId, Problem)] = [];
 
-  let persistentProblemStorage = Map.empty<Principal, ProblemHistory>();
+  var persistentProblemStorage = Map.empty<Principal, ProblemHistory>();
 
   // ── User Registration ──────────────────────────────────────
   public shared ({ caller }) func registerUser() : async () {
-    if (caller.isAnonymous()) { return };
+    if (caller.isAnonymous()) {
+      Runtime.trap("Unauthorized: Anonymous users cannot register");
+    };
     switch (accessControlState.userRoles.get(caller)) {
       case (?_) { /* already registered */ };
       case (null) {
-        if (AccessControl.hasPermission(accessControlState, caller, #admin)) {
-        } else if (not anyAdminExists()) {
+        if (AccessControl.hasPermission(accessControlState, caller, #admin)) {} else if (not anyAdminExists()) {
           accessControlState.userRoles.add(caller, #admin);
         } else {
           accessControlState.userRoles.add(caller, #user);
@@ -147,7 +176,9 @@ actor {
   };
 
   public shared ({ caller }) func forceClaimAdmin() : async Bool {
-    if (caller.isAnonymous()) { return false };
+    if (caller.isAnonymous()) {
+      Runtime.trap("Unauthorized: Anonymous users cannot claim admin");
+    };
     if (AccessControl.hasPermission(accessControlState, caller, #admin)) {
       return true;
     };
@@ -158,7 +189,11 @@ actor {
     false;
   };
 
-  public shared ({ caller }) func saveProblem(type_ : ProblemType, jsonInput : Text, solution : Text) : async () {
+  public shared ({ caller }) func saveProblem(
+    type_ : ProblemType,
+    jsonInput : Text,
+    solution : Text,
+  ) : async () {
     if (not isUserOrAdmin(caller)) {
       Runtime.trap("Unauthorized: Must be user or admin");
     };
@@ -223,7 +258,9 @@ actor {
     currentProblems.filter(func(p : Problem) : Bool { type_ == p.type_ });
   };
 
-  public query ({ caller }) func findProblemsByKeyword(keyword : Text) : async [Problem] {
+  public query ({ caller }) func findProblemsByKeyword(
+    keyword : Text,
+  ) : async [Problem] {
     if (not isUserOrAdmin(caller)) {
       Runtime.trap("Unauthorized: Must be user or admin");
     };
@@ -239,12 +276,9 @@ actor {
     );
   };
 
-  // ── Customer Support Messages ──────────────────────────────
-  //
-  // IMPORTANT: CustomerMessage type is kept WITHOUT adminReply to stay
-  // compatible with existing stable storage. Admin replies are stored
-  // separately in `messageReplies` map keyed by message id.
-
+  ////////////////////////
+  // Customer Support   //
+  ////////////////////////
   public type CustomerMessage = {
     id : Nat;
     sender : Principal;
@@ -253,7 +287,6 @@ actor {
     timestamp : Time.Time;
   };
 
-  // The public-facing type that includes the reply field
   public type CustomerMessageWithReply = {
     id : Nat;
     sender : Principal;
@@ -263,11 +296,10 @@ actor {
     adminReply : ?Text;
   };
 
-  let customerMessages = List.empty<CustomerMessage>();
+  var customerMessages = List.empty<CustomerMessage>();
   var nextMessageId : Nat = 1;
 
-  // Separate stable map for admin replies (avoids migration issue)
-  let messageReplies = Map.empty<Nat, Text>();
+  var messageReplies = Map.empty<Nat, Text>();
 
   func attachReply(m : CustomerMessage) : CustomerMessageWithReply {
     {
@@ -280,7 +312,10 @@ actor {
     };
   };
 
-  public shared ({ caller }) func submitCustomerMessage(senderName : Text, message : Text) : async () {
+  public shared ({ caller }) func submitCustomerMessage(
+    senderName : Text,
+    message : Text,
+  ) : async () {
     if (not isUserOrAdmin(caller)) {
       Runtime.trap("Unauthorized: Must be user or admin");
     };
@@ -302,7 +337,10 @@ actor {
     customerMessages.toArray().map(attachReply);
   };
 
-  public shared ({ caller }) func replyToCustomerMessage(messageId : Nat, replyText : Text) : async () {
+  public shared ({ caller }) func replyToCustomerMessage(
+    messageId : Nat,
+    replyText : Text,
+  ) : async () {
     if (not isAdmin(caller)) {
       Runtime.trap("Unauthorized: Admin only");
     };
@@ -318,7 +356,9 @@ actor {
       .map(attachReply);
   };
 
-  public shared ({ caller }) func deleteCustomerMessage(messageId : Nat) : async () {
+  public shared ({ caller }) func deleteCustomerMessage(
+    messageId : Nat,
+  ) : async () {
     if (not isAdmin(caller)) {
       Runtime.trap("Unauthorized: Admin only");
     };
@@ -330,8 +370,9 @@ actor {
     };
   };
 
-  // ── User Statistics ────────────────────────────────────────
-
+  ////////////////////////
+  // User Statistics    //
+  ////////////////////////
   public query ({ caller }) func getUserCount() : async Nat {
     if (not isAdmin(caller)) {
       Runtime.trap("Unauthorized: Admin only");
@@ -343,9 +384,14 @@ actor {
     isAdmin(caller);
   };
 
-  // ── Private helpers ────────────────────────────────────────
-
-  func persistProblem(user : Principal, problem : Problem, operation : { #persistNew; #persistEdit; #persistDelete }) {
+  ////////////////////////
+  // Private helpers    //
+  ////////////////////////
+  func persistProblem(
+    user : Principal,
+    problem : Problem,
+    operation : { #persistNew; #persistEdit; #persistDelete },
+  ) {
     let currentHistory = getOrCreateProblemHistory(user);
     let persistentProblems = currentHistory.problemsEntries.map(func(entry : (ProblemId, Problem)) : Problem { entry.1 });
     switch (operation) {
@@ -356,7 +402,11 @@ actor {
         persistProblemHistory(user, finalProblems, id + 1);
       };
       case (#persistEdit) {
-        let (updatedProblems, hasChanges) = updateProblemById(persistentProblems, problem.id, func(p : Problem) : Problem { problem });
+        let (updatedProblems, hasChanges) = updateProblemById(
+          persistentProblems,
+          problem.id,
+          func(p : Problem) : Problem { problem },
+        );
         if (not hasChanges) { Runtime.trap("Problem not found") };
         persistProblemHistory(user, updatedProblems, currentHistory.nextId);
       };
@@ -379,7 +429,11 @@ actor {
     (filteredArray, removedCount);
   };
 
-  func persistProblemHistory(user : Principal, problems : [Problem], nextId : ProblemId) {
+  func persistProblemHistory(
+    user : Principal,
+    problems : [Problem],
+    nextId : ProblemId,
+  ) {
     persistentProblemStorage.add(
       user,
       {
@@ -397,9 +451,20 @@ actor {
     persistentProblems.toArray();
   };
 
-  func updateProblemById(problems : [Problem], problemId : ProblemId, updateFunction : Problem -> Problem) : ([Problem], Bool) {
+  func updateProblemById(
+    problems : [Problem],
+    problemId : ProblemId,
+    updateFunction : Problem -> Problem,
+  ) : ([Problem], Bool) {
     var hasChanges = false;
-    let updatedProblems = problems.map(func(p : Problem) : Problem { if (p.id == problemId) { hasChanges := true; updateFunction(p) } else { p } });
+    let updatedProblems = problems.map(
+      func(p : Problem) : Problem {
+        if (p.id == problemId) {
+          hasChanges := true;
+          updateFunction(p);
+        } else { p };
+      }
+    );
     (updatedProblems, hasChanges);
   };
 
@@ -426,7 +491,6 @@ actor {
   };
 
   // ── Quiz Mode ────────────────────────────────────────────────
-
   public type QuizQuestion = {
     id : Nat;
     question : Text;
@@ -449,13 +513,13 @@ actor {
     wrongQuestionIds : [Nat];
   };
 
-  let quizQuestions = Map.empty<Nat, QuizQuestion>();
+  var quizQuestions = Map.empty<Nat, QuizQuestion>();
   var nextQuizQuestionId : Nat = 1;
+  var userQuizResults = Map.empty<Principal, [QuizResult]>();
 
-  let userQuizResults = Map.empty<Principal, [QuizResult]>();
-
-  // Initialize predefined questions at actor startup
+  // Predefined quiz questions
   let predefinedQuestions : [QuizQuestion] = [
+    // Accountancy (20)
     {
       id = 0;
       question = "What is the primary objective of financial accounting?";
@@ -708,6 +772,250 @@ actor {
       explanation = "Depreciation is caused by all given factors.";
       isAdminAdded = false;
     },
+    // Physics 11+12 (5)
+    {
+      id = 0;
+      question = "Newton's first law is also known as:";
+      optionA = "Law of acceleration";
+      optionB = "Law of action-reaction";
+      optionC = "Law of inertia";
+      optionD = "Law of gravity";
+      correctIndex = 2;
+      topic = "physics_11";
+      explanation = "Newton's first law describes inertia.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Optical lenses work based on:";
+      optionA = "Diffraction";
+      optionB = "Refraction";
+      optionC = "Reflection";
+      optionD = "Polarization";
+      correctIndex = 1;
+      topic = "physics_12";
+      explanation = "Lenses refract light.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "What is the SI unit of pressure?";
+      optionA = "Joule";
+      optionB = "Watt";
+      optionC = "Newton";
+      optionD = "Pascal";
+      correctIndex = 3;
+      topic = "physics_11";
+      explanation = "Pressure is measured in Pascals.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Wave frequency is measured in:";
+      optionA = "Newtons";
+      optionB = "Hertz";
+      optionC = "Joules";
+      optionD = "Volts";
+      correctIndex = 1;
+      topic = "physics_11";
+      explanation = "Frequency is measured in Hertz (Hz).";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Which is a form of electromagnetic wave?";
+      optionA = "Water wave";
+      optionB = "Sound wave";
+      optionC = "Light wave";
+      optionD = "Seismic wave";
+      correctIndex = 2;
+      topic = "physics_12";
+      explanation = "Light is an electromagnetic wave.";
+      isAdminAdded = false;
+    },
+    // Chemistry 11+12 (5)
+    {
+      id = 0;
+      question = "The atomic number represents the number of:";
+      optionA = "Protons";
+      optionB = "Electrons";
+      optionC = "Neutrons";
+      optionD = "Isotopes";
+      correctIndex = 0;
+      topic = "chemistry_11";
+      explanation = "Atomic number = protons.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "What type of bond is found in table salt (NaCl)?";
+      optionA = "Covalent bond";
+      optionB = "Ionic bond";
+      optionC = "Metallic bond";
+      optionD = "Hydrogen bond";
+      correctIndex = 1;
+      topic = "chemistry_12";
+      explanation = "NaCl is an example of ionic bonding.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Organic chemistry mainly deals with:";
+      optionA = "Metals";
+      optionB = "Hydrocarbons";
+      optionC = "Salts";
+      optionD = "Ions";
+      correctIndex = 1;
+      topic = "chemistry_12";
+      explanation = "Organic chemistry studies carbon compounds.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Which is a strong acid?";
+      optionA = "HCl";
+      optionB = "NaOH";
+      optionC = "KOH";
+      optionD = "NaCl";
+      correctIndex = 0;
+      topic = "chemistry_11";
+      explanation = "HCl (hydrochloric acid) is a strong acid.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Universal solvent is:";
+      optionA = "Ethanol";
+      optionB = "Ammonia";
+      optionC = "Water";
+      optionD = "Benzene";
+      correctIndex = 2;
+      topic = "chemistry_11";
+      explanation = "Water is called the universal solvent.";
+      isAdminAdded = false;
+    },
+    // Biology 11+12 (5)
+    {
+      id = 0;
+      question = "Smallest living unit in body is:";
+      optionA = "Tissue";
+      optionB = "Cell";
+      optionC = "Organ";
+      optionD = "Nucleus";
+      correctIndex = 1;
+      topic = "biology_11";
+      explanation = "Cell is the smallest unit of life.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Transfer of genetic information involves:";
+      optionA = "Proteins";
+      optionB = "Carbohydrates";
+      optionC = "DNA";
+      optionD = "Lipids";
+      correctIndex = 2;
+      topic = "biology_12";
+      explanation = "DNA carries genetic information.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Study of ecosystems is called:";
+      optionA = "Botany";
+      optionB = "Physiology";
+      optionC = "Ecology";
+      optionD = "Zoology";
+      correctIndex = 2;
+      topic = "biology_11";
+      explanation = "Ecosystem study = ecology.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Photosynthesis produces:";
+      optionA = "Glucose";
+      optionB = "Oxygen";
+      optionC = "Carbon dioxide";
+      optionD = "Water";
+      correctIndex = 0;
+      topic = "biology_11";
+      explanation = "Photosynthesis mainly creates glucose.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Basis of classification is known as:";
+      optionA = "Taxonomy";
+      optionB = "Anatomy";
+      optionC = "Morphology";
+      optionD = "Genotype";
+      correctIndex = 0;
+      topic = "biology_12";
+      explanation = "Basis of classification is taxonomy.";
+      isAdminAdded = false;
+    },
+    // Math 11+12 (5)
+    {
+      id = 0;
+      question = "Study of sets is called:";
+      optionA = "Algebra";
+      optionB = "Geometry";
+      optionC = "Set theory";
+      optionD = "Matrix algebra";
+      correctIndex = 2;
+      topic = "math_11";
+      explanation = "Study of sets is set theory.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "What is the value of sin(90 degrees)?";
+      optionA = "0";
+      optionB = "1";
+      optionC = "Infinity";
+      optionD = "-1";
+      correctIndex = 1;
+      topic = "math_11";
+      explanation = "Sin(90 degrees) = 1.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Derivative represents:";
+      optionA = "Area";
+      optionB = "Slope";
+      optionC = "Volume";
+      optionD = "Angle";
+      correctIndex = 1;
+      topic = "math_12";
+      explanation = "Derivative = slope of curve.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Which is a quadratic equation?";
+      optionA = "ax + b = 0";
+      optionB = "ax^2 + bx + c = 0";
+      optionC = "ax^3 + bx^2 + c = 0";
+      optionD = "ax^4 + bx^2 = 0";
+      correctIndex = 1;
+      topic = "math_11";
+      explanation = "Quadratic means x squared.";
+      isAdminAdded = false;
+    },
+    {
+      id = 0;
+      question = "Numerator of a fraction is divided by:";
+      optionA = "Array";
+      optionB = "Numerator";
+      optionC = "Denominator";
+      optionD = "Factor";
+      correctIndex = 2;
+      topic = "math_12";
+      explanation = "Numerator/denominator makes a fraction.";
+      isAdminAdded = false;
+    },
   ];
 
   // Initialize questions on first deployment
@@ -813,6 +1121,279 @@ actor {
     switch (userQuizResults.get(caller)) {
       case (null) { [] };
       case (?results) { results };
+    };
+  };
+
+  /// PREMIUM NOTES SYSTEM ///
+  public type PremiumNote = {
+    id : Nat;
+    title : Text;
+    subject : Text;
+    content : Text;
+    createdAt : Time.Time;
+  };
+
+  public type NoteAccessRequest = {
+    id : Nat;
+    userId : Principal;
+    userName : Text;
+    message : Text;
+    requestedAt : Time.Time;
+    status : Text; // "pending" | "approved" | "rejected"
+  };
+
+  var premiumNotes = Map.empty<Nat, PremiumNote>();
+  var nextNoteId = 1;
+  var nextRequestId = 1;
+  var noteAccessRequests = Map.empty<Nat, NoteAccessRequest>();
+  var approvedNoteUsers = Set.empty<Principal>();
+
+  public shared ({ caller }) func addPremiumNote(
+    title : Text,
+    subject : Text,
+    content : Text,
+  ) : async Nat {
+    if (not isAdmin(caller)) {
+      Runtime.trap("Unauthorized: Admin only");
+    };
+    let note : PremiumNote = {
+      id = nextNoteId;
+      title;
+      subject;
+      content;
+      createdAt = Time.now();
+    };
+    premiumNotes.add(nextNoteId, note);
+    nextNoteId += 1;
+    note.id;
+  };
+
+  public shared ({ caller }) func editPremiumNote(
+    id : Nat,
+    title : Text,
+    subject : Text,
+    content : Text,
+  ) : async () {
+    if (not isAdmin(caller)) {
+      Runtime.trap("Unauthorized: Admin only");
+    };
+    switch (premiumNotes.get(id)) {
+      case (null) { Runtime.trap("Premium note not found") };
+      case (?oldNote) {
+        let updatedNote : PremiumNote = {
+          id;
+          title;
+          subject;
+          content;
+          createdAt = oldNote.createdAt;
+        };
+        premiumNotes.add(id, updatedNote);
+      };
+    };
+  };
+
+  public shared ({ caller }) func deletePremiumNote(id : Nat) : async () {
+    if (not isAdmin(caller)) {
+      Runtime.trap("Unauthorized: Admin only");
+    };
+    if (not premiumNotes.containsKey(id)) {
+      Runtime.trap("Premium note not found");
+    };
+    premiumNotes.remove(id);
+  };
+
+  public query ({ caller }) func getPremiumNotesList() : async [PremiumNote] {
+    if (not isUserOrAdmin(caller)) {
+      Runtime.trap("Unauthorized: Must be user or admin");
+    };
+    let notes = premiumNotes.values().toArray();
+    notes.map(
+      func(note) {
+        {
+          note with content = "";
+        };
+      }
+    );
+  };
+
+  public query ({ caller }) func getPremiumNotesWithContent() : async [PremiumNote] {
+    if (not hasPremiumAccess(caller)) {
+      Runtime.trap("Unauthorized: Premium notes access only");
+    };
+    premiumNotes.values().toArray();
+  };
+
+  public shared ({ caller }) func requestNotesAccess(message : Text) : async Nat {
+    if (not isUserOrAdmin(caller)) {
+      Runtime.trap("Unauthorized: Must be user or admin");
+    };
+    if (hasPremiumAccess(caller)) {
+      Runtime.trap("User already has premium notes access");
+    };
+
+    let userName = switch (userProfiles.get(caller)) {
+      case (null) { "User" };
+      case (?profile) { profile.name };
+    };
+
+    let accessRequest : NoteAccessRequest = {
+      id = nextRequestId;
+      userId = caller;
+      userName;
+      message;
+      requestedAt = Time.now();
+      status = "pending";
+    };
+
+    noteAccessRequests.add(nextRequestId, accessRequest);
+    nextRequestId += 1;
+    accessRequest.id;
+  };
+
+  public query ({ caller }) func getMyAccessStatus() : async Text {
+    if (not isUserOrAdmin(caller)) {
+      Runtime.trap("Unauthorized: Must be user or admin");
+    };
+    if (hasPremiumAccess(caller)) {
+      return "approved";
+    };
+
+    let requests = noteAccessRequests.values().toArray().filter(func(r) { r.userId == caller });
+    if (requests.isEmpty()) {
+      return "none";
+    };
+
+    let latestRequest = findMaxRequestByRequestedAt(requests);
+    latestRequest.status;
+  };
+
+  public query ({ caller }) func getAllAccessRequests() : async [NoteAccessRequest] {
+    if (not isAdmin(caller)) {
+      Runtime.trap("Unauthorized: Admin only");
+    };
+    noteAccessRequests.values().toArray();
+  };
+
+  public shared ({ caller }) func approveAccessRequest(userId : Principal) : async () {
+    if (not isAdmin(caller)) {
+      Runtime.trap("Unauthorized: Admin only");
+    };
+
+    let requests = noteAccessRequests.values().toArray().filter(func(r) { r.userId == userId });
+    if (requests.isEmpty()) {
+      Runtime.trap("Access request not found for user " # debug_show (userId));
+    };
+
+    let latestRequest = findMaxRequestByRequestedAt(requests);
+    updateRequestStatus(latestRequest, "approved");
+    approvedNoteUsers.add(userId);
+  };
+
+  public shared ({ caller }) func rejectAccessRequest(userId : Principal) : async () {
+    if (not isAdmin(caller)) {
+      Runtime.trap("Unauthorized: Admin only");
+    };
+
+    let requests = noteAccessRequests.values().toArray().filter(func(r) { r.userId == userId });
+    if (requests.isEmpty()) {
+      Runtime.trap("Access request not found for user " # debug_show (userId));
+    };
+
+    let latestRequest = findMaxRequestByRequestedAt(requests);
+    updateRequestStatus(latestRequest, "rejected");
+  };
+
+  public shared ({ caller }) func revokeAccess(userId : Principal) : async () {
+    if (not isAdmin(caller)) {
+      Runtime.trap("Unauthorized: Admin only");
+    };
+
+    if (not approvedNoteUsers.contains(userId)) {
+      Runtime.trap("User does not have premium notes access");
+    };
+
+    approvedNoteUsers.remove(userId);
+  };
+
+  func hasPremiumAccess(userId : Principal) : Bool {
+    approvedNoteUsers.contains(userId);
+  };
+
+  func updateRequestStatus(request : NoteAccessRequest, newStatus : Text) {
+    let updatedRequest : NoteAccessRequest = {
+      request with status = newStatus;
+    };
+    noteAccessRequests.add(request.id, updatedRequest);
+  };
+
+  func findMaxRequestByRequestedAt(requests : [NoteAccessRequest]) : NoteAccessRequest {
+    if (requests.isEmpty()) {
+      Runtime.trap("No requests found");
+    };
+    var maxRequest = requests[0];
+    var maxRequestedAt = requests[0].requestedAt;
+    let size = requests.size();
+    var i = 1;
+    while (i < size) {
+      let current = requests[i];
+      if (current.requestedAt > maxRequestedAt) {
+        maxRequest := current;
+        maxRequestedAt := current.requestedAt;
+      };
+      i += 1;
+    };
+    maxRequest;
+  };
+
+  system func preupgrade() {
+    _stableUserRoles := accessControlState.userRoles.entries().toArray();
+    _stableAdminAssigned := accessControlState.adminAssigned;
+    _stableUserProfiles := userProfiles.entries().toArray();
+    _stableCustomerMessages := customerMessages.toArray();
+    _stableMessageReplies := messageReplies.entries().toArray();
+    _stableNextMessageId := nextMessageId;
+    _stablePremiumNotes := premiumNotes.entries().toArray();
+    _stableNextNoteId := nextNoteId;
+    _stableNoteAccessRequests := noteAccessRequests.entries().toArray();
+    _stableNextRequestId := nextRequestId;
+    _stableApprovedNoteUsers := approvedNoteUsers.toArray();
+    _stableQuizQuestions := quizQuestions.entries().toArray();
+    _stableNextQuizQuestionId := nextQuizQuestionId;
+    _stableUserQuizResults := userQuizResults.entries().toArray();
+  };
+
+  system func postupgrade() {
+    for ((k, v) in _stableUserRoles.vals()) {
+      accessControlState.userRoles.add(k, v);
+    };
+    accessControlState.adminAssigned := _stableAdminAssigned;
+    for ((k, v) in _stableUserProfiles.vals()) {
+      userProfiles.add(k, v);
+    };
+    for (m in _stableCustomerMessages.vals()) {
+      customerMessages.add(m);
+    };
+    for ((k, v) in _stableMessageReplies.vals()) {
+      messageReplies.add(k, v);
+    };
+    nextMessageId := _stableNextMessageId;
+    for ((k, v) in _stablePremiumNotes.vals()) {
+      premiumNotes.add(k, v);
+    };
+    nextNoteId := _stableNextNoteId;
+    for ((k, v) in _stableNoteAccessRequests.vals()) {
+      noteAccessRequests.add(k, v);
+    };
+    nextRequestId := _stableNextRequestId;
+    for (p in _stableApprovedNoteUsers.vals()) {
+      approvedNoteUsers.add(p);
+    };
+    for ((k, v) in _stableQuizQuestions.vals()) {
+      quizQuestions.add(k, v);
+    };
+    nextQuizQuestionId := _stableNextQuizQuestionId;
+    for ((k, v) in _stableUserQuizResults.vals()) {
+      userQuizResults.add(k, v);
     };
   };
 };

@@ -5,8 +5,10 @@ import { CustomerCasePage } from "./components/CustomerCasePage";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { HeroBanner } from "./components/HeroBanner";
 import { HistoryPage } from "./components/HistoryPage";
+import { LawPage } from "./components/LawPage";
 import { LoginPage } from "./components/LoginPage";
 import { Navbar } from "./components/Navbar";
+import { PremiumNotesPage } from "./components/PremiumNotesPage";
 import { ProblemSolver } from "./components/ProblemSolver";
 import { QuizPage } from "./components/QuizPage";
 import { ScienceHomePage } from "./components/ScienceHomePage";
@@ -24,7 +26,9 @@ type Page =
   | "admin"
   | "quiz"
   | "science"
-  | "scienceSolver";
+  | "scienceSolver"
+  | "notes"
+  | "law";
 
 function getLocalStorageKey(principalId: string) {
   return `wbcom_username_${principalId}`;
@@ -34,6 +38,7 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>("home");
   const [activeTopic, setActiveTopic] = useState("journal");
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdminLoading, setIsAdminLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [showUsernameModal, setShowUsernameModal] = useState(false);
   const [scienceSubject, setScienceSubject] = useState("");
@@ -48,6 +53,7 @@ export default function App() {
   const checkAdmin = useCallback(
     async (retries = 5, delayMs = 800) => {
       if (!actor) return;
+      setIsAdminLoading(true);
       for (let i = 0; i < retries; i++) {
         try {
           await actor.registerUser();
@@ -59,6 +65,7 @@ export default function App() {
               setIsAdmin(true);
             }
           }
+          setIsAdminLoading(false);
           return;
         } catch {
           if (i < retries - 1) {
@@ -66,6 +73,7 @@ export default function App() {
           }
         }
       }
+      setIsAdminLoading(false);
     },
     [actor],
   );
@@ -129,6 +137,7 @@ export default function App() {
     if (!identity) {
       setUsername("");
       setIsAdmin(false);
+      setIsAdminLoading(false);
     }
   }, [identity]);
 
@@ -138,7 +147,9 @@ export default function App() {
       (p === "history" ||
         p === "customerCase" ||
         p === "admin" ||
-        p === "quiz") &&
+        p === "quiz" ||
+        p === "notes" ||
+        p === "law") &&
       !identity
     )
       return;
@@ -175,6 +186,7 @@ export default function App() {
         currentPage={currentPage}
         onNavigate={handleNavigate}
         isAdmin={isAdmin}
+        isAdminLoading={isAdminLoading}
         username={username}
       />
       <Toaster richColors position="top-right" />
@@ -245,44 +257,48 @@ export default function App() {
             onBack={() => setCurrentPage("science")}
           />
         )}
+
+        {currentPage === "notes" && (
+          <ErrorBoundary>
+            <PremiumNotesPage />
+          </ErrorBoundary>
+        )}
+
+        {currentPage === "law" && <LawPage />}
       </main>
 
       <footer className="bg-navy text-white mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div>
-              <div className="font-display font-bold text-lg text-gold">
-                WBCom AI
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center">
+                <span className="text-xs font-bold">W</span>
               </div>
-              <p className="text-white/60 text-sm mt-1">
-                পশ্চিমবঙ্গের হিসাবরক্ষণ শিক্ষক
-              </p>
-              <p className="text-white/50 text-xs mt-2">
-                WBCHSE &amp; Calcutta University Accountancy &amp; Science Tutor
-              </p>
-              <p className="text-gold font-semibold text-xs mt-2">
+              <div>
+                <p className="font-display font-bold text-sm">WBCom AI</p>
+                <p className="text-xs text-white/60">পশ্চিমবঙ্গের শিক্ষক</p>
+              </div>
+            </div>
+            <div className="text-center">
+              <p className="text-xs text-white/70">
                 Founder &amp; CEO: Bikram Mandal | C.R.G.S
               </p>
             </div>
-            <div className="text-center sm:text-right space-y-2">
-              <div>
-                <TermsModal />
-              </div>
-              <p className="text-white/50 text-xs">
-                © {new Date().getFullYear()}. Built with ❤️ using{" "}
-                <a
-                  href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline hover:text-gold transition-colors"
-                >
-                  caffeine.ai
-                </a>
-              </p>
-            </div>
+            <p className="text-xs text-white/50">
+              © {new Date().getFullYear()}. Built with ❤️ using{" "}
+              <a
+                href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(typeof window !== "undefined" ? window.location.hostname : "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-white/80"
+              >
+                caffeine.ai
+              </a>
+            </p>
           </div>
         </div>
       </footer>
+      <TermsModal />
     </div>
   );
 }

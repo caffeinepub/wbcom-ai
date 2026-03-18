@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type {
   CustomerMessageWithReply,
+  NoteAccessRequest,
+  PremiumNote,
   ProblemType,
   QuizQuestion,
   QuizResult,
@@ -8,7 +10,13 @@ import type {
 import { useActor } from "./useActor";
 import { useInternetIdentity } from "./useInternetIdentity";
 
-export type { CustomerMessageWithReply, QuizQuestion, QuizResult };
+export type {
+  CustomerMessageWithReply,
+  NoteAccessRequest,
+  PremiumNote,
+  QuizQuestion,
+  QuizResult,
+};
 
 export function useProblemHistory() {
   const { actor, isFetching } = useActor();
@@ -237,5 +245,74 @@ export function useDeleteQuizQuestion() {
       queryClient.invalidateQueries({ queryKey: ["quizQuestions"] });
       queryClient.invalidateQueries({ queryKey: ["adminQuizQuestions"] });
     },
+  });
+}
+
+// Premium Notes hooks
+export function useGetMyAccessStatus() {
+  const { actor, isFetching } = useActor();
+  const { identity } = useInternetIdentity();
+  return useQuery({
+    queryKey: ["myAccessStatus"],
+    queryFn: async (): Promise<string> => {
+      if (!actor || !identity) return "none";
+      try {
+        return await actor.getMyAccessStatus();
+      } catch {
+        return "none";
+      }
+    },
+    enabled: !!actor && !isFetching && !!identity,
+  });
+}
+
+export function useGetAllNotesList() {
+  const { actor, isFetching } = useActor();
+  const { identity } = useInternetIdentity();
+  return useQuery({
+    queryKey: ["premiumNotesList"],
+    queryFn: async () => {
+      if (!actor || !identity) return [];
+      try {
+        return await actor.getPremiumNotesList();
+      } catch {
+        return [];
+      }
+    },
+    enabled: !!actor && !isFetching && !!identity,
+  });
+}
+
+export function useGetPremiumNotesWithContent(enabled: boolean) {
+  const { actor, isFetching } = useActor();
+  const { identity } = useInternetIdentity();
+  return useQuery({
+    queryKey: ["premiumNotesWithContent"],
+    queryFn: async () => {
+      if (!actor || !identity) return [];
+      try {
+        return await actor.getPremiumNotesWithContent();
+      } catch {
+        return [];
+      }
+    },
+    enabled: !!actor && !isFetching && !!identity && enabled,
+  });
+}
+
+export function useGetAllAccessRequests() {
+  const { actor, isFetching } = useActor();
+  const { identity } = useInternetIdentity();
+  return useQuery({
+    queryKey: ["allAccessRequests"],
+    queryFn: async (): Promise<NoteAccessRequest[]> => {
+      if (!actor || !identity) return [];
+      try {
+        return await actor.getAllAccessRequests();
+      } catch {
+        return [];
+      }
+    },
+    enabled: !!actor && !isFetching && !!identity,
   });
 }
