@@ -89,6 +89,14 @@ export class ExternalBlob {
         return this;
     }
 }
+export interface CustomerMessage {
+    id: bigint;
+    sender: Principal;
+    message: string;
+    timestamp: Time;
+    senderName: string;
+}
+export type Time = bigint;
 export interface Problem {
     id: ProblemId;
     type: ProblemType;
@@ -96,7 +104,6 @@ export interface Problem {
     solution: string;
     timestamp: Time;
 }
-export type Time = bigint;
 export type ProblemId = bigint;
 export interface UserProfile {
     studentId?: string;
@@ -122,15 +129,21 @@ export interface backendInterface {
     deleteProblem(problemId: ProblemId): Promise<void>;
     findProblemsByKeyword(keyword: string): Promise<Array<Problem>>;
     findProblemsByType(type: ProblemType): Promise<Array<Problem>>;
+    forceClaimAdmin(): Promise<boolean>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
+    getCustomerMessages(): Promise<Array<CustomerMessage>>;
+    getIsAdmin(): Promise<boolean>;
     getProblem(problemId: ProblemId): Promise<Array<Problem>>;
     getProblemHistory(): Promise<Array<Problem>>;
+    getUserCount(): Promise<bigint>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
     listProblemTypes(): Promise<Array<string>>;
+    registerUser(): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     saveProblem(type: ProblemType, jsonInput: string, solution: string): Promise<void>;
+    submitCustomerMessage(senderName: string, message: string): Promise<void>;
 }
 import type { Problem as _Problem, ProblemId as _ProblemId, ProblemType as _ProblemType, Time as _Time, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
@@ -205,6 +218,20 @@ export class Backend implements backendInterface {
             return from_candid_vec_n3(this._uploadFile, this._downloadFile, result);
         }
     }
+    async forceClaimAdmin(): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.forceClaimAdmin();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.forceClaimAdmin();
+            return result;
+        }
+    }
     async getCallerUserProfile(): Promise<UserProfile | null> {
         if (this.processError) {
             try {
@@ -233,6 +260,34 @@ export class Backend implements backendInterface {
             return from_candid_UserRole_n14(this._uploadFile, this._downloadFile, result);
         }
     }
+    async getCustomerMessages(): Promise<Array<CustomerMessage>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getCustomerMessages();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getCustomerMessages();
+            return result;
+        }
+    }
+    async getIsAdmin(): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getIsAdmin();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getIsAdmin();
+            return result;
+        }
+    }
     async getProblem(arg0: ProblemId): Promise<Array<Problem>> {
         if (this.processError) {
             try {
@@ -259,6 +314,20 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.getProblemHistory();
             return from_candid_vec_n3(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getUserCount(): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getUserCount();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getUserCount();
+            return result;
         }
     }
     async getUserProfile(arg0: Principal): Promise<UserProfile | null> {
@@ -303,6 +372,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async registerUser(): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.registerUser();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.registerUser();
+            return result;
+        }
+    }
     async saveCallerUserProfile(arg0: UserProfile): Promise<void> {
         if (this.processError) {
             try {
@@ -328,6 +411,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.saveProblem(to_candid_ProblemType_n8(this._uploadFile, this._downloadFile, arg0), arg1, arg2);
+            return result;
+        }
+    }
+    async submitCustomerMessage(arg0: string, arg1: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.submitCustomerMessage(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.submitCustomerMessage(arg0, arg1);
             return result;
         }
     }

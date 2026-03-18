@@ -1,9 +1,26 @@
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
-import { ChevronDown, ChevronUp, History, Search, Trash2 } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Flag,
+  History,
+  Search,
+  Trash2,
+} from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -26,6 +43,7 @@ export function HistoryPage() {
   const queryClient = useQueryClient();
   const [expanded, setExpanded] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [reportTarget, setReportTarget] = useState<bigint | null>(null);
 
   function formatDate(ts: bigint) {
     const ms = Number(ts) / 1_000_000;
@@ -44,6 +62,19 @@ export function HistoryPage() {
       toast.success("Deleted successfully");
     } catch {
       toast.error("Failed to delete");
+    }
+  }
+
+  async function handleReport(id: bigint) {
+    if (!actor) return;
+    try {
+      await actor.deleteProblem(id);
+      queryClient.invalidateQueries({ queryKey: ["problemHistory"] });
+      toast.success("Content reported and removed.");
+    } catch {
+      toast.error("Failed to report content");
+    } finally {
+      setReportTarget(null);
     }
   }
 
@@ -140,7 +171,20 @@ export function HistoryPage() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setReportTarget(problem.id);
+                  }}
+                  data-ocid={`history.secondary_button.${idx + 1}`}
+                  className="text-amber-600 hover:bg-amber-50 h-8 w-8 p-0"
+                  title="Report this content"
+                >
+                  <Flag className="w-4 h-4" />
+                </Button>
                 <Button
                   size="sm"
                   variant="ghost"
@@ -184,6 +228,44 @@ export function HistoryPage() {
           </motion.div>
         ))}
       </div>
+
+      {/* Report AlertDialog */}
+      <AlertDialog
+        open={reportTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) setReportTarget(null);
+        }}
+      >
+        <AlertDialogContent data-ocid="history.dialog">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-navy font-display">
+              Report this content?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to report and remove this content? This
+              action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              data-ocid="history.cancel_button"
+              onClick={() => setReportTarget(null)}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              data-ocid="history.confirm_button"
+              className="bg-amber-600 text-white hover:bg-amber-700"
+              onClick={() => {
+                if (reportTarget !== null) handleReport(reportTarget);
+              }}
+            >
+              <Flag className="w-4 h-4 mr-2" />
+              Report &amp; Remove
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

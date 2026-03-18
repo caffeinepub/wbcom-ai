@@ -7,7 +7,9 @@ import { HistoryPage } from "./components/HistoryPage";
 import { LoginPage } from "./components/LoginPage";
 import { Navbar } from "./components/Navbar";
 import { ProblemSolver } from "./components/ProblemSolver";
+import { TermsModal } from "./components/TermsPage";
 import { TopicGrid } from "./components/TopicGrid";
+import { UsernameModal } from "./components/UsernameModal";
 import { useActor } from "./hooks/useActor";
 import { useInternetIdentity } from "./hooks/useInternetIdentity";
 
@@ -17,22 +19,25 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>("home");
   const [activeTopic, setActiveTopic] = useState("journal");
   const [isAdmin, setIsAdmin] = useState(false);
+  const [username, setUsername] = useState("");
+  const [showUsernameModal, setShowUsernameModal] = useState(false);
   const { identity } = useInternetIdentity();
   const { actor, isFetching } = useActor();
   const adminCheckDone = useRef(false);
+  const profileCheckDone = useRef(false);
+  const lastIdentityPrincipal = useRef<string | null>(null);
+  const lastActorRef = useRef<unknown>(null);
 
   const checkAdmin = useCallback(
     async (retries = 5, delayMs = 800) => {
       if (!actor) return;
       for (let i = 0; i < retries; i++) {
         try {
-          await (actor as any).registerUser();
-          const result = (await (actor as any).getIsAdmin()) as boolean;
+          await actor.registerUser();
+          const result = await actor.getIsAdmin();
           setIsAdmin(result);
-          // If not admin on first try, also attempt forceClaimAdmin
-          // (works only if no admin exists yet or caller has token-based admin)
           if (!result && i === 0) {
-            const claimed = (await (actor as any).forceClaimAdmin()) as boolean;
+            const claimed = await actor.forceClaimAdmin();
             if (claimed) {
               setIsAdmin(true);
             }
@@ -48,15 +53,48 @@ export default function App() {
     [actor],
   );
 
+  const checkProfile = useCallback(async () => {
+    if (!actor) return;
+    try {
+      const profile = await actor.getCallerUserProfile();
+      if (profile?.name?.trim()) {
+        setUsername(profile.name.trim());
+        setShowUsernameModal(false);
+      } else {
+        setShowUsernameModal(true);
+      }
+    } catch {
+      setShowUsernameModal(true);
+    }
+  }, [actor]);
+
   useEffect(() => {
-    if (!identity || !actor || isFetching) {
+    const currentPrincipal = identity?.getPrincipal().toString() ?? null;
+
+    if (
+      currentPrincipal !== lastIdentityPrincipal.current ||
+      actor !== lastActorRef.current
+    ) {
       adminCheckDone.current = false;
+      profileCheckDone.current = false;
+      lastIdentityPrincipal.current = currentPrincipal;
+      lastActorRef.current = actor;
+    }
+
+    if (!identity || !actor || isFetching) {
       return;
     }
-    if (adminCheckDone.current) return;
-    adminCheckDone.current = true;
-    checkAdmin();
-  }, [identity, actor, isFetching, checkAdmin]);
+
+    if (!adminCheckDone.current) {
+      adminCheckDone.current = true;
+      checkAdmin();
+    }
+
+    if (!profileCheckDone.current) {
+      profileCheckDone.current = true;
+      checkProfile();
+    }
+  }, [identity, actor, isFetching, checkAdmin, checkProfile]);
 
   function handleNavigate(page: Page) {
     if (
@@ -67,7 +105,11 @@ export default function App() {
     setCurrentPage(page);
   }
 
-  // Show full-screen login page when not logged in
+  function handleUsernameSaved(name: string) {
+    setUsername(name);
+    setShowUsernameModal(false);
+  }
+
   if (!identity) {
     return (
       <>
@@ -83,8 +125,11 @@ export default function App() {
         currentPage={currentPage}
         onNavigate={handleNavigate}
         isAdmin={isAdmin}
+        username={username}
       />
       <Toaster richColors position="top-right" />
+
+      <UsernameModal open={showUsernameModal} onSaved={handleUsernameSaved} />
 
       <main className="flex-1">
         {currentPage === "home" && (
@@ -153,7 +198,10 @@ export default function App() {
                 Founder &amp; CEO: Bikram Mandal | C.R.G.S
               </p>
             </div>
-            <div className="text-center sm:text-right">
+            <div className="text-center sm:text-right space-y-2">
+              <div>
+                <TermsModal />
+              </div>
               <p className="text-white/50 text-xs">
                 © {new Date().getFullYear()}. Built with ❤️ using{" "}
                 <a

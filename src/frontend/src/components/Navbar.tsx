@@ -9,6 +9,7 @@ import {
   LogOut,
   Menu,
   ShieldCheck,
+  UserCircle,
 } from "lucide-react";
 import { useState } from "react";
 import { useInternetIdentity } from "../hooks/useInternetIdentity";
@@ -19,9 +20,15 @@ interface NavbarProps {
   currentPage: Page;
   onNavigate: (page: Page) => void;
   isAdmin?: boolean;
+  username?: string;
 }
 
-export function Navbar({ currentPage, onNavigate, isAdmin }: NavbarProps) {
+export function Navbar({
+  currentPage,
+  onNavigate,
+  isAdmin,
+  username,
+}: NavbarProps) {
   const { identity, login, clear, isLoggingIn, isInitializing } =
     useInternetIdentity();
   const isLoggedIn = !!identity;
@@ -107,8 +114,16 @@ export function Navbar({ currentPage, onNavigate, isAdmin }: NavbarProps) {
             ))}
           </nav>
 
-          {/* Auth + Mobile Menu */}
+          {/* Auth + Username + Mobile Menu */}
           <div className="flex items-center gap-2">
+            {/* Desktop: Hi [name] */}
+            {isLoggedIn && username && (
+              <div className="hidden sm:flex items-center gap-1.5 text-xs font-medium text-navy bg-navy/5 px-2.5 py-1.5 rounded-md">
+                <UserCircle className="w-3.5 h-3.5 text-gold" />
+                <span>Hi, {username}</span>
+              </div>
+            )}
+
             {isLoggedIn ? (
               <Button
                 variant="outline"
@@ -147,6 +162,15 @@ export function Navbar({ currentPage, onNavigate, isAdmin }: NavbarProps) {
               </SheetTrigger>
               <SheetContent side="right" className="w-64">
                 <div className="flex flex-col gap-1 mt-6">
+                  {/* Mobile: Hi [name] */}
+                  {isLoggedIn && username && (
+                    <div className="flex items-center gap-2 px-3 py-2.5 mb-1 rounded-md bg-navy/5">
+                      <UserCircle className="w-4 h-4 text-gold" />
+                      <span className="text-sm font-semibold text-navy">
+                        Hi, {username}
+                      </span>
+                    </div>
+                  )}
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-2">
                     Navigation
                   </p>

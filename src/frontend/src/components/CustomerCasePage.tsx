@@ -2,53 +2,66 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { Briefcase, Loader2, MessageCircle, Send } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ProblemType } from "../backend.d";
 import { useActor } from "../hooks/useActor";
 import { useInternetIdentity } from "../hooks/useInternetIdentity";
-import { useSaveProblem } from "../hooks/useQueries";
+import { useGetMyCustomerMessages, useSaveProblem } from "../hooks/useQueries";
 
 export function CustomerCasePage() {
-  const { actor } = useActor();
+  const { actor, isFetching } = useActor();
   const { identity } = useInternetIdentity();
   const { mutate: saveProblem } = useSaveProblem();
   const [problem, setProblem] = useState("");
   const [solution, setSolution] = useState("");
   const [isSolving, setIsSolving] = useState(false);
 
-  // Support contact form state
   const [supportName, setSupportName] = useState("");
   const [supportMessage, setSupportMessage] = useState("");
   const [isSendingSupport, setIsSendingSupport] = useState(false);
+
+  const { data: myMessages, isLoading: loadingMyMessages } =
+    useGetMyCustomerMessages();
+
+  const actorRef = useRef(actor);
+  useEffect(() => {
+    actorRef.current = actor;
+  }, [actor]);
+
+  const isFetchingRef = useRef(isFetching);
+  useEffect(() => {
+    isFetchingRef.current = isFetching;
+  }, [isFetching]);
+
+  async function waitForActor() {
+    for (let i = 0; i < 30; i++) {
+      const currentActor = actorRef.current;
+      const currentlyFetching = isFetchingRef.current;
+      if (currentActor && !currentlyFetching) return currentActor;
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    }
+    return null;
+  }
 
   async function handleSolve() {
     if (!problem.trim()) {
       toast.error("সমস্যাটি লিখুন / Please type your problem");
       return;
     }
-    if (!actor) {
-      toast.error("Actor not ready. Please try again.");
+    const readyActor = await waitForActor();
+    if (!readyActor) {
+      toast.error("সংযোগ স্থাপন হচ্ছে, একটু পরে আবার চেষ্টা করুন।");
       return;
     }
     setIsSolving(true);
     setSolution("");
     try {
-      const result = await (actor as any)
-        .solveProblem({ type: "journalEntry", jsonInput: problem })
-        .catch(() => null);
-
-      let sol: string;
-      if (result != null) {
-        sol = typeof result === "string" ? result : JSON.stringify(result);
-      } else {
-        sol = generateLocalSolution(problem);
-      }
-
+      const sol = generateLocalSolution(problem);
       setSolution(sol);
-
       if (identity) {
         saveProblem(
           { type: ProblemType.journalEntry, jsonInput: problem, solution: sol },
@@ -68,13 +81,14 @@ export function CustomerCasePage() {
       toast.error("নাম ও বার্তা দুটোই লিখুন / Please fill name and message");
       return;
     }
-    if (!actor) {
-      toast.error("Actor not ready. Please try again.");
+    const readyActor = await waitForActor();
+    if (!readyActor) {
+      toast.error("সংযোগ স্থাপন হচ্ছে, একটু পরে আবার চেষ্টা করুন।");
       return;
     }
     setIsSendingSupport(true);
     try {
-      await (actor as any).submitCustomerMessage(
+      await readyActor.submitCustomerMessage(
         supportName.trim(),
         supportMessage.trim(),
       );
@@ -90,6 +104,16 @@ export function CustomerCasePage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
+      {isFetching && (
+        <div
+          data-ocid="customercase.loading_state"
+          className="mb-4 flex items-center gap-2 rounded-lg bg-navy/10 border border-navy/20 px-4 py-3 text-navy text-sm font-medium"
+        >
+          <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+          সংযোগ স্থাপন হচ্ছে...
+        </div>
+      )}
+
       {/* Problem Solver Section */}
       <div className="flex items-center gap-3 mb-6">
         <div className="w-10 h-10 rounded-lg bg-navy flex items-center justify-center">
@@ -138,10 +162,7 @@ export function CustomerCasePage() {
       </Card>
 
       {isSolving && (
-        <Card
-          className="mt-6 border-gold/30 bg-gold/5"
-          data-ocid="customercase.loading_state"
-        >
+        <Card className="mt-6 border-gold/30 bg-gold/5">
           <CardContent className="py-8 flex flex-col items-center gap-3">
             <Loader2 className="w-8 h-8 animate-spin text-gold" />
             <p className="text-navy font-medium">সমাধান তৈরি হচ্ছে...</p>
@@ -240,6 +261,90 @@ export function CustomerCasePage() {
           </Button>
         </CardContent>
       </Card>
+
+      {/* My Support Replies Section */}
+      <div className="mt-10">
+        <div className="flex items-center gap-3 mb-5">
+          <div className="w-10 h-10 rounded-lg bg-teal-600 flex items-center justify-center">
+            <MessageCircle className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h2 className="font-display font-bold text-xl text-navy">
+              আমার বার্তার উত্তর / My Support Replies
+            </h2>
+            <p className="text-muted-foreground text-sm">
+              অ্যাডমিনের দেওয়া উত্তর দেখুন
+            </p>
+          </div>
+        </div>
+
+        {loadingMyMessages ? (
+          <div className="space-y-3" data-ocid="support.loading_state">
+            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-20 w-full" />
+          </div>
+        ) : !myMessages || myMessages.length === 0 ? (
+          <div
+            className="text-center py-10 border border-dashed border-navy/20 rounded-xl text-muted-foreground"
+            data-ocid="support.empty_state"
+          >
+            <MessageCircle className="w-10 h-10 mx-auto mb-3 opacity-25" />
+            <p className="font-medium">এখনো কোনো বার্তা পাঠানো হয়নি</p>
+            <p className="text-sm mt-1">
+              No messages sent yet. Use the form above to contact support.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {myMessages.map((msg, idx) => {
+              // adminReply is Candid optional: [] | [string]
+              const adminReply =
+                msg.adminReply.length > 0 ? msg.adminReply[0] : null;
+
+              return (
+                <Card
+                  key={String(msg.id)}
+                  className="border-navy/15 shadow-sm"
+                  data-ocid={`support.item.${idx + 1}`}
+                >
+                  <CardContent className="pt-4 pb-4 space-y-3">
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(
+                        Number(msg.timestamp / 1_000_000n),
+                      ).toLocaleString("bn-IN")}
+                    </p>
+
+                    <div className="rounded-md bg-navy/5 border border-navy/10 px-3 py-2">
+                      <p className="text-xs font-semibold text-navy mb-0.5">
+                        আপনার বার্তা / Your Message:
+                      </p>
+                      <p className="text-sm text-foreground whitespace-pre-wrap">
+                        {msg.message}
+                      </p>
+                    </div>
+
+                    {adminReply ? (
+                      <div className="rounded-md bg-teal-50 border border-teal-200 px-3 py-2">
+                        <p className="text-xs font-semibold text-teal-700 mb-0.5">
+                          ✅ Admin Reply / অ্যাডমিনের উত্তর:
+                        </p>
+                        <p className="text-sm text-teal-800 whitespace-pre-wrap">
+                          {adminReply}
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 text-amber-600 text-xs">
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                        উত্তরের অপেক্ষায়... / Awaiting reply
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

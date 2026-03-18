@@ -1,29 +1,28 @@
 # WBCom AI
 
 ## Current State
-App has admin panel visibility bug: `registerUser()` function conflicts with MixinAuthorization's admin assignment via `_initializeAccessControlWithSecret`. Also has 'actor not ready' error in Customer Case and recurring white screen issue.
+Admin panel shows customer support messages with delete option only. There is no way for admin to reply. CustomerCasePage has no section to show admin replies.
 
 ## Requested Changes (Diff)
 
 ### Add
-- Backend `forceClaimAdmin()` function: allows the current user to claim admin if no admin exists OR if they already have the MixinAuthorization token-based admin role
-- Frontend retry logic for admin check with exponential backoff
-- Actor readiness wait utility
+- Backend: `replyToCustomerMessage(id, replyText)` function for admin
+- Backend: `getMyCustomerMessages()` function for users to fetch their own messages with replies
+- `adminReply` optional field in `CustomerMessage` type
+- AdminPage: inline reply input + send button per message row
+- CustomerCasePage: "My Messages" section showing user's sent messages and admin replies
 
 ### Modify
-- `registerUser()`: Check `AccessControl.hasPermission` before downgrading user to `#user` role — prevents overriding MixinAuthorization admin
-- `isAdminSafe()`: Use `AccessControl.hasPermission` for consistent admin check
-- `App.tsx`: Improve admin check timing with retry after actor is ready
-- `CustomerCasePage.tsx`: Add actor wait/retry before submitCustomerMessage
-- `useInternetIdentity.ts`: Fix re-initialization loop by tracking init state with ref
+- `CustomerMessage` type to include `adminReply: ?Text`
+- AdminPage table to show reply input
+- CustomerCasePage to show replies
 
 ### Remove
-- Nothing removed
+- Nothing
 
 ## Implementation Plan
-1. Fix backend `registerUser()` to not downgrade MixinAuthorization-assigned admins
-2. Fix `isAdminSafe()` to use AccessControl.hasPermission
-3. Add `forceClaimAdmin()` backend function  
-4. Fix frontend App.tsx admin check with retry
-5. Fix CustomerCasePage actor readiness check
-6. Fix useInternetIdentity re-init loop
+1. Update `CustomerMessage` type with `adminReply: ?Text`
+2. Add `replyToCustomerMessage` shared function (admin only)
+3. Add `getMyCustomerMessages` query function (user sees own messages)
+4. Update AdminPage with reply UI per message
+5. Update CustomerCasePage with "My Replies" section

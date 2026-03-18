@@ -7,6 +7,14 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
+export interface CustomerMessage {
+    id: bigint;
+    sender: Principal;
+    message: string;
+    timestamp: Time;
+    senderName: string;
+}
+export type Time = bigint;
 export interface Problem {
     id: ProblemId;
     type: ProblemType;
@@ -14,7 +22,6 @@ export interface Problem {
     solution: string;
     timestamp: Time;
 }
-export type Time = bigint;
 export type ProblemId = bigint;
 export interface UserProfile {
     studentId?: string;
@@ -39,13 +46,19 @@ export interface backendInterface {
     deleteProblem(problemId: ProblemId): Promise<void>;
     findProblemsByKeyword(keyword: string): Promise<Array<Problem>>;
     findProblemsByType(type: ProblemType): Promise<Array<Problem>>;
+    forceClaimAdmin(): Promise<boolean>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
+    getCustomerMessages(): Promise<Array<CustomerMessage>>;
+    getIsAdmin(): Promise<boolean>;
     getProblem(problemId: ProblemId): Promise<Array<Problem>>;
     getProblemHistory(): Promise<Array<Problem>>;
+    getUserCount(): Promise<bigint>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
     listProblemTypes(): Promise<Array<string>>;
+    registerUser(): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     saveProblem(type: ProblemType, jsonInput: string, solution: string): Promise<void>;
+    submitCustomerMessage(senderName: string, message: string): Promise<void>;
 }

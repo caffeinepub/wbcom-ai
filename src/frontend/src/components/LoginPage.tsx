@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { GraduationCap, Star } from "lucide-react";
+import { GraduationCap, Lock, Star } from "lucide-react";
 import { motion } from "motion/react";
 import { useInternetIdentity } from "../hooks/useInternetIdentity";
 
@@ -95,7 +95,15 @@ export function LoginPage() {
           {isLoggingIn ? "Logging in..." : "Login with Internet Identity"}
         </Button>
 
-        <p className="text-white/40 text-xs text-center">
+        {/* Privacy notice */}
+        <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 w-full">
+          <Lock className="w-3.5 h-3.5 text-gold/70 shrink-0" />
+          <p className="text-white/50 text-xs">
+            We do not share your personal information with anyone.
+          </p>
+        </div>
+
+        <p className="text-white/40 text-xs text-center -mt-4">
           Secure, passwordless login powered by Internet Computer
         </p>
       </motion.div>

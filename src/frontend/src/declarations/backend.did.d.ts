@@ -10,6 +10,13 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface CustomerMessage {
+  'id' : bigint,
+  'sender' : Principal,
+  'message' : string,
+  'timestamp' : Time,
+  'senderName' : string,
+}
 export interface Problem {
   'id' : ProblemId,
   'type' : ProblemType,
@@ -39,15 +46,21 @@ export interface _SERVICE {
   'deleteProblem' : ActorMethod<[ProblemId], undefined>,
   'findProblemsByKeyword' : ActorMethod<[string], Array<Problem>>,
   'findProblemsByType' : ActorMethod<[ProblemType], Array<Problem>>,
+  'forceClaimAdmin' : ActorMethod<[], boolean>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getCustomerMessages' : ActorMethod<[], Array<CustomerMessage>>,
+  'getIsAdmin' : ActorMethod<[], boolean>,
   'getProblem' : ActorMethod<[ProblemId], Array<Problem>>,
   'getProblemHistory' : ActorMethod<[], Array<Problem>>,
+  'getUserCount' : ActorMethod<[], bigint>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'listProblemTypes' : ActorMethod<[], Array<string>>,
+  'registerUser' : ActorMethod<[], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'saveProblem' : ActorMethod<[ProblemType, string, string], undefined>,
+  'submitCustomerMessage' : ActorMethod<[string, string], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];
