@@ -379,7 +379,7 @@ export function LawPage() {
                       ⚖️ {lc.name}
                     </p>
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      {lc.summary}
+                      {lc.summary || lc.principle || ""}
                     </p>
                   </div>
                 ))}
@@ -398,7 +398,9 @@ export function LawPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-red-900 leading-relaxed">
-                  {result.exceptions}
+                  {Array.isArray(result.exceptions)
+                    ? result.exceptions.join(" ")
+                    : result.exceptions}
                 </p>
               </CardContent>
             </Card>
