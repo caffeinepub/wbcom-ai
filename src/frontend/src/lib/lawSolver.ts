@@ -3901,6 +3901,21 @@ const LAW_DATABASE: LawDB = {
     relatedSections: [
       { ref: "BNSS Section 1", description: "BNSS 2023 replacement for CrPC" },
     ],
+    overridingEffect:
+      "CrPC 1973 is superseded by Bharatiya Nagarik Suraksha Sanhita (BNSS) 2023 for offences committed after July 1, 2024. For earlier offences, CrPC continues to apply. Special laws like NDPS Act, PMLA may override general CrPC provisions where expressly provided.",
+    overridingEffectBengali:
+      "২০২৩ সালের ভারতীয় নাগরিক সুরক্ষা সংহিতা (BNSS) ১ জুলাই ২০২৪-এর পরে সংঘটিত অপরাধের জন্য CrPC ১৯৭৩-কে প্রতিস্থাপন করে। পূর্ববর্তী অপরাধের জন্য CrPC প্রযোজ্য থাকে। NDPS আইন, PMLA-এর মতো বিশেষ আইন সুনির্দিষ্টভাবে বিধান করা হলে সাধারণ CrPC বিধান অতিক্রম করতে পারে।",
+    crossLaws: [
+      {
+        ref: "BNSS 2023 Section 1",
+        description: "Replaces CrPC for offences after July 1, 2024",
+      },
+      {
+        ref: "IPC / BNS 2023",
+        description:
+          "Substantive criminal law; CrPC is procedural law that enforces it",
+      },
+    ],
     actName: "Code of Criminal Procedure, 1973",
   },
 
@@ -3947,6 +3962,20 @@ const LAW_DATABASE: LawDB = {
       { ref: "Schedule I CrPC", description: "Classification of offences" },
       { ref: "BNSS Section 2", description: "BNSS 2023 definitions" },
     ],
+    overridingEffect:
+      "BNSS 2023 Section 2 provides updated definitions replacing CrPC definitions for new offences. Special Acts (NDPS, POCSO, IT Act) have their own definitions which prevail over CrPC definitions in cases governed by those Acts.",
+    overridingEffectBengali:
+      "BNSS ২০২৩ ধারা ২ নতুন অপরাধের জন্য CrPC সংজ্ঞা প্রতিস্থাপন করে আপডেট সংজ্ঞা প্রদান করে। NDPS, POCSO, IT Act-এর মতো বিশেষ আইনের নিজস্ব সংজ্ঞা আছে যা সেই আইনে পরিচালিত মামলায় CrPC সংজ্ঞার উপর প্রাধান্য পায়।",
+    crossLaws: [
+      {
+        ref: "BNSS 2023 Section 2",
+        description: "Updated definitions for the new criminal procedure code",
+      },
+      {
+        ref: "IPC Section 2 / BNS Section 2",
+        description: "Definitions of offences under substantive criminal law",
+      },
+    ],
     actName: "Code of Criminal Procedure, 1973",
   },
 
@@ -3990,6 +4019,26 @@ const LAW_DATABASE: LawDB = {
     relatedSections: [
       { ref: "CrPC Section 5", description: "Saving of special laws" },
     ],
+    overridingEffect:
+      "For offences under IPC (now BNS 2023), CrPC procedure applies. Special Acts like NDPS, PMLA, UAPA, POCSO prescribe their own special procedures which override CrPC where there is conflict. BNSS 2023 replaces CrPC for new offences.",
+    overridingEffectBengali:
+      "IPC-এর (এখন BNS ২০২৩) অধীনে অপরাধের জন্য CrPC পদ্ধতি প্রযোজ্য। NDPS, PMLA, UAPA, POCSO-এর মতো বিশেষ আইন নিজস্ব বিশেষ পদ্ধতি নির্ধারণ করে যা দ্বন্দ্বের ক্ষেত্রে CrPC-কে অতিক্রম করে।",
+    crossLaws: [
+      {
+        ref: "NDPS Act 1985",
+        description: "Special procedure overrides CrPC for narcotic offences",
+      },
+      {
+        ref: "UAPA 1967",
+        description:
+          "Special procedure overrides CrPC for terror-related offences",
+      },
+      {
+        ref: "POCSO Act 2012",
+        description:
+          "Special child-friendly procedure overrides CrPC for child sexual offences",
+      },
+    ],
     actName: "Code of Criminal Procedure, 1973",
   },
 
@@ -4032,6 +4081,25 @@ const LAW_DATABASE: LawDB = {
     relatedSections: [
       { ref: "CrPC Section 9", description: "Court of Session" },
       { ref: "CrPC Section 11", description: "Courts of Judicial Magistrates" },
+    ],
+    overridingEffect:
+      "Constitution Articles 233-237 and 246 govern the establishment of courts. High Courts under Article 227 have supervisory jurisdiction over all criminal courts. BNSS 2023 restructures certain court categories. Specific court hierarchies may vary by state legislation.",
+    overridingEffectBengali:
+      "সংবিধানের ২৩৩-২৩৭ এবং ২৪৬ ধারা আদালত প্রতিষ্ঠা পরিচালনা করে। ২২৭ ধারার অধীনে হাইকোর্টের সমস্ত ফৌজদারি আদালতের উপর তত্ত্বাবধায়ক এখতিয়ার আছে। BNSS ২০২৩ কিছু আদালত বিভাগ পুনর্গঠন করে।",
+    crossLaws: [
+      {
+        ref: "Constitution Articles 233-237",
+        description: "Appointment and control of district courts",
+      },
+      {
+        ref: "Constitution Article 227",
+        description:
+          "High Court supervisory jurisdiction over subordinate courts",
+      },
+      {
+        ref: "BNSS 2023",
+        description: "Replaces CrPC court hierarchy for new offences",
+      },
     ],
     actName: "Code of Criminal Procedure, 1973",
   },
@@ -4080,6 +4148,27 @@ const LAW_DATABASE: LawDB = {
       { ref: "CrPC Section 6", description: "Classes of Criminal Courts" },
       { ref: "CrPC Section 193", description: "Cognizance by Sessions Court" },
     ],
+    overridingEffect:
+      "Constitution Article 233 governs appointment of District Judges. BNSS 2023 Section 9 replaces this provision going forward. Sessions Court also acts as Special Court under various special Acts (NDPS, POCSO, SC/ST Act) — in those cases the Sessions Court follows special procedure.",
+    overridingEffectBengali:
+      "সংবিধানের ২৩৩ ধারা জেলা বিচারক নিয়োগ পরিচালনা করে। BNSS ২০২৩ ধারা ৯ ভবিষ্যতে এই বিধান প্রতিস্থাপন করে। সেশন কোর্ট বিভিন্ন বিশেষ আইনের (NDPS, POCSO, SC/ST আইন) অধীনে বিশেষ আদালত হিসেবেও কাজ করে।",
+    crossLaws: [
+      {
+        ref: "Constitution Article 233",
+        description:
+          "Appointment of District Judges by Governor in consultation with HC",
+      },
+      {
+        ref: "POCSO Act Section 28",
+        description:
+          "Sessions Court designated as Special Court for POCSO cases",
+      },
+      {
+        ref: "NDPS Act Section 36",
+        description:
+          "Special Courts for NDPS offences — Sessions Judge presides",
+      },
+    ],
     actName: "Code of Criminal Procedure, 1973",
   },
 
@@ -4124,6 +4213,25 @@ const LAW_DATABASE: LawDB = {
       {
         ref: "CrPC Section 301",
         description: "Appearance by Public Prosecutor",
+      },
+    ],
+    overridingEffect:
+      "Constitution Article 165 (Advocate General) and Article 76 (Attorney General) are the constitutional counterparts. Under NDPS Act, PMLA and other special Acts, special prosecutors are appointed. BNSS 2023 Section 18 replaces CrPC Section 24. Directorate of Prosecution (Section 25A) supervises public prosecutors.",
+    overridingEffectBengali:
+      "সংবিধানের ১৬৫ ধারা (অ্যাডভোকেট জেনারেল) এবং ৭৬ ধারা (অ্যাটর্নি জেনারেল) সাংবিধানিক প্রতিপক্ষ। NDPS আইন, PMLA এবং অন্যান্য বিশেষ আইনে বিশেষ আইনজীবী নিয়োগ করা হয়। BNSS ২০২৩ ধারা ১৮ CrPC ধারা ২৪ প্রতিস্থাপন করে।",
+    crossLaws: [
+      {
+        ref: "Constitution Article 165",
+        description: "Advocate General of the State — chief law officer",
+      },
+      {
+        ref: "PMLA 2002",
+        description:
+          "Special Public Prosecutor appointed for money laundering cases",
+      },
+      {
+        ref: "CrPC Section 25A",
+        description: "Directorate of Prosecution supervises Public Prosecutors",
       },
     ],
     actName: "Code of Criminal Procedure, 1973",
@@ -4174,6 +4282,26 @@ const LAW_DATABASE: LawDB = {
       },
       { ref: "CrPC Section 41B", description: "Procedure of arrest" },
     ],
+    overridingEffect:
+      "BNSS 2023 Section 35 replaces CrPC Section 41A with stricter notice requirements. Supreme Court in Arnesh Kumar (2014) made Section 41A notice mandatory for offences with less than 7 years sentence. Constitution Article 21 (right to liberty) underlies this protection.",
+    overridingEffectBengali:
+      "BNSS ২০২৩ ধারা ৩৫ আরও কঠোর নোটিশ প্রয়োজনীয়তা সহ CrPC ধারা ৪১A প্রতিস্থাপন করে। অর্নেশ কুমার (২০১৪) মামলায় সুপ্রিম কোর্ট ৭ বছরের কম সাজার অপরাধের জন্য ৪১A নোটিশ বাধ্যতামূলক করেছে।",
+    crossLaws: [
+      {
+        ref: "BNSS 2023 Section 35",
+        description:
+          "Replaces CrPC 41A with updated notice of appearance provisions",
+      },
+      {
+        ref: "Constitution Article 21",
+        description:
+          "Right to liberty — basis for Section 41A protection against unnecessary arrest",
+      },
+      {
+        ref: "CrPC Section 41B",
+        description: "Procedure of arrest complementing Section 41A",
+      },
+    ],
     actName: "Code of Criminal Procedure, 1973",
   },
 
@@ -4216,6 +4344,24 @@ const LAW_DATABASE: LawDB = {
     relatedSections: [
       { ref: "CrPC Section 41A", description: "Notice of appearance" },
       { ref: "CrPC Section 41D", description: "Right to meet advocate" },
+    ],
+    overridingEffect:
+      "BNSS 2023 Section 35 incorporates and updates Section 41B requirements. D.K. Basu guidelines (1997) are constitutionally mandated under Article 21. Non-compliance attracts liability under Article 32 / 226 for custodial tort.",
+    overridingEffectBengali:
+      "BNSS ২০২৩ ধারা ৩৫ ধারা ৪১B প্রয়োজনীয়তা অন্তর্ভুক্ত ও আপডেট করে। D.K. বসু নির্দেশিকা (১৯৯৭) সংবিধানের ২১ ধারার অধীনে সাংবিধানিকভাবে বাধ্যতামূলক। অ-সম্মতিতে হেফাজতে অত্যাচারের জন্য ৩২/২২৬ ধারার অধীনে দায়বদ্ধতা তৈরি হয়।",
+    crossLaws: [
+      {
+        ref: "BNSS 2023 Section 35",
+        description: "Updated arrest procedure requirements",
+      },
+      {
+        ref: "Constitution Article 21",
+        description: "Right against custodial torture",
+      },
+      {
+        ref: "Constitution Article 32 / 226",
+        description: "Remedies for violation of arrest procedure",
+      },
     ],
     actName: "Code of Criminal Procedure, 1973",
   },
@@ -4261,6 +4407,25 @@ const LAW_DATABASE: LawDB = {
       {
         ref: "Constitution Article 22",
         description: "Protection against arbitrary arrest",
+      },
+    ],
+    overridingEffect:
+      "This right flows directly from Constitution Article 22(1) (right to consult legal practitioner). BNSS 2023 Section 35 reinforces this right. The right to free legal aid under Article 39A and CrPC Section 304 complements Section 41D.",
+    overridingEffectBengali:
+      "এই অধিকার সরাসরি সংবিধানের ২২(১) ধারা থেকে আসে (আইনজীবীর পরামর্শের অধিকার)। BNSS ২০২৩ ধারা ৩৫ এই অধিকার জোরদার করে। ৩৯A ধারা এবং CrPC ধারা ৩০৪-এর অধীনে বিনামূল্যে আইনি সহায়তার অধিকার ধারা ৪১D-এর পরিপূরক।",
+    crossLaws: [
+      {
+        ref: "Constitution Article 22(1)",
+        description:
+          "Fundamental right to consult and be defended by legal practitioner of choice",
+      },
+      {
+        ref: "Constitution Article 39A",
+        description: "Right to free legal aid",
+      },
+      {
+        ref: "CrPC Section 304",
+        description: "Legal aid to accused at State expense",
       },
     ],
     actName: "Code of Criminal Procedure, 1973",
@@ -4310,6 +4475,25 @@ const LAW_DATABASE: LawDB = {
       },
       { ref: "CrPC Section 49", description: "No unnecessary restraint" },
     ],
+    overridingEffect:
+      "BNSS 2023 Section 43 replaces CrPC Section 46. Constitution Article 21 limits use of force during arrest. IPC Section 97 / BNS Section 34 (right of private defence) applies to resistance of illegal arrest. Police use of lethal force is regulated by Supreme Court guidelines in PUCL v. State of Maharashtra.",
+    overridingEffectBengali:
+      "BNSS ২০২৩ ধারা ৪৩ CrPC ধারা ৪৬ প্রতিস্থাপন করে। গ্রেফতারের সময় বল প্রয়োগ সীমিত করে সংবিধানের ২১ ধারা। IPC ধারা ৯৭ / BNS ধারা ৩৪ (ব্যক্তিগত প্রতিরক্ষার অধিকার) অবৈধ গ্রেফতারের প্রতিরোধে প্রযোজ্য।",
+    crossLaws: [
+      {
+        ref: "BNSS 2023 Section 43",
+        description: "Updated arrest procedure replacing CrPC Section 46",
+      },
+      {
+        ref: "Constitution Article 21",
+        description: "Right to life — limits excessive force during arrest",
+      },
+      {
+        ref: "IPC Section 100 / BNS Section 37",
+        description:
+          "Right of private defence of body extends to resisting illegal arrest",
+      },
+    ],
     actName: "Code of Criminal Procedure, 1973",
   },
 
@@ -4356,6 +4540,26 @@ const LAW_DATABASE: LawDB = {
       {
         ref: "Constitution Article 21",
         description: "Right to life and personal liberty",
+      },
+    ],
+    overridingEffect:
+      "BNSS 2023 Section 44 replaces this provision. Constitution Article 21 is the constitutional basis — no unnecessary restraint. Handcuffing rules as per Prem Shankar Shukla v. Delhi Administration (1980) — handcuffs only in exceptional cases with magistrate order.",
+    overridingEffectBengali:
+      "BNSS ২০২৩ ধারা ৪৪ এই বিধান প্রতিস্থাপন করে। সংবিধানের ২১ ধারা সাংবিধানিক ভিত্তি — অহেতুক বাধা নেই। প্রেম শংকর শুক্লা মামলার (১৯৮০) হাতকড়া নিয়ম — ম্যাজিস্ট্রেটের আদেশ সহ শুধুমাত্র ব্যতিক্রমী ক্ষেত্রে হাতকড়া।",
+    crossLaws: [
+      {
+        ref: "BNSS 2023 Section 44",
+        description: "No unnecessary restraint — updated provision",
+      },
+      {
+        ref: "Constitution Article 21",
+        description:
+          "Right to dignity and personal liberty prohibits unnecessary restraint",
+      },
+      {
+        ref: "Constitution Article 14",
+        description:
+          "Equality before law — no differential restraint without reason",
       },
     ],
     actName: "Code of Criminal Procedure, 1973",
@@ -4410,6 +4614,1287 @@ const LAW_DATABASE: LawDB = {
       {
         ref: "Constitution Article 22",
         description: "Right to be informed of grounds of arrest",
+      },
+    ],
+    overridingEffect:
+      "BNSS 2023 Section 47 replaces this provision. Constitution Article 22(1) guarantees this right as a fundamental right. Violation makes arrest illegal and gives right to habeas corpus under Article 32 / 226. SC/ST Act, NDPS Act arrests must also comply.",
+    overridingEffectBengali:
+      "BNSS ২০২৩ ধারা ৪৭ এই বিধান প্রতিস্থাপন করে। সংবিধানের ২২(১) ধারা এই অধিকারকে মৌলিক অধিকার হিসেবে নিশ্চিত করে। লঙ্ঘনে গ্রেফতার অবৈধ হয় এবং ৩২/২২৬ ধারার অধীনে হেবিয়াস কর্পাসের অধিকার দেয়।",
+    crossLaws: [
+      {
+        ref: "Constitution Article 22(1)",
+        description: "Fundamental right to be informed of grounds of arrest",
+      },
+      {
+        ref: "BNSS 2023 Section 47",
+        description: "Replaces CrPC Section 50 for new offences",
+      },
+      {
+        ref: "CrPC Section 41B",
+        description: "Procedure of arrest — must include informing grounds",
+      },
+    ],
+    actName: "Code of Criminal Procedure, 1973",
+  },
+  crpc_51: {
+    act: "Code of Criminal Procedure, 1973",
+    section: "Section 51",
+    title: "Search of Arrested Person",
+    titleBengali: "গ্রেফতারকৃত ব্যক্তির তল্লাশি",
+    summary:
+      "Section 51 authorises police to search an arrested person and seize any articles found on them. All seized articles must be safely kept and returned upon release except items used in the offence.",
+    summaryBengali:
+      "ধারা ৫১ পুলিশকে গ্রেফতারকৃত ব্যক্তিকে তল্লাশি করার এবং তার কাছে পাওয়া জিনিসপত্র জব্দ করার অধিকার দেয়। জব্দকৃত জিনিসপত্র নিরাপদে রাখতে হবে এবং মুক্তির সময় ফিরিয়ে দিতে হবে, অপরাধে ব্যবহৃত জিনিস ছাড়া।",
+    keyPoints: [
+      "Police can search person arrested without warrant",
+      "All articles found must be inventoried and kept safely",
+      "Articles returned to arrested person upon release",
+      "Weapons or offensive articles may be retained",
+      "Female arrested person must be searched by a female officer",
+    ],
+    keyPointsBengali: [
+      "পরোয়ানা ছাড়া গ্রেফতারকৃত ব্যক্তিকে তল্লাশি করা যাবে",
+      "পাওয়া সমস্ত জিনিসের তালিকা তৈরি করে নিরাপদে রাখতে হবে",
+      "মুক্তির সময় গ্রেফতারকৃতকে জিনিস ফিরিয়ে দিতে হবে",
+      "অস্ত্র বা আপত্তিকর জিনিস রাখা যাবে",
+      "মহিলা গ্রেফতারকৃতকে মহিলা অফিসার দ্বারা তল্লাশি করতে হবে",
+    ],
+    exceptions: [
+      "Weapons used in offence cannot be returned",
+      "Articles that are evidence of the crime are retained for trial",
+    ],
+    exceptionsBengali: [
+      "অপরাধে ব্যবহৃত অস্ত্র ফিরিয়ে দেওয়া যাবে না",
+      "অপরাধের প্রমাণ হিসেবে ব্যবহৃত জিনিস বিচারের জন্য রাখা যাবে",
+    ],
+    examples: [
+      "If a person is arrested for robbery, police can search him and seize the stolen goods and any weapon found",
+      "A lady constable must conduct search of a female accused",
+    ],
+    examplesBengali: [
+      "ডাকাতির জন্য গ্রেফতার হলে পুলিশ তল্লাশি করে চোরাই মাল ও অস্ত্র জব্দ করতে পারে",
+      "মহিলা আসামির তল্লাশি মহিলা কনস্টেবলকেই করতে হবে",
+    ],
+    landmarkCases: [
+      {
+        name: "State of Maharashtra v. Christian Community Welfare Council (2003)",
+        significance:
+          "Supreme Court held that strip-search of women violates dignity; female officer must conduct search",
+      },
+      {
+        name: "D.K. Basu v. State of WB (1997)",
+        significance:
+          "Guidelines include proper handling and inventory of articles seized during arrest",
+      },
+    ],
+    relatedSections: [
+      {
+        ref: "CrPC Section 52",
+        description: "Power to seize offensive weapons",
+      },
+      { ref: "CrPC Section 54", description: "Examination by medical officer" },
+      {
+        ref: "CrPC Section 100",
+        description: "Persons in charge of closed places to allow search",
+      },
+    ],
+    overridingEffect:
+      "BNSS 2023 Section 48 replaces this section. Constitution Article 21 guarantees right to privacy and dignity, limiting how search is conducted. Section 51 must be read with Section 100 CrPC (search of premises). Supreme Court guidelines in D.K. Basu apply to all custody-related procedures including search.",
+    overridingEffectBengali:
+      "BNSS ২০২৩ ধারা ৪৮ এই ধারা প্রতিস্থাপন করে। সংবিধানের ২১ ধারা গোপনীয়তা এবং মর্যাদার অধিকার নিশ্চিত করে, তল্লাশি কিভাবে পরিচালনা করা হয় তা সীমিত করে। ধারা ৫১ CrPC ধারা ১০০-এর সাথে পড়তে হবে।",
+    crossLaws: [
+      {
+        ref: "BNSS 2023 Section 48",
+        description: "Replaces CrPC Section 51 — search of arrested person",
+      },
+      {
+        ref: "Constitution Article 21",
+        description: "Right to privacy limits manner of search",
+      },
+      {
+        ref: "CrPC Section 100",
+        description: "Search of closed premises — related search power",
+      },
+    ],
+    actName: "Code of Criminal Procedure, 1973",
+  },
+
+  crpc_52: {
+    act: "Code of Criminal Procedure, 1973",
+    section: "Section 52",
+    title: "Power to Seize Offensive Weapons",
+    titleBengali: "আক্রমণাত্মক অস্ত্র জব্দ করার ক্ষমতা",
+    summary:
+      "Section 52 empowers the officer making an arrest to take from the arrested person any offensive weapons that they have and deliver all weapons so seized to the court or officer before which or whom the arrested person is produced.",
+    summaryBengali:
+      "ধারা ৫২ গ্রেফতারকারী অফিসারকে গ্রেফতারকৃত ব্যক্তির কাছ থেকে যেকোনো আক্রমণাত্মক অস্ত্র নিয়ে নেওয়ার ক্ষমতা দেয় এবং সেই অস্ত্রগুলি যে আদালতে বা যে অফিসারের কাছে গ্রেফতারকৃত ব্যক্তিকে হাজির করা হবে সেখানে জমা দিতে হবে।",
+    keyPoints: [
+      "Arresting officer can seize all offensive weapons from arrested person",
+      "Weapons must be delivered to the court or magistrate",
+      "This power is in addition to general search power under Section 51",
+      "Offensive weapons include firearms, knives, lathis if used offensively",
+    ],
+    keyPointsBengali: [
+      "গ্রেফতারকারী অফিসার গ্রেফতারকৃত ব্যক্তির কাছ থেকে সমস্ত আক্রমণাত্মক অস্ত্র জব্দ করতে পারেন",
+      "অস্ত্রগুলি আদালত বা ম্যাজিস্ট্রেটের কাছে জমা দিতে হবে",
+      "এই ক্ষমতা ধারা ৫১-এর সাধারণ তল্লাশি ক্ষমতার অতিরিক্ত",
+      "আক্রমণাত্মক অস্ত্রের মধ্যে রয়েছে আগ্নেয়াস্ত্র, ছুরি, লাঠি যদি আক্রমণাত্মকভাবে ব্যবহার করা হয়",
+    ],
+    exceptions: [
+      "Licensed weapons may be returned after trial unless used in offence",
+      "If acquitted, weapons may be returned to owner",
+    ],
+    exceptionsBengali: [
+      "লাইসেন্সপ্রাপ্ত অস্ত্র বিচারের পর ফিরিয়ে দেওয়া যেতে পারে যদি অপরাধে ব্যবহার না হয়",
+      "খালাস পেলে অস্ত্র মালিককে ফিরিয়ে দেওয়া যাবে",
+    ],
+    examples: [
+      "Person arrested for assault found carrying a knife — knife is seized under Section 52",
+      "A pistol found on an arrested murder accused is seized and produced before the Magistrate",
+    ],
+    examplesBengali: [
+      "মারপিটের জন্য গ্রেফতার ব্যক্তির কাছে ছুরি পাওয়া গেলে ধারা ৫২-এর অধীনে জব্দ করা হবে",
+      "খুনের আসামির কাছে পিস্তল পাওয়া গেলে তা জব্দ করে ম্যাজিস্ট্রেটের সামনে হাজির করতে হবে",
+    ],
+    landmarkCases: [
+      {
+        name: "Mst. Zubida v. State of Rajasthan (1968)",
+        significance:
+          "Weapons seized at time of arrest are admissible as evidence if properly documented under Section 52",
+      },
+    ],
+    relatedSections: [
+      {
+        ref: "CrPC Section 51",
+        description: "General search of arrested person",
+      },
+      {
+        ref: "CrPC Section 457",
+        description: "Procedure for disposal of property seized by police",
+      },
+    ],
+    overridingEffect:
+      "BNSS 2023 Section 49 replaces this provision. Arms Act 1959 governs licensing and seizure of weapons. IPC Section 399 / BNS (making preparation to commit dacoity) — possession of offensive weapons is an offence in itself under some contexts. NDPS Act also empowers seizure of contraband.",
+    overridingEffectBengali:
+      "BNSS ২০২৩ ধারা ৪৯ এই বিধান প্রতিস্থাপন করে। অস্ত্র আইন ১৯৫৯ অস্ত্রের লাইসেন্স ও জব্দ পরিচালনা করে। IPC ধারা ৩৯৯ / BNS (দস্যুতার প্রস্তুতি) — কিছু প্রেক্ষাপটে আক্রমণাত্মক অস্ত্রের দখল নিজেই একটি অপরাধ।",
+    crossLaws: [
+      {
+        ref: "BNSS 2023 Section 49",
+        description: "Replaces CrPC Section 52 for new offences",
+      },
+      {
+        ref: "Arms Act 1959",
+        description: "Licensing and seizure of firearms and weapons",
+      },
+      {
+        ref: "IPC Section 399 / BNS",
+        description:
+          "Making preparation to commit dacoity — weapon possession offence",
+      },
+    ],
+    actName: "Code of Criminal Procedure, 1973",
+  },
+
+  crpc_53: {
+    act: "Code of Criminal Procedure, 1973",
+    section: "Section 53",
+    title:
+      "Examination of Accused by Medical Practitioner at Request of Police Officer",
+    titleBengali: "পুলিশ অফিসারের অনুরোধে চিকিৎসক দ্বারা অভিযুক্তের পরীক্ষা",
+    summary:
+      "Section 53 empowers a police officer (not below sub-inspector rank) to request a medical practitioner to examine an arrested person when there are reasonable grounds to believe that examination will afford evidence of commission of an offence.",
+    summaryBengali:
+      "ধারা ৫৩ একজন পুলিশ অফিসারকে (সাব-ইন্সপেক্টরের নিচে নয়) একজন চিকিৎসকের কাছে অনুরোধ করার ক্ষমতা দেয় একজন গ্রেফতারকৃত ব্যক্তিকে পরীক্ষা করতে যখন যুক্তিসঙ্গত কারণ আছে যে পরীক্ষা অপরাধ সংঘটনের প্রমাণ দেবে।",
+    keyPoints: [
+      "Police officer (not below Sub-Inspector) can request medical examination of accused",
+      "Medical practitioner must be registered under applicable law",
+      "Examination includes blood, semen, swabs and other forensic samples",
+      "Medical report is used as evidence in trial",
+      "Accused cannot refuse medical examination ordered under this section",
+    ],
+    keyPointsBengali: [
+      "পুলিশ অফিসার (সাব-ইন্সপেক্টরের নিচে নয়) অভিযুক্তের চিকিৎসা পরীক্ষার অনুরোধ করতে পারেন",
+      "চিকিৎসককে প্রযোজ্য আইনের অধীনে নিবন্ধিত হতে হবে",
+      "পরীক্ষায় রক্ত, বীর্য, সোয়াব এবং অন্যান্য ফরেনসিক নমুনা অন্তর্ভুক্ত",
+      "চিকিৎসা প্রতিবেদন বিচারে প্রমাণ হিসেবে ব্যবহৃত হয়",
+      "অভিযুক্ত এই ধারার অধীনে আদেশকৃত চিকিৎসা পরীক্ষা প্রত্যাখ্যান করতে পারবেন না",
+    ],
+    exceptions: [
+      "Examination must be by a registered medical practitioner only",
+      "Cannot use force beyond necessary for examination",
+    ],
+    exceptionsBengali: [
+      "পরীক্ষা শুধুমাত্র নিবন্ধিত চিকিৎসক দ্বারা হতে হবে",
+      "পরীক্ষার জন্য প্রয়োজনীয়তার বাইরে জোর খাটানো যাবে না",
+    ],
+    examples: [
+      "In a drug trafficking case, police requests blood test to check for drug use",
+      "In assault case, medical examination of accused to check for injuries that support the fight theory",
+    ],
+    examplesBengali: [
+      "মাদক পাচারের মামলায় পুলিশ মাদক গ্রহণ পরীক্ষার জন্য রক্ত পরীক্ষার অনুরোধ করে",
+      "হামলার মামলায় অভিযুক্তের চিকিৎসা পরীক্ষা করে মারামারির তত্ত্ব সমর্থনকারী আঘাতের চিহ্ন খোঁজা হয়",
+    ],
+    landmarkCases: [
+      {
+        name: "State of UP v. Ram Babu Misra (1980)",
+        significance:
+          "SC held that specimen signatures of accused can be taken; medical examination is permissible without violating Article 20(3)",
+      },
+      {
+        name: "Selvi v. State of Karnataka (2010)",
+        significance:
+          "SC held that involuntary administration of narco-analysis violates Article 20(3) but medical examination under Section 53 is valid",
+      },
+    ],
+    relatedSections: [
+      {
+        ref: "CrPC Section 53A",
+        description: "Medical examination of rape accused",
+      },
+      {
+        ref: "CrPC Section 54",
+        description: "Medical examination of arrested person at his request",
+      },
+      {
+        ref: "Constitution Article 20(3)",
+        description: "Right against self-incrimination",
+      },
+    ],
+    overridingEffect:
+      "BNSS 2023 Section 51 replaces this section. Constitution Article 20(3) protects against self-incrimination but does NOT protect against medical examination (Selvi v. Karnataka 2010). IEA Section 45 / BSA (expert evidence) governs admissibility of medical reports as expert evidence.",
+    overridingEffectBengali:
+      "BNSS ২০২৩ ধারা ৫১ এই ধারা প্রতিস্থাপন করে। সংবিধানের ২০(৩) ধারা আত্ম-অপরাধের বিরুদ্ধে সুরক্ষা দেয় কিন্তু চিকিৎসা পরীক্ষার বিরুদ্ধে নয় (সেলভি বনাম কর্ণাটক ২০১০)। IEA ধারা ৪৫ বিশেষজ্ঞ সাক্ষ্য হিসেবে চিকিৎসা প্রতিবেদনের গ্রহণযোগ্যতা পরিচালনা করে।",
+    crossLaws: [
+      {
+        ref: "BNSS 2023 Section 51",
+        description: "Replaces CrPC Section 53 for new offences",
+      },
+      {
+        ref: "Constitution Article 20(3)",
+        description:
+          "Right against self-incrimination — does not cover medical examination",
+      },
+      {
+        ref: "Indian Evidence Act Section 45",
+        description:
+          "Expert opinion — medical report is expert evidence admissible in court",
+      },
+    ],
+    actName: "Code of Criminal Procedure, 1973",
+  },
+
+  crpc_54: {
+    act: "Code of Criminal Procedure, 1973",
+    section: "Section 54",
+    title: "Examination of Arrested Person by Medical Officer",
+    titleBengali: "চিকিৎসা অফিসার দ্বারা গ্রেফতারকৃত ব্যক্তির পরীক্ষা",
+    summary:
+      "Section 54 gives an arrested person the right to request medical examination by a medical officer to document any injuries received before or during arrest. This protects the arrested person from custodial torture claims.",
+    summaryBengali:
+      "ধারা ৫৪ একজন গ্রেফতারকৃত ব্যক্তিকে চিকিৎসা অফিসার দ্বারা চিকিৎসা পরীক্ষার অনুরোধ করার অধিকার দেয় যাতে গ্রেফতারের আগে বা সময়ে প্রাপ্ত কোনো আঘাত নথিভুক্ত করা যায়। এটি হেফাজতে নির্যাতনের দাবি থেকে গ্রেফতারকৃত ব্যক্তিকে রক্ষা করে।",
+    keyPoints: [
+      "Arrested person has right to be examined by a medical officer",
+      "Medical examination must be done by registered medical officer",
+      "Examination documents any injuries BEFORE custody — protects against false torture allegations",
+      "Also protects arrested person from actual torture in custody",
+      "Magistrate can order such examination if satisfied it is needed",
+    ],
+    keyPointsBengali: [
+      "গ্রেফতারকৃত ব্যক্তির চিকিৎসা অফিসার দ্বারা পরীক্ষার অধিকার আছে",
+      "নিবন্ধিত চিকিৎসা অফিসার দ্বারা পরীক্ষা করতে হবে",
+      "হেফাজতের আগের আঘাত নথিভুক্ত করে — মিথ্যা নির্যাতনের অভিযোগ থেকে রক্ষা করে",
+      "হেফাজতে প্রকৃত নির্যাতন থেকেও গ্রেফতারকৃতকে রক্ষা করে",
+      "ম্যাজিস্ট্রেট প্রয়োজন মনে করলে এই পরীক্ষার আদেশ দিতে পারেন",
+    ],
+    exceptions: [
+      "Request should be reasonable; frivolous requests can be denied",
+      "Examination is to document existing injuries, not to treat illness",
+    ],
+    exceptionsBengali: [
+      "অনুরোধ যুক্তিসঙ্গত হওয়া উচিত; অযৌক্তিক অনুরোধ প্রত্যাখ্যান করা যেতে পারে",
+      "পরীক্ষা বিদ্যমান আঘাত নথিভুক্ত করার জন্য, অসুস্থতার চিকিৎসার জন্য নয়",
+    ],
+    examples: [
+      "An accused who was in a fight before arrest requests medical examination to document pre-existing injuries",
+      "An arrested person claims police beat him; medical examination is done to verify injuries",
+    ],
+    examplesBengali: [
+      "গ্রেফতারের আগে মারামারিতে থাকা অভিযুক্ত পূর্ববর্তী আঘাত নথিভুক্ত করতে চিকিৎসা পরীক্ষার অনুরোধ করে",
+      "একজন গ্রেফতারকৃত ব্যক্তি দাবি করেন পুলিশ তাকে মেরেছে; আঘাত যাচাই করতে চিকিৎসা পরীক্ষা করা হয়",
+    ],
+    landmarkCases: [
+      {
+        name: "D.K. Basu v. State of WB (1997)",
+        significance:
+          "SC made medical examination on arrest mandatory as part of anti-custodial torture guidelines",
+      },
+      {
+        name: "Nilabati Behera v. State of Orissa (1993)",
+        significance:
+          "Custodial death case where medical evidence was crucial; reinforced importance of Section 54",
+      },
+    ],
+    relatedSections: [
+      {
+        ref: "CrPC Section 53",
+        description: "Medical examination at police's request",
+      },
+      {
+        ref: "CrPC Section 55A",
+        description: "Health and safety of arrested person",
+      },
+      {
+        ref: "Constitution Article 21",
+        description:
+          "Right to life and personal liberty includes right against custodial torture",
+      },
+    ],
+    overridingEffect:
+      "BNSS 2023 Section 52 replaces this provision. Constitution Article 21 provides right against custodial torture which is enforced through Section 54. UN Convention Against Torture (not ratified by India but SC follows its spirit) supports this section's purpose.",
+    overridingEffectBengali:
+      "BNSS ২০২৩ ধারা ৫২ এই বিধান প্রতিস্থাপন করে। সংবিধানের ২১ ধারা হেফাজতে নির্যাতনের বিরুদ্ধে অধিকার প্রদান করে যা ধারা ৫৪-এর মাধ্যমে প্রয়োগ করা হয়। জাতিসংঘের নির্যাতনের বিরুদ্ধে কনভেনশন (ভারত অনুসমর্থন করেনি কিন্তু SC এর মূল নীতি অনুসরণ করে) এই ধারার উদ্দেশ্য সমর্থন করে।",
+    crossLaws: [
+      {
+        ref: "BNSS 2023 Section 52",
+        description: "Replaces CrPC Section 54 for new offences",
+      },
+      {
+        ref: "Constitution Article 21",
+        description: "Right against custodial torture and inhuman treatment",
+      },
+      {
+        ref: "IPC Section 330 / BNS",
+        description:
+          "Voluntarily causing hurt to extort confession — custodial torture offence",
+      },
+    ],
+    actName: "Code of Criminal Procedure, 1973",
+  },
+
+  crpc_55: {
+    act: "Code of Criminal Procedure, 1973",
+    section: "Section 55",
+    title: "Procedure when Police Officer Deputes Subordinate to Arrest",
+    titleBengali: "পুলিশ অফিসার গ্রেফতারের জন্য অধীনস্থকে নিযুক্ত করার পদ্ধতি",
+    summary:
+      "Section 55 deals with the procedure when a police officer wishes to depute a subordinate officer to arrest a person without a warrant. The officer must give a written order specifying the person to be arrested and the offence or other cause for which arrest is to be made.",
+    summaryBengali:
+      "ধারা ৫৫ সেই পদ্ধতি নিয়ে আলোচনা করে যখন একজন পুলিশ অফিসার পরোয়ানা ছাড়া কাউকে গ্রেফতার করতে একজন অধীনস্থ অফিসারকে নিযুক্ত করতে চান। অফিসারকে গ্রেফতারযোগ্য ব্যক্তি এবং যে অপরাধ বা কারণে গ্রেফতার করা হবে তা উল্লেখ করে একটি লিখিত আদেশ দিতে হবে।",
+    keyPoints: [
+      "Senior police officer must give written order to subordinate for arrest",
+      "Written order must specify: (a) person to be arrested, (b) offence or cause",
+      "Subordinate officer must show order to person being arrested on demand",
+      "Protects accused from arbitrary arrest by lower-ranking officers",
+    ],
+    keyPointsBengali: [
+      "উর্ধ্বতন পুলিশ অফিসারকে গ্রেফতারের জন্য অধীনস্থকে লিখিত আদেশ দিতে হবে",
+      "লিখিত আদেশে উল্লেখ থাকতে হবে: (ক) গ্রেফতারযোগ্য ব্যক্তি, (খ) অপরাধ বা কারণ",
+      "অধীনস্থ অফিসারকে চাহিদা অনুযায়ী গ্রেফতারকৃত ব্যক্তিকে আদেশ দেখাতে হবে",
+      "নিম্নপদস্থ অফিসার দ্বারা স্বেচ্ছাচারী গ্রেফতার থেকে অভিযুক্তকে রক্ষা করে",
+    ],
+    exceptions: [
+      "Does not apply when subordinate officer independently has power to arrest",
+      "In hot pursuit or emergency, immediate arrest may precede formal order",
+    ],
+    exceptionsBengali: [
+      "প্রযোজ্য নয় যখন অধীনস্থ অফিসার স্বাধীনভাবে গ্রেফতারের ক্ষমতা রাখেন",
+      "তাৎক্ষণিক তাড়া বা জরুরি অবস্থায়, আনুষ্ঠানিক আদেশের আগেই তাৎক্ষণিক গ্রেফতার করা যেতে পারে",
+    ],
+    examples: [
+      "Inspector issues written order to constable to arrest accused for theft at specific address",
+      "Officer-in-Charge deputes Head Constable to arrest absconding accused with written specification",
+    ],
+    examplesBengali: [
+      "ইন্সপেক্টর নির্দিষ্ট ঠিকানায় চুরির অভিযুক্তকে গ্রেফতার করতে কনস্টেবলকে লিখিত আদেশ দেন",
+      "অফিসার-ইন-চার্জ পলাতক অভিযুক্তকে লিখিত বিবরণসহ গ্রেফতার করতে হেড কনস্টেবলকে নিযুক্ত করেন",
+    ],
+    landmarkCases: [
+      {
+        name: "Bhim Singh v. State of J&K (1985)",
+        significance:
+          "SC held that arrest and detention in violation of procedure under CrPC is actionable; proper delegation under Section 55 is mandatory",
+      },
+    ],
+    relatedSections: [
+      {
+        ref: "CrPC Section 41",
+        description: "When police may arrest without warrant",
+      },
+      {
+        ref: "CrPC Section 41B",
+        description: "Procedure of arrest and duties of arresting officer",
+      },
+    ],
+    overridingEffect:
+      "BNSS 2023 Section 53 replaces this section. Constitution Article 21 requires that delegated arrest also follows due procedure. If delegation order is not given, the subordinate's arrest may be challenged as unauthorised.",
+    overridingEffectBengali:
+      "BNSS ২০২৩ ধারা ৫৩ এই ধারা প্রতিস্থাপন করে। সংবিধানের ২১ ধারার প্রয়োজন যে প্রতিনিধিত্বমূলক গ্রেফতারও যথাযথ পদ্ধতি অনুসরণ করে। প্রতিনিধিত্বের আদেশ না দেওয়া হলে অধীনস্থের গ্রেফতারকে অননুমোদিত হিসেবে চ্যালেঞ্জ করা যাবে।",
+    crossLaws: [
+      {
+        ref: "BNSS 2023 Section 53",
+        description: "Replaces CrPC Section 55 — delegation of arrest power",
+      },
+      {
+        ref: "Constitution Article 21",
+        description: "Due process requirements apply to delegated arrests also",
+      },
+      {
+        ref: "CrPC Section 41B",
+        description:
+          "Duties of arresting officer apply to delegated arrests too",
+      },
+    ],
+    actName: "Code of Criminal Procedure, 1973",
+  },
+
+  crpc_56: {
+    act: "Code of Criminal Procedure, 1973",
+    section: "Section 56",
+    title: "Person Arrested to be Taken Before Magistrate or Officer in Charge",
+    titleBengali: "গ্রেফতারকৃতকে ম্যাজিস্ট্রেট বা ভারপ্রাপ্ত অফিসারের সামনে হাজির করা",
+    summary:
+      "Section 56 mandates that a police officer making an arrest must without unnecessary delay take or send the arrested person before a Magistrate having jurisdiction or before the officer in charge of a police station. This is a fundamental safeguard against illegal detention.",
+    summaryBengali:
+      "ধারা ৫৬ নির্দেশ দেয় যে একজন পুলিশ অফিসার যিনি গ্রেফতার করেছেন তিনি অহেতুক বিলম্ব ছাড়াই গ্রেফতারকৃতকে এখতিয়ারসম্পন্ন ম্যাজিস্ট্রেটের সামনে বা থানার ভারপ্রাপ্ত অফিসারের সামনে নিয়ে যাবেন বা পাঠাবেন। এটি অবৈধ আটকের বিরুদ্ধে একটি মৌলিক রক্ষাকবচ।",
+    keyPoints: [
+      "Police MUST take arrested person before Magistrate without unnecessary delay",
+      "Or before the Officer in Charge of the police station",
+      "Delay in producing before Magistrate makes detention illegal",
+      "This section is basis for the 24-hour rule in Section 57",
+      "Violation gives right to file habeas corpus petition",
+    ],
+    keyPointsBengali: [
+      "পুলিশ অবশ্যই গ্রেফতারকৃতকে অহেতুক বিলম্ব ছাড়াই ম্যাজিস্ট্রেটের সামনে নিয়ে যেতে হবে",
+      "বা থানার ভারপ্রাপ্ত অফিসারের সামনে",
+      "ম্যাজিস্ট্রেটের সামনে হাজির করতে বিলম্ব আটক অবৈধ করে দেয়",
+      "এই ধারা ধারা ৫৭-এর ২৪ ঘণ্টার নিয়মের ভিত্তি",
+      "লঙ্ঘনে হেবিয়াস কর্পাস আবেদন করার অধিকার দেয়",
+    ],
+    exceptions: [
+      "If Officer in Charge orders discharge, Magistrate production may not be required",
+      "Section applies to all arrests — with or without warrant",
+    ],
+    exceptionsBengali: [
+      "ভারপ্রাপ্ত অফিসার মুক্তির আদেশ দিলে ম্যাজিস্ট্রেটের সামনে হাজির নাও লাগতে পারে",
+      "ধারাটি পরোয়ানা সহ বা ছাড়া সকল গ্রেফতারে প্রযোজ্য",
+    ],
+    examples: [
+      "Person arrested at 10 PM for theft must be produced before Magistrate within 24 hours as per Section 57",
+      "Delay of 3 days in producing arrested person made the entire detention illegal — court ordered release",
+    ],
+    examplesBengali: [
+      "রাত ১০টায় চুরির জন্য গ্রেফতার ব্যক্তিকে ধারা ৫৭ অনুযায়ী ২৪ ঘণ্টার মধ্যে ম্যাজিস্ট্রেটের সামনে হাজির করতে হবে",
+      "গ্রেফতারকৃতকে ৩ দিন পর হাজির করা পুরো আটককে অবৈধ করে দিয়েছে — আদালত মুক্তির আদেশ দিয়েছে",
+    ],
+    landmarkCases: [
+      {
+        name: "Khatri v. State of Bihar (1981)",
+        significance:
+          "SC held that failure to produce arrested person before Magistrate within 24 hours violates fundamental rights",
+      },
+      {
+        name: "Joginder Kumar v. State of UP (1994)",
+        significance:
+          "Arrest must be followed by immediate production before Magistrate; police cannot detain indefinitely",
+      },
+    ],
+    relatedSections: [
+      {
+        ref: "CrPC Section 57",
+        description: "Person arrested not to be detained more than 24 hours",
+      },
+      {
+        ref: "Constitution Article 22(2)",
+        description: "Right to be produced before Magistrate within 24 hours",
+      },
+    ],
+    overridingEffect:
+      "BNSS 2023 Section 54 replaces this provision. Constitution Article 22(2) makes production before Magistrate within 24 hours a fundamental right. Violation gives right to habeas corpus under Articles 32 / 226. Special Acts like NSA (National Security Act) allow longer detention but require Magistrate communication.",
+    overridingEffectBengali:
+      "BNSS ২০২৩ ধারা ৫৪ এই বিধান প্রতিস্থাপন করে। সংবিধানের ২২(২) ধারা ২৪ ঘণ্টার মধ্যে ম্যাজিস্ট্রেটের সামনে হাজির করাকে মৌলিক অধিকার করে। লঙ্ঘনে ৩২/২২৬ ধারার অধীনে হেবিয়াস কর্পাসের অধিকার। NSA-এর মতো বিশেষ আইন দীর্ঘ আটকের অনুমতি দেয় কিন্তু ম্যাজিস্ট্রেটকে জানাতে হয়।",
+    crossLaws: [
+      {
+        ref: "BNSS 2023 Section 54",
+        description: "Replaces CrPC Section 56 for new offences",
+      },
+      {
+        ref: "Constitution Article 22(2)",
+        description:
+          "Fundamental right to be produced before Magistrate within 24 hours",
+      },
+      {
+        ref: "National Security Act 1980",
+        description:
+          "Allows preventive detention beyond 24 hours — special law overrides",
+      },
+    ],
+    actName: "Code of Criminal Procedure, 1973",
+  },
+
+  crpc_57: {
+    act: "Code of Criminal Procedure, 1973",
+    section: "Section 57",
+    title: "Person Arrested Not to be Detained More Than Twenty-Four Hours",
+    titleBengali: "গ্রেফতারকৃত ব্যক্তিকে চব্বিশ ঘণ্টার বেশি আটক না করা",
+    summary:
+      "Section 57 is a crucial fundamental rights protection. No police officer shall detain an arrested person in custody beyond 24 hours from the time of arrest without a special order from a Magistrate. This is a constitutional mandate flowing from Article 22(2).",
+    summaryBengali:
+      "ধারা ৫৭ একটি গুরুত্বপূর্ণ মৌলিক অধিকার সুরক্ষা। কোনো পুলিশ অফিসার গ্রেফতারকৃত ব্যক্তিকে গ্রেফতারের সময় থেকে ২৪ ঘণ্টার বেশি ম্যাজিস্ট্রেটের বিশেষ আদেশ ছাড়া হেফাজতে আটক রাখতে পারবেন না। এটি সংবিধানের ২২(২) ধারা থেকে প্রবাহিত একটি সাংবিধানিক আদেশ।",
+    keyPoints: [
+      "Maximum detention without Magistrate's order is 24 hours",
+      "Time of arrest to time of production before Magistrate must not exceed 24 hours",
+      "Travel time excluded from 24 hours",
+      "After 24 hours, Magistrate can grant remand (judicial or police custody)",
+      "Violation allows arrested person to demand immediate release",
+    ],
+    keyPointsBengali: [
+      "ম্যাজিস্ট্রেটের আদেশ ছাড়া সর্বোচ্চ আটক ২৪ ঘণ্টা",
+      "গ্রেফতারের সময় থেকে ম্যাজিস্ট্রেটের সামনে হাজির হওয়ার সময় পর্যন্ত ২৪ ঘণ্টার বেশি হওয়া যাবে না",
+      "যাত্রার সময় ২৪ ঘণ্টা থেকে বাদ দেওয়া হয়",
+      "২৪ ঘণ্টার পরে, ম্যাজিস্ট্রেট রিমান্ড মঞ্জুর করতে পারেন (বিচারিক বা পুলিশ হেফাজত)",
+      "লঙ্ঘনে গ্রেফতারকৃত ব্যক্তি তাৎক্ষণিক মুক্তি দাবি করতে পারেন",
+    ],
+    exceptions: [
+      "Travel time from place of arrest to court is excluded from 24 hours",
+      "After Magistrate's remand order, extended custody is lawful",
+      "Section 167 allows Magistrate to authorise up to 15 days police custody",
+    ],
+    exceptionsBengali: [
+      "গ্রেফতারের স্থান থেকে আদালত পর্যন্ত যাত্রার সময় ২৪ ঘণ্টা থেকে বাদ দেওয়া হয়",
+      "ম্যাজিস্ট্রেটের রিমান্ড আদেশের পরে, বর্ধিত হেফাজত বৈধ",
+      "ধারা ১৬৭ ম্যাজিস্ট্রেটকে সর্বোচ্চ ১৫ দিন পুলিশ হেফাজত অনুমোদন করার অধিকার দেয়",
+    ],
+    examples: [
+      "Person arrested at 6 AM must be produced before Magistrate by 6 AM next day at the latest",
+      "Police cannot keep a person in lock-up for 3 days without Magistrate's remand order — this is illegal detention",
+    ],
+    examplesBengali: [
+      "সকাল ৬টায় গ্রেফতার ব্যক্তিকে পরের দিন সকাল ৬টার মধ্যে ম্যাজিস্ট্রেটের সামনে হাজির করতে হবে",
+      "পুলিশ ম্যাজিস্ট্রেটের রিমান্ড আদেশ ছাড়া ৩ দিন কাউকে লক-আপে রাখতে পারে না — এটি অবৈধ আটক",
+    ],
+    landmarkCases: [
+      {
+        name: "Khatri v. State of Bihar (Bhagalpur Blinding Case) (1981)",
+        significance:
+          "SC held that production before Magistrate within 24 hours is mandatory constitutional right",
+      },
+      {
+        name: "Arnesh Kumar v. State of Bihar (2014)",
+        significance:
+          "SC issued guidelines: police must justify arrest necessity; automatic production within 24 hours mandatory",
+      },
+      {
+        name: "D.K. Basu v. State of WB (1997)",
+        significance:
+          "Part of comprehensive custody guidelines; 24-hour rule is non-negotiable",
+      },
+    ],
+    relatedSections: [
+      {
+        ref: "CrPC Section 56",
+        description: "Person arrested to be taken before Magistrate",
+      },
+      {
+        ref: "CrPC Section 167",
+        description: "Magistrate can grant remand beyond 24 hours",
+      },
+      {
+        ref: "Constitution Article 22(2)",
+        description:
+          "Constitutional right to be produced before Magistrate within 24 hours",
+      },
+    ],
+    overridingEffect:
+      "BNSS 2023 Section 58 replaces this section. Constitution Article 22(2) is the constitutional guarantee. NSA 1980, COFEPOSA, UAPA allow preventive detention beyond 24 hours — these special laws override Section 57 in their specific domains. Section 167 CrPC provides mechanism for extended custody after 24 hours.",
+    overridingEffectBengali:
+      "BNSS ২০২৩ ধারা ৫৮ এই ধারা প্রতিস্থাপন করে। সংবিধানের ২২(২) ধারা সাংবিধানিক গ্যারান্টি। NSA ১৯৮০, COFEPOSA, UAPA ২৪ ঘণ্টার বাইরে প্রতিরোধমূলক আটকের অনুমতি দেয় — এই বিশেষ আইনগুলি তাদের নির্দিষ্ট ক্ষেত্রে ধারা ৫৭-কে অতিক্রম করে।",
+    crossLaws: [
+      {
+        ref: "BNSS 2023 Section 58",
+        description: "Replaces CrPC Section 57 — 24-hour detention rule",
+      },
+      {
+        ref: "Constitution Article 22(2)",
+        description:
+          "Constitutional 24-hour rule — supreme over CrPC Section 57",
+      },
+      {
+        ref: "National Security Act 1980 / UAPA 1967",
+        description:
+          "Preventive detention laws that override 24-hour rule in special cases",
+      },
+      {
+        ref: "CrPC Section 167",
+        description: "Magistrate can authorise extended custody after 24 hours",
+      },
+    ],
+    actName: "Code of Criminal Procedure, 1973",
+  },
+
+  crpc_58: {
+    act: "Code of Criminal Procedure, 1973",
+    section: "Section 58",
+    title: "Police to Report Apprehensions",
+    titleBengali: "গ্রেফতার সম্পর্কে পুলিশের প্রতিবেদন",
+    summary:
+      "Section 58 requires officers in charge of police stations to report to the District Magistrate (or Sub-Divisional Magistrate) all cases of persons arrested without warrant within their jurisdiction, along with the reasons for such arrests.",
+    summaryBengali:
+      "ধারা ৫৮ থানার ভারপ্রাপ্ত অফিসারদের তাদের এখতিয়ারে পরোয়ানা ছাড়া গ্রেফতার করা সমস্ত ব্যক্তির ঘটনা জেলা ম্যাজিস্ট্রেট (বা সাব-ডিভিশনাল ম্যাজিস্ট্রেট)-কে এই গ্রেফতারের কারণসহ জানাতে বাধ্য করে।",
+    keyPoints: [
+      "Police must report all warrantless arrests to District Magistrate",
+      "Report must include reasons for arrest",
+      "Ensures executive oversight over police arrest powers",
+      "Helps District Magistrate monitor law and order situation",
+      "Non-compliance is an administrative violation",
+    ],
+    keyPointsBengali: [
+      "পুলিশকে সমস্ত পরোয়ানাবিহীন গ্রেফতার জেলা ম্যাজিস্ট্রেটকে জানাতে হবে",
+      "প্রতিবেদনে গ্রেফতারের কারণ অন্তর্ভুক্ত থাকতে হবে",
+      "পুলিশের গ্রেফতার ক্ষমতার উপর নির্বাহী তদারকি নিশ্চিত করে",
+      "জেলা ম্যাজিস্ট্রেটকে আইন ও শৃঙ্খলা পরিস্থিতি পর্যবেক্ষণ করতে সাহায্য করে",
+      "অননুপালন একটি প্রশাসনিক লঙ্ঘন",
+    ],
+    exceptions: [
+      "Reporting is administrative requirement; does not validate or invalidate arrest itself",
+      "Section applies to arrests within police station jurisdiction only",
+    ],
+    exceptionsBengali: [
+      "প্রতিবেদন প্রশাসনিক প্রয়োজনীয়তা; গ্রেফতার বৈধ বা অবৈধ করে না",
+      "ধারাটি শুধুমাত্র থানার এখতিয়ারের মধ্যে গ্রেফতারের ক্ষেত্রে প্রযোজ্য",
+    ],
+    examples: [
+      "Officer in Charge submits weekly report to DM listing all arrests made without warrant that week",
+      "DM reviews arrest reports to ensure police are not abusing arrest powers in his district",
+    ],
+    examplesBengali: [
+      "ভারপ্রাপ্ত অফিসার সেই সপ্তাহে পরোয়ানা ছাড়া করা সমস্ত গ্রেফতারের তালিকা সহ DM-কে সাপ্তাহিক প্রতিবেদন জমা দেন",
+      "DM তার জেলায় পুলিশ গ্রেফতার ক্ষমতার অপব্যবহার করছে কিনা তা নিশ্চিত করতে গ্রেফতার প্রতিবেদন পর্যালোচনা করেন",
+    ],
+    landmarkCases: [
+      {
+        name: "Joginder Kumar v. State of UP (1994)",
+        significance:
+          "SC emphasised need for accountability in arrests; Section 58 reporting is part of accountability framework",
+      },
+    ],
+    relatedSections: [
+      {
+        ref: "CrPC Section 41",
+        description: "When police may arrest without warrant",
+      },
+      { ref: "CrPC Section 57", description: "24-hour rule for detention" },
+    ],
+    overridingEffect:
+      "BNSS 2023 Section 59 replaces this reporting requirement. CrPC Section 57 and Constitution Article 22(2) work together with Section 58 to create accountability. District Magistrate's power under Section 107 / 151 CrPC to act on such reports reinforces executive oversight.",
+    overridingEffectBengali:
+      "BNSS ২০২৩ ধারা ৫৯ এই প্রতিবেদন প্রয়োজনীয়তা প্রতিস্থাপন করে। CrPC ধারা ৫৭ এবং সংবিধানের ২২(২) ধারা জবাবদিহিতা তৈরিতে ধারা ৫৮-এর সাথে মিলে কাজ করে।",
+    crossLaws: [
+      {
+        ref: "BNSS 2023 Section 59",
+        description: "Replaces CrPC Section 58 — police reporting requirement",
+      },
+      {
+        ref: "CrPC Section 107",
+        description: "DM can act on arrest reports to prevent breach of peace",
+      },
+      {
+        ref: "CrPC Section 57",
+        description: "24-hour rule — reports confirm compliance",
+      },
+    ],
+    actName: "Code of Criminal Procedure, 1973",
+  },
+
+  crpc_59: {
+    act: "Code of Criminal Procedure, 1973",
+    section: "Section 59",
+    title: "Discharge of Person Apprehended",
+    titleBengali: "আটককৃত ব্যক্তির মুক্তি",
+    summary:
+      "Section 59 provides that no person who has been arrested by a police officer shall be discharged except on his own bond, or on bail, or under the special order of a Magistrate. This prevents arbitrary or improper release by police.",
+    summaryBengali:
+      "ধারা ৫৯ বিধান করে যে পুলিশ অফিসার দ্বারা গ্রেফতার কোনো ব্যক্তিকে তার নিজের মুচলেকায়, জামিনে, বা ম্যাজিস্ট্রেটের বিশেষ আদেশ ছাড়া মুক্তি দেওয়া যাবে না। এটি পুলিশ কর্তৃক স্বেচ্ছাচারী বা অনুচিত মুক্তি রোধ করে।",
+    keyPoints: [
+      "Police cannot release arrested person without proper authority",
+      "Release can only be: (a) on own bond, (b) on bail, (c) by Magistrate's order",
+      "Prevents police from releasing suspect for bribe or favours",
+      "Ensures proper documentation of every release",
+    ],
+    keyPointsBengali: [
+      "পুলিশ যথাযথ কর্তৃত্ব ছাড়া গ্রেফতারকৃত ব্যক্তিকে মুক্তি দিতে পারে না",
+      "মুক্তি শুধুমাত্র হতে পারে: (ক) নিজের মুচলেকায়, (খ) জামিনে, (গ) ম্যাজিস্ট্রেটের আদেশে",
+      "পুলিশকে ঘুষ বা সুবিধার জন্য সন্দেহভাজনকে মুক্তি দেওয়া থেকে রোধ করে",
+      "প্রতিটি মুক্তির সঠিক নথিভুক্তি নিশ্চিত করে",
+    ],
+    exceptions: [
+      "If offence is bailable, Officer in Charge can grant bail and release",
+      "Special Magistrate orders can override this section in specific circumstances",
+    ],
+    exceptionsBengali: [
+      "জামিনযোগ্য অপরাধে ভারপ্রাপ্ত অফিসার জামিন মঞ্জুর করে মুক্তি দিতে পারেন",
+      "বিশেষ ম্যাজিস্ট্রেটের আদেশ নির্দিষ্ট পরিস্থিতিতে এই ধারাকে অতিক্রম করতে পারে",
+    ],
+    examples: [
+      "Police cannot release an accused person just because his influential relatives pressured them — requires proper Magistrate order",
+      "If bailable offence, Officer in Charge can release on bail without Magistrate order",
+    ],
+    examplesBengali: [
+      "পুলিশ শুধু প্রভাবশালী আত্মীয়দের চাপের কারণে অভিযুক্তকে মুক্তি দিতে পারে না — যথাযথ ম্যাজিস্ট্রেটের আদেশ প্রয়োজন",
+      "জামিনযোগ্য অপরাধে ভারপ্রাপ্ত অফিসার ম্যাজিস্ট্রেটের আদেশ ছাড়াই জামিনে মুক্তি দিতে পারেন",
+    ],
+    landmarkCases: [
+      {
+        name: "State of MP v. Sheetla Sahai (2009)",
+        significance:
+          "Improper release of accused without following Section 59 procedure amounts to dereliction of duty",
+      },
+    ],
+    relatedSections: [
+      { ref: "CrPC Section 436", description: "Bail in bailable offences" },
+      { ref: "CrPC Section 437", description: "Bail in non-bailable offences" },
+    ],
+    overridingEffect:
+      "BNSS 2023 Section 60 replaces this provision. Constitution Article 21 prohibits arbitrary release as well as arbitrary detention. IPC Section 223 / BNS (escape from custody) makes escape by accused an offence. Bail provisions under Sections 436-439 provide the lawful framework for release.",
+    overridingEffectBengali:
+      "BNSS ২০২৩ ধারা ৬০ এই বিধান প্রতিস্থাপন করে। সংবিধানের ২১ ধারা স্বেচ্ছাচারী মুক্তি এবং স্বেচ্ছাচারী আটক উভয়কেই নিষিদ্ধ করে। IPC ধারা ২২৩ / BNS হেফাজত থেকে পালানোকে অপরাধ করে।",
+    crossLaws: [
+      {
+        ref: "BNSS 2023 Section 60",
+        description: "Replaces CrPC Section 59 — discharge of arrested person",
+      },
+      {
+        ref: "IPC Section 223 / BNS",
+        description:
+          "Escape from confinement or custody — offence of the person released improperly",
+      },
+      {
+        ref: "CrPC Sections 436-439",
+        description: "Bail framework — lawful method for release from custody",
+      },
+    ],
+    actName: "Code of Criminal Procedure, 1973",
+  },
+
+  crpc_60: {
+    act: "Code of Criminal Procedure, 1973",
+    section: "Section 60",
+    title: "Power on Escape to Pursue and Re-take",
+    titleBengali: "পালানোর পর পুনরায় গ্রেফতারের ক্ষমতা",
+    summary:
+      "Section 60 empowers any police officer to pursue and re-arrest a person who has escaped from lawful custody. The person may be re-arrested without any further warrant in any place in India.",
+    summaryBengali:
+      "ধারা ৬০ যেকোনো পুলিশ অফিসারকে বৈধ হেফাজত থেকে পালিয়ে যাওয়া ব্যক্তিকে অনুসরণ করে পুনরায় গ্রেফতার করার ক্ষমতা দেয়। ব্যক্তিটিকে ভারতের যেকোনো স্থানে কোনো নতুন পরোয়ানা ছাড়াই পুনরায় গ্রেফতার করা যাবে।",
+    keyPoints: [
+      "Police can re-arrest escaped person anywhere in India without fresh warrant",
+      "Power applies when person escapes from lawful custody",
+      "Any police officer (not just arresting officer) can pursue and re-arrest",
+      "Private persons may also assist in re-arrest under Section 38",
+      "Hot pursuit doctrine applies — no geographical limitation within India",
+    ],
+    keyPointsBengali: [
+      "পুলিশ নতুন পরোয়ানা ছাড়াই পালানো ব্যক্তিকে ভারতের যেকোনো স্থানে পুনরায় গ্রেফতার করতে পারে",
+      "ক্ষমতাটি বৈধ হেফাজত থেকে পালানো ব্যক্তির ক্ষেত্রে প্রযোজ্য",
+      "যেকোনো পুলিশ অফিসার (শুধু গ্রেফতারকারী নয়) অনুসরণ ও পুনরায় গ্রেফতার করতে পারেন",
+      "ব্যক্তিগত ব্যক্তিরাও ধারা ৩৮-এর অধীনে পুনরায় গ্রেফতারে সহায়তা করতে পারেন",
+      "তাৎক্ষণিক তাড়া নীতি প্রযোজ্য — ভারতের মধ্যে কোনো ভৌগোলিক সীমাবদ্ধতা নেই",
+    ],
+    exceptions: [
+      "Cannot re-arrest person released legally by Magistrate or court",
+      "Power applies only to escape from lawful custody — if original arrest was illegal, Section 60 does not apply",
+    ],
+    exceptionsBengali: [
+      "ম্যাজিস্ট্রেট বা আদালত কর্তৃক আইনগতভাবে মুক্তিপ্রাপ্ত ব্যক্তিকে পুনরায় গ্রেফতার করা যাবে না",
+      "ক্ষমতাটি কেবল বৈধ হেফাজত থেকে পালানোর ক্ষেত্রে প্রযোজ্য — মূল গ্রেফতার অবৈধ হলে ধারা ৬০ প্রযোজ্য নয়",
+    ],
+    examples: [
+      "Accused escapes from police lock-up in Kolkata; officers from any state can re-arrest him in Mumbai without fresh warrant",
+      "Prisoner escapes during transit to court; any police officer can immediately re-arrest him",
+    ],
+    examplesBengali: [
+      "কলকাতার পুলিশ লক-আপ থেকে অভিযুক্ত পালিয়ে গেলে; যেকোনো রাজ্যের অফিসার তাকে মুম্বাইতে নতুন পরোয়ানা ছাড়াই পুনরায় গ্রেফতার করতে পারেন",
+      "আদালতে নেওয়ার পথে কয়েদি পালালে; যেকোনো পুলিশ অফিসার তাকে তাৎক্ষণিকভাবে পুনরায় গ্রেফতার করতে পারেন",
+    ],
+    landmarkCases: [
+      {
+        name: "State v. Somabhai Bachubhai Jadeja (1984)",
+        significance:
+          "Court held that Section 60 re-arrest power is wide and extends to all parts of India; fresh FIR not needed",
+      },
+    ],
+    relatedSections: [
+      {
+        ref: "CrPC Section 38",
+        description: "Aid to person executing warrant or making arrest",
+      },
+      {
+        ref: "CrPC Section 48",
+        description: "Pursuit of offenders into other jurisdictions",
+      },
+    ],
+    overridingEffect:
+      "BNSS 2023 Section 61 replaces this provision. Constitution Article 22 applies even to re-arrest situations. IPC Section 224 / BNS (resistance to taking of property by lawful authority or escape from custody) criminalises resistance to lawful re-arrest. Extradition Act applies if fugitive escapes to foreign country.",
+    overridingEffectBengali:
+      "BNSS ২০২৩ ধারা ৬১ এই বিধান প্রতিস্থাপন করে। সংবিধানের ২২ ধারা পুনরায় গ্রেফতারের পরিস্থিতিতেও প্রযোজ্য। IPC ধারা ২২৪ / BNS (বৈধ কর্তৃপক্ষের সম্পত্তি নেওয়ার প্রতিরোধ) বৈধ পুনরায় গ্রেফতারের প্রতিরোধকে অপরাধ করে।",
+    crossLaws: [
+      {
+        ref: "BNSS 2023 Section 61",
+        description:
+          "Replaces CrPC Section 60 — pursuit and re-arrest of escapee",
+      },
+      {
+        ref: "IPC Section 224 / BNS",
+        description: "Resistance to lawful re-arrest is itself an offence",
+      },
+      {
+        ref: "Extradition Act 1962",
+        description:
+          "If fugitive flees to foreign country — extradition process applies",
+      },
+    ],
+    actName: "Code of Criminal Procedure, 1973",
+  },
+
+  crpc_61: {
+    act: "Code of Criminal Procedure, 1973",
+    section: "Section 61",
+    title: "Form of Summons",
+    titleBengali: "সমন-এর রূপ",
+    summary:
+      "Section 61 lays down the requirements for a valid summons issued by a court. Every summons shall be in writing, in duplicate, signed by the presiding officer of the court or by an officer authorized by the High Court. It must bear the seal of the court.",
+    summaryBengali:
+      "ধারা ৬১ আদালত কর্তৃক জারি করা একটি বৈধ সমনের প্রয়োজনীয়তা নির্ধারণ করে। প্রতিটি সমন লিখিত, দুই প্রস্থে, আদালতের সভাপতিত্বকারী অফিসার বা হাইকোর্ট কর্তৃক অধিকৃত অফিসার দ্বারা স্বাক্ষরিত হবে। এতে আদালতের সিল থাকতে হবে।",
+    keyPoints: [
+      "Summons must be in writing",
+      "Must be in duplicate (two copies)",
+      "Must be signed by presiding officer or authorized officer",
+      "Must bear the seal of the court",
+      "Non-compliance with form makes summons invalid",
+      "Summons is the initial step to call a person before the court",
+    ],
+    keyPointsBengali: [
+      "সমন অবশ্যই লিখিত হতে হবে",
+      "দুই প্রস্থে হতে হবে (দুটি কপি)",
+      "সভাপতিত্বকারী অফিসার বা অধিকৃত অফিসার দ্বারা স্বাক্ষরিত হতে হবে",
+      "আদালতের সিল থাকতে হবে",
+      "রূপ মেনে না চলা সমনকে অবৈধ করে দেয়",
+      "সমন হল আদালতে কাউকে ডাকার প্রাথমিক পদক্ষেপ",
+    ],
+    exceptions: [
+      "Electronic summons now permitted under amended CrPC provisions",
+      "Defect in form alone does not necessarily vitiate summons if substantial compliance is shown",
+    ],
+    exceptionsBengali: [
+      "সংশোধিত CrPC বিধানের অধীনে এখন ইলেকট্রনিক সমনের অনুমতি আছে",
+      "শুধুমাত্র রূপে ত্রুটি সমনকে অকার্যকর করে না যদি উল্লেখযোগ্য সম্মতি দেখানো যায়",
+    ],
+    examples: [
+      "Court issues summons to witness asking them to appear on a specific date — must be in writing with court seal",
+      "A summons without court seal is challenged as invalid; court must re-issue with proper seal",
+    ],
+    examplesBengali: [
+      "আদালত সাক্ষীকে নির্দিষ্ট তারিখে হাজির হতে সমন জারি করে — আদালতের সিলসহ লিখিত হতে হবে",
+      "আদালতের সিলবিহীন একটি সমনকে অবৈধ বলে চ্যালেঞ্জ করা হয়; আদালতকে যথাযথ সিলসহ পুনরায় জারি করতে হবে",
+    ],
+    landmarkCases: [
+      {
+        name: "State of UP v. Hari Shanker (1996)",
+        significance:
+          "Defective summons which does not comply with Section 61 requirements cannot compel appearance; accused cannot be penalised for not responding to defective summons",
+      },
+    ],
+    relatedSections: [
+      { ref: "CrPC Section 62", description: "Summons — how served" },
+      { ref: "CrPC Section 63", description: "Service of summons on company" },
+      {
+        ref: "CrPC Section 64",
+        description: "Service when person summoned cannot be found",
+      },
+    ],
+    overridingEffect:
+      "BNSS 2023 Section 63 replaces this provision. IT Act Section 65B and electronic records — courts now recognise electronic summons. Constitution Article 21 due process applies to service of summons. Non-compliance with summons is punishable under CrPC Sections 174 / 175. Bailable warrant issued on failure to appear.",
+    overridingEffectBengali:
+      "BNSS ২০২৩ ধারা ৬৩ এই বিধান প্রতিস্থাপন করে। IT আইন ধারা ৬৫B এবং ইলেকট্রনিক রেকর্ড — আদালত এখন ইলেকট্রনিক সমন স্বীকার করে। সংবিধানের ২১ ধারার যথাযথ প্রক্রিয়া সমন প্রদানে প্রযোজ্য।",
+    crossLaws: [
+      {
+        ref: "BNSS 2023 Section 63",
+        description: "Replaces CrPC Section 61 — updated form of summons",
+      },
+      {
+        ref: "IT Act Section 65B",
+        description: "Electronic records — enables electronic summons",
+      },
+      {
+        ref: "CrPC Section 62",
+        description:
+          "How summons is served — follows Section 61 form requirements",
+      },
+    ],
+    actName: "Code of Criminal Procedure, 1973",
+  },
+
+  crpc_62: {
+    section: "Section 62",
+    title: "Service of Summons on Persons",
+    act: "CrPC",
+    summary:
+      "Prescribes the procedure for serving summons on a person — must be served personally by delivering or tendering a duplicate copy.",
+    sectionText:
+      "Every summons shall be served by a police officer, or subject to such rules as the State Government may make in this behalf, by an officer of the court issuing it or other public servant. The summons shall, if practicable, be served personally on the person summoned, by delivering or tendering to him one of the duplicates of the summons.",
+    explanation:
+      "Section 62 of CrPC mandates that summons must be served personally on the individual named in the summons. A duplicate copy of the summons is handed to the person. This ensures the person has actual notice of the court's direction to appear.",
+    keyPoints: [
+      "Summons must be served by police officer or court officer",
+      "Personal service is the primary mode — direct delivery to the person",
+      "A duplicate (copy) of the summons is handed over",
+      "Personal service ensures actual knowledge of the summons",
+    ],
+    bengaliExplanation:
+      "ধারা ৬২ — ব্যক্তিকে সমন প্রদান: এই ধারা অনুযায়ী, আদালতের সমন ব্যক্তিগতভাবে সংশ্লিষ্ট ব্যক্তিকে প্রদান করতে হবে। পুলিশ অফিসার বা আদালতের কর্মকর্তা সমনের একটি নকল কপি সরাসরি ঐ ব্যক্তির হাতে দেবেন। ব্যক্তিগত সেবা নিশ্চিত করে যে সংশ্লিষ্ট ব্যক্তি আদালতের নির্দেশ সম্পর্কে সত্যিকার অর্থে অবহিত।",
+    relatedSections: ["CrPC 61", "CrPC 63", "CrPC 64", "CrPC 65"],
+    overridingEffect:
+      "BNSS 2023 Section 69 replaces CrPC 62 — electronic service now permitted.",
+    crossLaws: [
+      "BNSS Section 69 (Service of Summons — 2023)",
+      "CrPC Section 61 (Form of Summons)",
+    ],
+    landmarkCases: [
+      {
+        name: "State of U.P. v. Ram Naresh",
+        citation: "AIR 1957 SC 411",
+        relevance:
+          "Personal service under Section 62 is essential for valid summons; non-compliance vitiates proceedings.",
+      },
+    ],
+    actName: "Code of Criminal Procedure, 1973",
+  },
+  crpc_63: {
+    section: "Section 63",
+    title: "Service of Summons on Corporate Bodies and Societies",
+    act: "CrPC",
+    summary:
+      "Deals with how summons are served on companies, corporations, local bodies, or societies — served on secretary, manager, or principal officer.",
+    sectionText:
+      "Service of a summons on a corporation may be effected by serving it on the secretary, local manager or other principal officer of the corporation, or by registered post addressed to the chief officer of the corporation in India.",
+    explanation:
+      "When a corporation or company is summoned to appear before a court, physical personal service is not possible. Section 63 provides that in such cases, the summons may be served on the company's secretary, local manager, or by registered post to the chief officer. This ensures companies cannot avoid legal proceedings by claiming inability to be personally served.",
+    keyPoints: [
+      "Applies to corporations, companies, local bodies, registered societies",
+      "Served on secretary, local manager, or principal officer",
+      "Alternatively, sent by registered post to chief officer",
+      "Ensures companies cannot evade court summons",
+    ],
+    bengaliExplanation:
+      "ধারা ৬৩ — কর্পোরেট সংস্থা ও সমিতিকে সমন প্রদান: কোনো কোম্পানি বা প্রতিষ্ঠানকে সমন দিতে হলে, তা সেই প্রতিষ্ঠানের সচিব, স্থানীয় ব্যবস্থাপক বা প্রধান কর্মকর্তার কাছে প্রদান করতে হবে। বিকল্পভাবে, রেজিস্টার্ড ডাকযোগেও সমন পাঠানো যায়। এতে কোম্পানি আদালতের নির্দেশ এড়াতে পারে না।",
+    relatedSections: ["CrPC 62", "CrPC 64", "CrPC 66"],
+    overridingEffect: "BNSS 2023 Section 70 is the corresponding provision.",
+    crossLaws: ["Companies Act 2013 (corporate liability)", "BNSS Section 70"],
+    landmarkCases: [
+      {
+        name: "Pepsi Foods Ltd. v. Special Judicial Magistrate",
+        citation: "(1998) 5 SCC 749",
+        relevance:
+          "Summons to company validly served on local manager — Section 63 upheld.",
+      },
+    ],
+    actName: "Code of Criminal Procedure, 1973",
+  },
+  crpc_64: {
+    section: "Section 64",
+    title: "Service when Person Summoned Cannot Be Found",
+    act: "CrPC",
+    summary:
+      "Allows substituted service — if the person summoned cannot be found, the summons may be left with an adult male member of the family.",
+    sectionText:
+      "Where the person summoned cannot by the exercise of due diligence be found, the summons may be served by leaving one of the duplicates for him with some adult male member of his family then residing with him; and the person with whom the summons is so left shall, if so required by the serving officer, sign a receipt therefor on the back of the other duplicate.",
+    explanation:
+      "Section 64 provides for substituted service. If despite due diligence the person cannot be located, the summons copy may be left with an adult male family member residing with the person. This ensures the legal process is not stalled merely because the person avoids service. The family member may be required to sign a receipt.",
+    keyPoints: [
+      "Applies when personal service is not possible after due diligence",
+      "Summons left with adult male family member at the residence",
+      "Family member may be required to sign receipt on duplicate",
+      "Substitute service is valid and binding",
+    ],
+    bengaliExplanation:
+      "ধারা ৬৪ — অনুপস্থিত ব্যক্তিকে সমন প্রদান: যদি যথাযথ চেষ্টা সত্ত্বেও সংশ্লিষ্ট ব্যক্তিকে খুঁজে না পাওয়া যায়, তাহলে সমনের একটি কপি তার পরিবারের প্রাপ্তবয়স্ক পুরুষ সদস্যের কাছে রেখে দেওয়া যাবে যিনি ঐ বাড়িতে থাকেন। ঐ পরিবারের সদস্যকে রসিদে স্বাক্ষর করতে বলা হতে পারে। এটি প্রতিস্থাপিত সেবা হিসেবে বৈধ।",
+    relatedSections: ["CrPC 62", "CrPC 63", "CrPC 65"],
+    overridingEffect: "BNSS 2023 Section 71 corresponds to CrPC 64.",
+    crossLaws: [
+      "CPC Order V Rule 15 (Civil substituted service)",
+      "BNSS Section 71",
+    ],
+    landmarkCases: [
+      {
+        name: "Bhagwan Prasad v. State of U.P.",
+        citation: "AIR 1962 All 285",
+        relevance:
+          "Substituted service under Section 64 valid when due diligence for personal service is shown.",
+      },
+    ],
+    actName: "Code of Criminal Procedure, 1973",
+  },
+  crpc_65: {
+    section: "Section 65",
+    title: "Procedure When Service Cannot Be Effected",
+    act: "CrPC",
+    summary:
+      "When summons cannot be served, the serving officer affixes a copy at the last known residence and reports to the court.",
+    sectionText:
+      "If service cannot by the exercise of due diligence be effected as required by this Chapter, the serving officer shall affix one of the duplicates of the summons to some conspicuous part of the house or homestead in which the person summoned ordinarily resides; and thereupon the court, after making such inquiries as it thinks fit, may either declare the service to have been effected or order fresh service in such manner as it considers proper.",
+    explanation:
+      "Section 65 is the last resort for service of summons. If personal service and substituted service both fail, the serving officer must affix the summons to a conspicuous part of the person's residence. The court then decides whether to treat this as valid service or order fresh service. This prevents indefinite delay in proceedings.",
+    keyPoints: [
+      "Last resort when personal and substituted service both fail",
+      "Summons affixed to conspicuous part of the person's residence",
+      "Court decides if this service is sufficient or orders fresh service",
+      "Prevents indefinite delays due to evasion",
+    ],
+    bengaliExplanation:
+      "ধারা ৬৫ — সমন প্রদান সম্ভব না হলে পদ্ধতি: যখন সমন কোনোভাবেই প্রদান করা সম্ভব হয় না, তখন সেবাকারী কর্মকর্তা সংশ্লিষ্ট ব্যক্তির বাসস্থানের বিশিষ্ট স্থানে সমনের কপি সেঁটে দেবেন। এরপর আদালত তদন্ত করে সিদ্ধান্ত নেবে — এই সেবা গ্রহণযোগ্য কিনা বা নতুন করে সমন পাঠানো দরকার কিনা।",
+    relatedSections: ["CrPC 62", "CrPC 64", "CrPC 66"],
+    overridingEffect: "BNSS 2023 Section 72 corresponds to CrPC 65.",
+    crossLaws: ["BNSS Section 72", "CPC Order V Rule 17 (Affixture)"],
+    landmarkCases: [
+      {
+        name: "Rajendra Singh v. State",
+        citation: "1975 CriLJ 1236",
+        relevance:
+          "Affixture of summons under Section 65 is valid service when personal service proved impossible.",
+      },
+    ],
+    actName: "Code of Criminal Procedure, 1973",
+  },
+  crpc_66: {
+    section: "Section 66",
+    title: "Service on Government Servants",
+    act: "CrPC",
+    summary:
+      "Provides special procedure for serving summons on government servants — sent through the head of the office.",
+    sectionText:
+      "Where the person summoned is in the active service of the Government, the court issuing the summons shall ordinarily send it in duplicate to the head of the office in which such person is employed; and such head shall thereupon cause the summons to be served in the manner provided by Section 62, and shall return it to the court under his signature with the endorsement required by that section.",
+    explanation:
+      "Section 66 creates a special channel for serving summons on government employees. Instead of direct service, the court sends summons to the head of the office (like a department head or superior officer). That officer then serves the summons as per Section 62 and returns the served copy to the court. This respects official hierarchy and ensures proper record-keeping.",
+    keyPoints: [
+      "Applies specifically to government servants in active service",
+      "Summons sent to head of the office in duplicate",
+      "Head of office causes service as per Section 62",
+      "Endorsed copy returned to court",
+    ],
+    bengaliExplanation:
+      "ধারা ৬৬ — সরকারি কর্মচারীদের ক্ষেত্রে সমন প্রদান: সরকারি চাকরিরতদের ক্ষেত্রে আদালত সাধারণত সমন সরাসরি না পাঠিয়ে সংশ্লিষ্ট অফিসের প্রধানের কাছে পাঠায়। অফিস প্রধান তখন ৬২ ধারা মোতাবেক সমন প্রদান করেন এবং আদালতে ফেরত পাঠান। সরকারি সেবায় শৃঙ্খলা বজায় রাখতে এই বিশেষ ব্যবস্থা।",
+    relatedSections: ["CrPC 62", "CrPC 67", "CrPC 68"],
+    overridingEffect: "BNSS 2023 Section 73 corresponds to CrPC 66.",
+    crossLaws: ["BNSS Section 73", "Government Servants Conduct Rules"],
+    landmarkCases: [
+      {
+        name: "State v. Raghavendra Prasad",
+        citation: "1971 CriLJ 521",
+        relevance:
+          "Service on government servant through office head is valid under Section 66.",
+      },
+    ],
+    actName: "Code of Criminal Procedure, 1973",
+  },
+  crpc_67: {
+    section: "Section 67",
+    title: "Service of Summons Outside Local Jurisdiction",
+    act: "CrPC",
+    summary:
+      "When the person to be summoned lives outside the court's local jurisdiction, the court sends the summons to the court having jurisdiction there.",
+    sectionText:
+      "When a court desires that a summons issued by it shall be served at any place outside its local jurisdiction, it shall ordinarily send such summons in duplicate to a Magistrate within whose local jurisdiction the person summoned resides, to be there served.",
+    explanation:
+      "Section 67 deals with inter-jurisdictional service of summons. If a person lives in another district or area outside the issuing court's jurisdiction, the summons cannot be directly served there. The issuing court sends duplicate summons to the Magistrate of the area where the person resides, who then causes it to be served locally. This maintains proper legal authority for service.",
+    keyPoints: [
+      "Applies when the summoned person lives outside court's jurisdiction",
+      "Summons sent to Magistrate of the area where person resides",
+      "That Magistrate causes local service of the summons",
+      "Ensures legality of cross-jurisdictional service",
+    ],
+    bengaliExplanation:
+      "ধারা ৬৭ — স্থানীয় এখতিয়ারের বাইরে সমন প্রদান: যদি সমনভোগী ব্যক্তি আদালতের এখতিয়ারের বাইরে থাকেন, তাহলে আদালত সেই ব্যক্তির বাসস্থানের ম্যাজিস্ট্রেটের কাছে সমনের কপি পাঠায়। সেই ম্যাজিস্ট্রেট তখন স্থানীয়ভাবে সমন প্রদান করেন। এইভাবে দেশের যেকোনো প্রান্তে থাকা ব্যক্তিকেও আইনি প্রক্রিয়ার অধীনে আনা যায়।",
+    relatedSections: ["CrPC 62", "CrPC 66", "CrPC 68"],
+    overridingEffect: "BNSS 2023 Section 74 corresponds to CrPC 67.",
+    crossLaws: [
+      "BNSS Section 74",
+      "CPC Order V Rule 21 (Service outside local limits)",
+    ],
+    landmarkCases: [
+      {
+        name: "Madan Lal v. State of Rajasthan",
+        citation: "1977 CriLJ 422",
+        relevance:
+          "Service through Magistrate of another area under Section 67 is valid.",
+      },
+    ],
+    actName: "Code of Criminal Procedure, 1973",
+  },
+  crpc_68: {
+    section: "Section 68",
+    title:
+      "Proof of Service in Such Cases and When Serving Officer Not Present",
+    act: "CrPC",
+    summary:
+      "Specifies how proof of service is established when the serving officer cannot appear in court — through affidavit or endorsement.",
+    sectionText:
+      "When a summons issued by a court is served outside its local jurisdiction, and in any case where the officer who has served a summons is not present at the hearing of the case, an affidavit, purporting to be made by the officer before whom such service was effected, or a statement in writing, purporting to be made by the head of the office referred to in Section 66, shall be admissible in evidence, and the statements made therein shall be deemed to be correct unless and until the contrary is proved.",
+    explanation:
+      "Section 68 deals with evidentiary proof of service when the serving officer is unavailable to personally testify in court. An affidavit from the officer who served the summons, or a written statement from the head of office (in case of government servants), is admissible as proof of service. These statements are presumed correct unless disproved.",
+    keyPoints: [
+      "Applies when serving officer cannot appear in court",
+      "Affidavit by serving officer is admissible as proof of service",
+      "Written statement by head of office also accepted",
+      "Statements presumed correct unless contrary is proved",
+    ],
+    bengaliExplanation:
+      "ধারা ৬৮ — সমন প্রদানের প্রমাণ: যখন সমন প্রদানকারী অফিসার আদালতে উপস্থিত থাকতে পারেন না, তখন তার শপথনামা বা লিখিত বিবৃতি আদালতে প্রমাণ হিসেবে গ্রহণযোগ্য। এই বিবৃতিগুলো সঠিক বলে ধরে নেওয়া হবে যতক্ষণ না বিপরীত প্রমাণিত হয়। এটি আদালতের সময় বাঁচায় এবং প্রক্রিয়াকে সহজ করে।",
+    relatedSections: ["CrPC 62", "CrPC 66", "CrPC 67"],
+    overridingEffect: "BNSS 2023 Section 75 corresponds to CrPC 68.",
+    crossLaws: [
+      "Indian Evidence Act (Admissibility of documents)",
+      "BNSS Section 75",
+    ],
+    landmarkCases: [
+      {
+        name: "Ram Kishan v. State",
+        citation: "1980 CriLJ 741",
+        relevance:
+          "Affidavit proof of service under Section 68 accepted as valid evidence.",
+      },
+    ],
+    actName: "Code of Criminal Procedure, 1973",
+  },
+  crpc_69: {
+    section: "Section 69",
+    title: "Service of Summons on Witnesses",
+    act: "CrPC",
+    summary:
+      "Allows service of summons on a witness by registered post when the court deems it appropriate, instead of personal service.",
+    sectionText:
+      "Notwithstanding anything contained in the preceding sections of this Chapter, a court issuing a summons to a witness may, in addition to and simultaneously with the issue of such summons, direct a copy of the summons to be served by registered post addressed to the witness at the place where he ordinarily resides or carries on business or personally works for gain.",
+    explanation:
+      "Section 69 provides an additional and simultaneous method of serving witnesses — by registered post. This is in addition to personal service, not a replacement. If the witness resides far away or cannot be easily personally served, registered post service ensures timely notice. Delivery of the registered post is treated as valid service.",
+    keyPoints: [
+      "Applies specifically to witnesses (not accused)",
+      "Service by registered post — additional and simultaneous with personal service",
+      "Sent to place of ordinary residence, business, or work",
+      "Expedites proceedings involving outstation witnesses",
+    ],
+    bengaliExplanation:
+      "ধারা ৬৯ — সাক্ষীকে সমন প্রদান: সাক্ষীদের ক্ষেত্রে আদালত রেজিস্টার্ড ডাকযোগে সমন পাঠাতে পারে — এটি ব্যক্তিগত সমনের পাশাপাশি একই সাথে করা যায়। সাক্ষী যেখানে সাধারণত থাকেন বা কাজ করেন সেই ঠিকানায় পাঠানো হয়। এটি দূরবর্তী সাক্ষীদের দ্রুত অবহিত করতে সাহায্য করে।",
+    relatedSections: ["CrPC 62", "CrPC 64", "CrPC 68"],
+    overridingEffect: "BNSS 2023 Section 76 corresponds to CrPC 69.",
+    crossLaws: ["BNSS Section 76", "Indian Post Office Act (Registered Post)"],
+    landmarkCases: [
+      {
+        name: "Suresh Kumar v. State of Haryana",
+        citation: "1994 CriLJ 2345",
+        relevance:
+          "Registered post service on witness under Section 69 is valid and admissible.",
+      },
+    ],
+    actName: "Code of Criminal Procedure, 1973",
+  },
+  crpc_70: {
+    section: "Section 70",
+    title: "Form of Warrant of Arrest and Duration",
+    act: "CrPC",
+    summary:
+      "Prescribes the form of warrant of arrest and declares that warrants remain in force until executed or cancelled.",
+    sectionText:
+      "Every warrant of arrest issued by a court under this Code shall be in writing, signed by the presiding officer of such court and shall bear the seal of the court. Every such warrant shall remain in force until it is cancelled by the court which issued it, or until it is executed.",
+    explanation:
+      "Section 70 governs the form and duration of arrest warrants. A warrant must be in writing, signed by the presiding judge/magistrate, and bear the court's seal. Crucially, a warrant does not expire after a fixed time — it remains valid and in force until it is either executed (person arrested) or cancelled by the court. This means outstanding warrants can be enforced years later.",
+    keyPoints: [
+      "Warrant must be in writing, signed by presiding officer, with court seal",
+      "Warrant remains valid until executed (arrest made) or cancelled by court",
+      "No automatic expiry — outstanding warrants can be enforced anytime",
+      "Cancellation must be by the same court that issued it",
+    ],
+    bengaliExplanation:
+      "ধারা ৭০ — গ্রেফতারি পরোয়ানার ফর্ম ও মেয়াদ: গ্রেফতারি পরোয়ানা অবশ্যই লিখিত হতে হবে, বিচারকের স্বাক্ষর ও আদালতের সিল থাকতে হবে। সবচেয়ে গুরুত্বপূর্ণ — পরোয়ানা কোনো নির্দিষ্ট সময়ের পর মেয়াদোত্তীর্ণ হয় না। যতক্ষণ না গ্রেফতার করা হয় বা আদালত বাতিল করে, পরোয়ানা বলবৎ থাকে। তাই বছরের পর বছর পুরানো পরোয়ানাও কার্যকর হতে পারে।",
+    relatedSections: ["CrPC 71", "CrPC 72", "CrPC 73", "CrPC 74"],
+    overridingEffect: "BNSS 2023 Section 77 corresponds to CrPC 70.",
+    crossLaws: [
+      "BNSS Section 77",
+      "CrPC Section 73 (Warrant to any person)",
+      "CrPC Section 74 (Warrant to land-holder etc.)",
+    ],
+    landmarkCases: [
+      {
+        name: "State of U.P. v. Deoman Upadhyaya",
+        citation: "AIR 1960 SC 1125",
+        relevance:
+          "Warrant does not expire with time — remains enforceable until cancelled or executed.",
+      },
+    ],
+    actName: "Code of Criminal Procedure, 1973",
+  },
+  crpc_71: {
+    section: "Section 71",
+    title: "Power to Direct Security to Be Taken",
+    act: "CrPC",
+    summary:
+      "Empowers the court to direct that a person arrested under a warrant be released on security bond (bail) instead of being held in custody.",
+    sectionText:
+      "Any court issuing a warrant for the arrest of any person may in its discretion direct by endorsement on the warrant that, if such person executes a bond with sufficient sureties for his attendance before the court at a specified time and thereafter until otherwise directed by the court, the officer to whom the warrant is directed shall take such security and shall release such person from custody.",
+    explanation:
+      "Section 71 allows courts to include a bail directive on the arrest warrant itself. When issuing a warrant, the court may endorse it stating that if the accused furnishes a security bond with sureties, the arresting officer can release them without bringing them to custody. This avoids unnecessary detention for less serious offences and saves time. The release is conditional — the person must appear in court as directed.",
+    keyPoints: [
+      "Court may endorse arrest warrant with bail/security directive",
+      "Arresting officer can release the person if bond with sureties is furnished",
+      "Avoids unnecessary custody for bailable-type situations",
+      "Person must appear in court at specified time as per bond",
+    ],
+    bengaliExplanation:
+      "ধারা ৭১ — জামানত নেওয়ার ক্ষমতা: আদালত গ্রেফতারি পরোয়ানায় এন্ডোর্সমেন্ট দিতে পারে যে, যদি অভিযুক্ত যথেষ্ট জামিনদার সহ মুচলেকা দেন তাহলে গ্রেফতারকারী অফিসার তাকে ছেড়ে দিতে পারবেন। এই ব্যবস্থা অপ্রয়োজনীয় কারাবাস এড়ায় এবং হাজিরার শর্তে ব্যক্তিকে মুক্তি দেয়। অভিযুক্তকে নির্ধারিত সময়ে আদালতে হাজির হতে হবে।",
+    relatedSections: ["CrPC 70", "CrPC 72", "CrPC 436", "CrPC 437"],
+    overridingEffect: "BNSS 2023 Section 78 corresponds to CrPC 71.",
+    crossLaws: [
+      "BNSS Section 78",
+      "CrPC Section 436 (Bail in bailable offences)",
+      "CrPC Section 437 (Bail in non-bailable offences)",
+    ],
+    landmarkCases: [
+      {
+        name: "Hussainara Khatoon v. State of Bihar",
+        citation: "AIR 1979 SC 1360",
+        relevance:
+          "Endorsed warrants with bail directives reduce unnecessary incarceration — upheld as constitutionally sound.",
+      },
+    ],
+    actName: "Code of Criminal Procedure, 1973",
+  },
+  crpc_72: {
+    section: "Section 72",
+    title: "Warrants to Whom Directed",
+    act: "CrPC",
+    summary:
+      "Specifies to whom a warrant of arrest may be directed — primarily to police officers, and in certain cases to any person.",
+    sectionText:
+      "A warrant of arrest shall ordinarily be directed to one or more police officers; but the court issuing such a warrant may, if its immediate execution is necessary and no police officer is immediately available, direct it to any other person or persons, and such person or persons shall execute the same.",
+    explanation:
+      "Section 72 deals with who can execute an arrest warrant. Normally, warrants are directed to police officers who are responsible for making the arrest. However, in urgent situations where no police officer is immediately available, the court has the power to direct the warrant to any person (a civilian). That person then has the legal authority and obligation to execute the warrant. This provision ensures no one can escape arrest simply because police are unavailable at that moment.",
+    keyPoints: [
+      "Warrants ordinarily directed to police officers",
+      "In urgent cases, court may direct warrant to any person if no police available",
+      "Any person so directed is legally bound to execute the warrant",
+      "Ensures warrants are not defeated by absence of police",
+    ],
+    bengaliExplanation:
+      "ধারা ৭২ — পরোয়ানা কার কাছে পাঠানো হয়: সাধারণত গ্রেফতারি পরোয়ানা পুলিশ অফিসারের কাছে পাঠানো হয়। কিন্তু জরুরি পরিস্থিতিতে যদি কোনো পুলিশ অফিসার তাৎক্ষণিকভাবে পাওয়া না যায়, তাহলে আদালত যেকোনো ব্যক্তিকে পরোয়ানা কার্যকর করার নির্দেশ দিতে পারে। সেই ব্যক্তি তখন আইনগতভাবে গ্রেফতার করার ক্ষমতাসম্পন্ন হন। এটি নিশ্চিত করে যে পুলিশের অনুপস্থিতিতেও পরোয়ানা ব্যর্থ না হয়।",
+    relatedSections: ["CrPC 70", "CrPC 71", "CrPC 73", "CrPC 74"],
+    overridingEffect: "BNSS 2023 Section 79 corresponds to CrPC 72.",
+    crossLaws: [
+      "BNSS Section 79",
+      "CrPC Section 73 (Warrant to any person for arrest of escaped prisoner)",
+    ],
+    landmarkCases: [
+      {
+        name: "Jogendra Kumar v. State of U.P.",
+        citation: "(1994) 4 SCC 260",
+        relevance:
+          "Warrants must be specific in direction; civilian execution permitted only in genuine emergencies.",
       },
     ],
     actName: "Code of Criminal Procedure, 1973",
@@ -4810,6 +6295,91 @@ const KEY_ALIASES: Record<string, string> = {
   "grounds of arrest": "crpc_50",
   "inform grounds of arrest": "crpc_50",
   "right to know arrest reason": "crpc_50",
+  "crpc 51": "crpc_51",
+  crpc51: "crpc_51",
+  "search arrested person": "crpc_51",
+  "search of arrested": "crpc_51",
+  "crpc 52": "crpc_52",
+  crpc52: "crpc_52",
+  "seize offensive weapons": "crpc_52",
+  "offensive weapons arrest": "crpc_52",
+  "crpc 53": "crpc_53",
+  crpc53: "crpc_53",
+  "medical examination accused": "crpc_53",
+  "police medical exam accused": "crpc_53",
+  "crpc 54": "crpc_54",
+  crpc54: "crpc_54",
+  "medical examination arrested": "crpc_54",
+  "arrested person medical": "crpc_54",
+  "crpc 55": "crpc_55",
+  crpc55: "crpc_55",
+  "depute subordinate arrest": "crpc_55",
+  "crpc 56": "crpc_56",
+  crpc56: "crpc_56",
+  "produce before magistrate": "crpc_56",
+  "taken before magistrate": "crpc_56",
+  "crpc 57": "crpc_57",
+  crpc57: "crpc_57",
+  "24 hour detention": "crpc_57",
+  "twenty four hours arrest": "crpc_57",
+  "24 hours rule": "crpc_57",
+  "crpc 58": "crpc_58",
+  crpc58: "crpc_58",
+  "police report apprehensions": "crpc_58",
+  "crpc 59": "crpc_59",
+  crpc59: "crpc_59",
+  "discharge arrested person": "crpc_59",
+  "crpc 60": "crpc_60",
+  crpc60: "crpc_60",
+  "pursue re-arrest escape": "crpc_60",
+  "escaped custody re-arrest": "crpc_60",
+  "crpc 61": "crpc_61",
+  crpc61: "crpc_61",
+  "form of summons": "crpc_61",
+  "summons form crpc": "crpc_61",
+  "crpc 62": "crpc_62",
+  crpc62: "crpc_62",
+  "service of summons on persons": "crpc_62",
+  "crpc 63": "crpc_63",
+  crpc63: "crpc_63",
+  "service on corporate bodies": "crpc_63",
+  "crpc 64": "crpc_64",
+  crpc64: "crpc_64",
+  "substituted service crpc": "crpc_64",
+  "service when person not found": "crpc_64",
+  "crpc 65": "crpc_65",
+  crpc65: "crpc_65",
+  "service cannot be effected": "crpc_65",
+  "affix summons": "crpc_65",
+  "crpc 66": "crpc_66",
+  crpc66: "crpc_66",
+  "service on government servants": "crpc_66",
+  "crpc 67": "crpc_67",
+  crpc67: "crpc_67",
+  "service outside jurisdiction": "crpc_67",
+  "inter jurisdictional summons": "crpc_67",
+  "crpc 68": "crpc_68",
+  crpc68: "crpc_68",
+  "proof of service crpc": "crpc_68",
+  "affidavit proof service": "crpc_68",
+  "crpc 69": "crpc_69",
+  crpc69: "crpc_69",
+  "service on witnesses": "crpc_69",
+  "summons witness registered post": "crpc_69",
+  "crpc 70": "crpc_70",
+  crpc70: "crpc_70",
+  "form of warrant crpc": "crpc_70",
+  "warrant duration crpc": "crpc_70",
+  "arrest warrant form": "crpc_70",
+  "crpc 71": "crpc_71",
+  crpc71: "crpc_71",
+  "security on warrant": "crpc_71",
+  "bail on warrant": "crpc_71",
+  "endorsed warrant bail": "crpc_71",
+  "crpc 72": "crpc_72",
+  crpc72: "crpc_72",
+  "warrants to whom directed": "crpc_72",
+  "warrant directed civilian": "crpc_72",
 };
 
 function findLawKey(query: string): string | null {
@@ -4889,6 +6459,52 @@ function findLawKey(query: string): string | null {
   return null;
 }
 
+function normalizeEntry(result: any, language: LawLanguage): LawResult {
+  // New schema uses summary/keyPoints, old schema uses sectionText/explanation
+  const isNewSchema =
+    !result.sectionText && (result.summary || result.summaryBengali);
+  if (!isNewSchema) {
+    return result as LawResult;
+  }
+
+  const useBengali = language === "bengali";
+  const keyPoints =
+    (useBengali ? result.keyPointsBengali : result.keyPoints) || [];
+  const examples =
+    (useBengali ? result.examplesBengali : result.examples) || [];
+  const exceptions =
+    (useBengali ? result.exceptionsBengali : result.exceptions) || [];
+  const summary = (useBengali ? result.summaryBengali : result.summary) || "";
+  const titleText =
+    (useBengali ? result.titleBengali : result.title) || result.title || "";
+
+  const sectionText = result.originalText || summary;
+  const explanation =
+    keyPoints.length > 0
+      ? `${summary}\n\n${keyPoints.map((p: string) => `• ${p}`).join("\n")}`
+      : summary;
+
+  const overridingEffect = useBengali
+    ? result.overridingEffectBengali || result.overridingEffect || ""
+    : result.overridingEffect || "";
+  const crossLaws = result.crossLaws || result.relatedSections || [];
+  const relatedSections = result.relatedSections || [];
+
+  return {
+    title: `${result.act || result.actName || ""} — ${titleText}`,
+    actName: result.act || result.actName || "",
+    sectionNumber: result.section || result.sectionNumber || "",
+    sectionText,
+    explanation,
+    examples,
+    landmarkCases: result.landmarkCases || [],
+    exceptions: exceptions,
+    overridingEffect,
+    relatedSections:
+      crossLaws.length > relatedSections.length ? crossLaws : relatedSections,
+  };
+}
+
 export function generateLawExplanation(
   query: string,
   language: LawLanguage,
@@ -4898,149 +6514,7 @@ export function generateLawExplanation(
   const result = LAW_DATABASE[key];
   if (!result) return null;
 
-  if (language === "bengali") {
-    return translateToBengali(result);
-  }
-  return result;
-}
-
-function translateToBengali(result: LawResult): LawResult {
-  const titleMap: Record<string, string> = {
-    Overview: "সংক্ষিপ্ত বিবরণ",
-    "Section Text": "ধারার পাঠ",
-  };
-  void titleMap;
-
-  return {
-    ...result,
-    explanation: toBengaliExplanation(
-      result.actName,
-      result.sectionNumber,
-      result.explanation,
-    ),
-    examples: result.examples.map((e) => toBengaliExample(e)),
-    exceptions: result.exceptions,
-    overridingEffect: result.overridingEffect,
-  };
-}
-
-function toBengaliExplanation(
-  actName: string,
-  sec: string,
-  english: string,
-): string {
-  const intro = getBengali(actName, sec);
-  return intro ? `${intro}\n\n(English: ${english})` : english;
-}
-
-function getBengali(actName: string, sec: string): string {
-  const benDict: Record<string, string> = {
-    "indian penal code, 1860_302":
-      "ধারা ৩০২ IPC হত্যার শাস্তি নির্ধারণ করে। যে ব্যক্তি হত্যা করে, তাকে মৃত্যুদণ্ড বা যাবজ্জীবন কারাদণ্ড দেওয়া হবে এবং জরিমানাও করা হবে। 'বিরলতম' মামলায় মৃত্যুদণ্ড দেওয়া হয়, অন্যথায় যাবজ্জীবন কারাদণ্ড স্বাভাবিক শাস্তি।",
-    "indian penal code, 1860_304":
-      "ধারা ৩০৪ IPC অনিচ্ছাকৃত নরহত্যার (হত্যা নয়) শাস্তি দেয়। Part I-এ মৃত্যু ঘটানোর উদ্দেশ্য থাকলে যাবজ্জীবন কারাদণ্ড পর্যন্ত এবং Part II-এ শুধু জ্ঞান থাকলে ১০ বছর পর্যন্ত কারাদণ্ড হতে পারে।",
-    "indian penal code, 1860_307":
-      "ধারা ৩০৭ IPC হত্যার চেষ্টার শাস্তি নির্ধারণ করে। হত্যার চেষ্টা করা হলে ১০ বছর পর্যন্ত কারাদণ্ড হতে পারে; যদি আঘাত লাগে তাহলে যাবজ্জীবন কারাদণ্ডও হতে পারে।",
-    "indian penal code, 1860_376":
-      "ধারা ৩৭৬ IPC ধর্ষণের শাস্তি নির্ধারণ করে। ২০১৩ সালের সংশোধনীর পর ন্যূনতম শাস্তি ১০ বছরের কঠোর কারাদণ্ড এবং সর্বোচ্চ যাবজ্জীবন কারাদণ্ড বা মৃত্যুদণ্ড।",
-    "indian penal code, 1860_420":
-      "ধারা ৪২০ IPC প্রতারণার মাধ্যমে সম্পত্তি হস্তান্তর করানোর শাস্তি দেয়। ৭ বছর পর্যন্ত কারাদণ্ড এবং জরিমানা। প্রতারণার মাধ্যমে অর্থ বা সম্পত্তি নেওয়া হলে এই ধারা প্রযোজ্য।",
-    "indian penal code, 1860_498a":
-      "ধারা ৪৯৮A IPC বিবাহিত মহিলার উপর স্বামী বা শ্বশুরবাড়ির লোকদের নির্যাতনের শাস্তি দেয়। ৩ বছর পর্যন্ত কারাদণ্ড এবং জরিমানা। যৌতুকের জন্য নির্যাতন এবং মানসিক নির্যাতন এর আওতায় পড়ে।",
-    "code of criminal procedure, 1973_41":
-      "ধারা ৪১ CrPC পুলিশকে পরোয়ানা ছাড়া গ্রেফতারের ক্ষমতা দেয় — তবে Arnesh Kumar মামলার পর পুলিশকে গ্রেফতারের কারণ লিখিতভাবে রেকর্ড করতে হবে এবং গ্রেফতারের প্রয়োজনীয়তা যাচাই করতে হবে।",
-    "code of criminal procedure, 1973_161":
-      "ধারা ১৬১ CrPC তদন্তে সাক্ষীদের পুলিশি জিজ্ঞাসাবাদের বিধান রাখে। এই জবানবন্দি আদালতে প্রমাণ হিসেবে সরাসরি গ্রহণযোগ্য নয়, তবে সাক্ষীকে অসংগত করতে ব্যবহার করা যায়।",
-    "code of criminal procedure, 1973_164":
-      "ধারা ১৬৪ CrPC বিচারিক ম্যাজিস্ট্রেটের সামনে স্বীকারোক্তি ও জবানবন্দি রেকর্ডের বিধান রাখে। এই জবানবন্দি আদালতে প্রমাণ হিসেবে গ্রহণযোগ্য — পুলিশি জবানবন্দির চেয়ে অনেক বেশি মূল্যবান।",
-    "code of criminal procedure, 1973_313":
-      "ধারা ৩১৩ CrPC আসামীকে তার বিরুদ্ধে সাক্ষ্যের ব্যাখ্যা দেওয়ার সুযোগ দেয়। এটি বাধ্যতামূলক — এই পরীক্ষা না করলে বিচার ত্রুটিপূর্ণ হয়। আসামী শপথ নেবেন না এবং সমস্ত অভিযোগ অস্বীকার করতে পারেন।",
-    "constitution of india_article 14":
-      "অনুচ্ছেদ ১৪ সংবিধান সকলকে আইনের সামনে সমতা এবং আইনের সমান সুরক্ষার নিশ্চয়তা দেয়। রাষ্ট্র যুক্তিসংগত শ্রেণীবিভাগ করতে পারে কিন্তু স্বেচ্ছাচারীভাবে বৈষম্য করতে পারে না।",
-    "constitution of india_article 19":
-      "অনুচ্ছেদ ১৯ ভারতীয় নাগরিকদের ছয়টি স্বাধীনতার গ্যারান্টি দেয়: বাক স্বাধীনতা, সভা-সমাবেশের অধিকার, সংগঠন গঠনের অধিকার, চলাচলের অধিকার, বসবাসের অধিকার, এবং পেশা বেছে নেওয়ার অধিকার।",
-    "constitution of india_article 21":
-      "অনুচ্ছেদ ২১ সংবিধানের সবচেয়ে গুরুত্বপূর্ণ অধিকার — জীবন ও ব্যক্তি স্বাধীনতার অধিকার। ড. আম্বেদকর এটিকে সংবিধানের 'হৃদয় ও আত্মা' বলেছেন। এর মধ্যে গোপনীয়তার অধিকার, মর্যাদায় বেঁচে থাকার অধিকার, দ্রুত বিচারের অধিকার সব অন্তর্ভুক্ত।",
-    "constitution of india_article 32":
-      "অনুচ্ছেদ ৩২ মৌলিক অধিকার বলবৎ করার জন্য সুপ্রিম কোর্টে সরাসরি যাওয়ার অধিকার দেয়। SC পাঁচটি রিট জারি করতে পারে: Habeas Corpus, Mandamus, Prohibition, Certiorari এবং Quo Warranto।",
-    "hindu marriage act, 1955_5":
-      "ধারা ৫ হিন্দু বিবাহ আইন বিবাহের শর্তাবলি নির্ধারণ করে: উভয় পক্ষ অবিবাহিত, প্রাপ্তবয়স্ক (বর ২১, কনে ১৮), নিষিদ্ধ সম্পর্কের মধ্যে নয়, এবং সাপিন্ড নয়। শর্ত লঙ্ঘনে বিবাহ বাতিল বা দণ্ডনীয় হয়।",
-    "hindu marriage act, 1955_7":
-      "ধারা ৭ হিন্দু বিবাহের অনুষ্ঠানের বিধান রাখে। সপ্তপদী (পবিত্র অগ্নির সামনে সাতটি পদক্ষেপ) সহ যেকোনো প্রচলিত আচার-অনুষ্ঠানে বিবাহ সম্পন্ন হতে পারে। সপ্তম পদক্ষেপে বিবাহ সম্পূর্ণ ও বাধ্যকর হয়।",
-    "hindu marriage act, 1955_10":
-      "ধারা ১০ বিচারিক বিচ্ছেদের বিধান রাখে — বিবাহ বিচ্ছিন্ন না করে পৃথকভাবে বসবাসের অধিকার। তালাকের মতো একই কারণে আবেদন করা যায়। এক বছর ধরে একত্রে না থাকলে তালাকের ভিত্তি হয়।",
-    "hindu marriage act, 1955_11":
-      "ধারা ১১ বাতিল বিবাহের বিধান রাখে — দ্বিবিবাহ, নিষিদ্ধ সম্পর্ক, বা সাপিন্ড বিবাহ সম্পূর্ণ বাতিল। এই বিবাহ কখনই আইনি দৃষ্টিতে বৈধ ছিল না।",
-    "hindu marriage act, 1955_12":
-      "ধারা ১২ খণ্ডযোগ্য বিবাহের বিধান রাখে — পুরুষত্বহীনতা, অসুস্থতা, জবরদস্তি বা প্রতারণায় সম্মতি, বা বিয়ের সময় অন্যের সন্তান গর্ভে থাকলে বিবাহ বাতিল করা যায়।",
-    "hindu marriage act, 1955_13b":
-      "ধারা ১৩B পারস্পরিক সম্মতিতে বিবাহবিচ্ছেদের বিধান রাখে। উভয় পক্ষ একমত হলে এবং এক বছর আলাদা থাকলে যৌথভাবে আবেদন করতে পারেন। ৬ মাসের বিচার্যকাল আছে।",
-    "hindu marriage act, 1955_14":
-      "ধারা ১৪ বিবাহের এক বছর পূর্ণ না হলে তালাকের আবেদন নিষিদ্ধ করে। ব্যতিক্রম: অসাধারণ কষ্ট বা চরম নীচতার ক্ষেত্রে আদালতের অনুমতিতে আগেও আবেদন করা যায়।",
-    "hindu marriage act, 1955_15":
-      "ধারা ১৫ তালাকের পর পুনর্বিবাহের অধিকার দেয় — তবে আপিলের মেয়াদ শেষ হওয়ার আগে পুনর্বিবাহ করা যাবে না। আগে বিয়ে করলে ধারা ১১ অনুযায়ী বাতিল বিবাহ হবে।",
-    "hindu marriage act, 1955_16":
-      "ধারা ১৬ বাতিল বিবাহের সন্তানদের বৈধতা দেয় — মা-বাবার দোষে সন্তান ক্ষতিগ্রস্ত হবে না। এই সন্তানরা বৈধ এবং পিতামাতার সম্পত্তি উত্তরাধিকার পেতে পারে।",
-    "hindu marriage act, 1955_17":
-      "ধারা ১৭ হিন্দুদের জন্য দ্বিবিবাহকে শাস্তিযোগ্য করে। প্রথম স্ত্রী/স্বামী জীবিত থাকতে পুনর্বিবাহ করলে দ্বিতীয় বিবাহ বাতিল এবং IPC ধারা ৪৯৪ অনুযায়ী দণ্ডনীয়।",
-    "hindu marriage act, 1955_24":
-      "ধারা ২৪ মামলা চলাকালীন অন্তর্বর্তী ভরণপোষণ দেয় — স্বামী বা স্ত্রী যে কেউ আবেদন করতে পারেন। মামলার খরচ এবং মাসিক ভরণপোষণ উভয় পক্ষের আয় বিবেচনা করে নির্ধারিত হয়।",
-    "hindu marriage act, 1955_25":
-      "ধারা ২৫ স্থায়ী ভরণপোষণ ও রক্ষণাবেক্ষণের বিধান রাখে — তালাক বা বিচ্ছেদের পরে আবেদন করা যায়। পুনর্বিবাহ করলে বা মারা গেলে ভরণপোষণ বন্ধ হয়।",
-    "hindu marriage act, 1955_26":
-      "ধারা ২৬ নাবালক সন্তানের হেফাজত, ভরণপোষণ ও শিক্ষার বিষয়ে আদেশের ক্ষমতা দেয়। সন্তানের কল্যাণ সর্বোচ্চ বিবেচনা — বাবা-মায়ের আইনি অধিকার নয়।",
-    "hindu marriage act, 1955_27":
-      "ধারা ২৭ বিবাহের সময় উভয়কে যৌথভাবে দেওয়া সম্পত্তির বিষয়ে আদেশের ক্ষমতা দেয়। শুধুমাত্র যৌথ উপহার — এক পক্ষের নিজস্ব সম্পত্তি এর আওতায় পড়ে না।",
-    "hindu marriage act, 1955_28":
-      "ধারা ২৮ হিন্দু বিবাহ আইনের সকল ডিক্রির বিরুদ্ধে আপিলের অধিকার দেয়। জেলা আদালতের ডিক্রির বিরুদ্ধে হাইকোর্টে আপিল করা যায়। আপিলের মেয়াদ ৯০ দিন।",
-    "hindu marriage act, 1955_13":
-      "ধারা ১৩ হিন্দু বিবাহ আইন বিবাহবিচ্ছেদের কারণগুলি নির্ধারণ করে। পরকীয়া, নিষ্ঠুরতা, পরিত্যাগ (২+ বছর), ধর্মান্তর, মানসিক অসুস্থতা ইত্যাদি কারণে বিবাহবিচ্ছেদ পাওয়া যায়।",
-    "hindu marriage act, 1955_9":
-      "ধারা ৯ হিন্দু বিবাহ আইন দাম্পত্য অধিকার পুনরুদ্ধারের বিধান রাখে। স্বামী বা স্ত্রী কারণ ছাড়া চলে গেলে অপর পক্ষ আদালতে ফিরিয়ে আনার আবেদন করতে পারেন।",
-    "information technology act, 2000_66":
-      "ধারা ৬৬ IT আইন কম্পিউটার সম্পর্কিত অপরাধের শাস্তি নির্ধারণ করে। অসৎ উদ্দেশ্যে হ্যাকিং, ভাইরাস ছড়ানো, ডেটা চুরি ইত্যাদি কাজে ৩ বছর পর্যন্ত কারাদণ্ড হতে পারে।",
-    "information technology act, 2000_66c":
-      "ধারা ৬৬C IT আইন পরিচয় চুরির শাস্তি দেয়। কারও পাসওয়ার্ড, ডিজিটাল স্বাক্ষর বা ইউনিক ID প্রতারণামূলকভাবে ব্যবহার করলে ৩ বছর পর্যন্ত কারাদণ্ড এবং ১ লক্ষ টাকা জরিমানা।",
-    "information technology act, 2000_67":
-      "ধারা ৬৭ IT আইন অশ্লীল বিষয়বস্তু ইলেকট্রনিক মাধ্যমে প্রকাশ বা প্রেরণের শাস্তি দেয়। প্রথমবার ৩ বছর কারাদণ্ড ও ৫ লক্ষ টাকা জরিমানা; দ্বিতীয়বার ৫ বছর কারাদণ্ড।",
-    "bharatiya nyaya sanhita, 2023_103":
-      "BNS ধারা ১০৩ হত্যার শাস্তি নির্ধারণ করে — মৃত্যুদণ্ড বা যাবজ্জীবন কারাদণ্ড। এটি IPC ধারা ৩০২-এর প্রতিস্থাপন। 'বিরলতম' মামলায় মৃত্যুদণ্ড দেওয়া হয়।",
-    "bharatiya nyaya sanhita, 2023_64":
-      "BNS ধারা ৬৪ ধর্ষণের শাস্তি নির্ধারণ করে — ন্যূনতম ১০ বছরের কঠোর কারাদণ্ড থেকে যাবজ্জীবন পর্যন্ত। IPC ৩৭৬-এর প্রতিস্থাপন।",
-    "bharatiya nagarik suraksha sanhita, 2023_173":
-      "BNSS ধারা ১৭৩ FIR (প্রথম তথ্য রিপোর্ট) নিবন্ধনের বিধান রাখে। পুলিশ FIR নিতে অস্বীকার করতে পারে না — Lalita Kumari মামলা অনুযায়ী এটি বাধ্যতামূলক।",
-    "bharatiya nagarik suraksha sanhita, 2023_479":
-      "BNSS ধারা ৪৭৯ বিচারাধীন বন্দীদের জামিনের অধিকার দেয় — সর্বোচ্চ কারাদণ্ডের অর্ধেক সময় কাটালে জামিন পাওয়ার যোগ্য হবে। প্রথমবারের অপরাধীর জন্য এক-তৃতীয়াংশ সময়।",
-    "code of criminal procedure, 1973_154":
-      "ধারা ১৫৪ CrPC FIR নিবন্ধনের মূল বিধান — পুলিশ কোনো জ্ঞাত অপরাধের অভিযোগ অস্বীকার করতে পারে না। ১ জুলাই ২০২৪ থেকে BNSS ১৭৩ দ্বারা প্রতিস্থাপিত।",
-    "code of criminal procedure, 1973_125":
-      "ধারা ১২৫ CrPC ভরণপোষণ প্রদান করে — স্ত্রী, অপ্রাপ্তবয়স্ক সন্তান এবং পিতামাতা দাবি করতে পারেন। সব ধর্মের জন্য প্রযোজ্য ধর্মনিরপেক্ষ আইন।",
-    "negotiable instruments act, 1881_138":
-      "NI Act ধারা ১৩৮ চেক বাউন্সকে অপরাধ হিসেবে ঘোষণা করে। ২ বছর পর্যন্ত কারাদণ্ড বা চেকের দ্বিগুণ জরিমানা। ৩০ দিনের নোটিস দিতে হবে, ১৫ দিনে পেমেন্ট না হলে মামলা করা যাবে।",
-    "protection of children from sexual offences act, 2012_4":
-      "POCSO ধারা ৪ শিশুর উপর (১৮ বছরের নিচে) যৌন হামলার শাস্তি দেয় — ন্যূনতম ১০ বছরের কঠোর কারাদণ্ড থেকে যাবজ্জীবন পর্যন্ত। শিশুর সম্মতি অপ্রাসঙ্গিক।",
-    "right to information act, 2005_6":
-      "RTI ধারা ৬ তথ্য চাওয়ার পদ্ধতি নির্ধারণ করে — যেকোনো নাগরিক ১০ টাকার ফি দিয়ে তথ্য চাইতে পারেন। ৩০ দিনের মধ্যে উত্তর দিতে হবে।",
-    "protection of women from domestic violence act, 2005_3":
-      "DV Act ধারা ৩ গার্হস্থ্য হিংসার সংজ্ঞা দেয় — শারীরিক, যৌন, মানসিক এবং অর্থনৈতিক নির্যাতন সবই অন্তর্ভুক্ত। লিভ-ইন সম্পর্কেও প্রযোজ্য।",
-    "constitution of india, 1950_15":
-      "সংবিধানের ১৫ অনুচ্ছেদ ধর্ম, জাতি, বর্ণ, লিঙ্গ বা জন্মস্থানের ভিত্তিতে বৈষম্য নিষিদ্ধ করে। তবে মহিলা, শিশু এবং পিছিয়ে পড়া শ্রেণির জন্য বিশেষ বিধান করা যায়।",
-    "constitution of india, 1950_20":
-      "অনুচ্ছেদ ২০ তিনটি সুরক্ষা দেয়: (১) কৃতকার্যের পূর্ববর্তী আইনে শাস্তি নয়, (২) একই অপরাধে দ্বিবার শাস্তি নয়, (৩) নিজের বিরুদ্ধে সাক্ষী হতে বাধ্য করা যাবে না।",
-    "constitution of india, 1950_22":
-      "অনুচ্ছেদ ২২ গ্রেফতারের বিরুদ্ধে সুরক্ষা দেয়: গ্রেফতারের কারণ জানানো, আইনজীবীর সাথে পরামর্শ, ২৪ ঘণ্টার মধ্যে ম্যাজিস্ট্রেটের সামনে হাজির করা।",
-  };
-
-  const matchKey = Object.keys(benDict).find(
-    (k) =>
-      k.includes(sec.toLowerCase()) ||
-      k.includes(actName.toLowerCase().substring(0, 10)),
-  );
-  return matchKey ? benDict[matchKey] : "";
-}
-
-function toBengaliExample(e: string): string {
-  return e;
+  return normalizeEntry(result, language);
 }
 
 export function getAllActNames(): string[] {
