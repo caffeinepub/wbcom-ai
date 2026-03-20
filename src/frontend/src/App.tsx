@@ -1,20 +1,24 @@
 import { Toaster } from "@/components/ui/sonner";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AdminPage } from "./components/AdminPage";
+import { ArtsHomePage } from "./components/ArtsHomePage";
+import { ArtsSolver } from "./components/ArtsSolver";
+import { CommerceHomePage } from "./components/CommerceHomePage";
+import { CommerceSolver } from "./components/CommerceSolver";
 import { CustomerCasePage } from "./components/CustomerCasePage";
 import { ErrorBoundary } from "./components/ErrorBoundary";
-import { HeroBanner } from "./components/HeroBanner";
 import { HistoryPage } from "./components/HistoryPage";
+import { HomePage } from "./components/HomePage";
 import { LawPage } from "./components/LawPage";
 import { LoginPage } from "./components/LoginPage";
 import { Navbar } from "./components/Navbar";
+import { NeetHomePage } from "./components/NeetHomePage";
+import { NeetSolver } from "./components/NeetSolver";
 import { PremiumNotesPage } from "./components/PremiumNotesPage";
-import { ProblemSolver } from "./components/ProblemSolver";
 import { QuizPage } from "./components/QuizPage";
 import { ScienceHomePage } from "./components/ScienceHomePage";
 import { ScienceSolver } from "./components/ScienceSolver";
-import { TermsModal } from "./components/TermsPage";
-import { TopicGrid } from "./components/TopicGrid";
+import { TermsFullPage, TermsModal } from "./components/TermsPage";
 import { UsernameModal } from "./components/UsernameModal";
 import { useActor } from "./hooks/useActor";
 import { useInternetIdentity } from "./hooks/useInternetIdentity";
@@ -28,7 +32,14 @@ type Page =
   | "science"
   | "scienceSolver"
   | "notes"
-  | "law";
+  | "law"
+  | "arts"
+  | "artsSolver"
+  | "commerce"
+  | "commerceSolver"
+  | "terms"
+  | "neet"
+  | "neetSolver";
 
 function getLocalStorageKey(principalId: string) {
   return `wbcom_username_${principalId}`;
@@ -43,12 +54,22 @@ export default function App() {
   const [showUsernameModal, setShowUsernameModal] = useState(false);
   const [scienceSubject, setScienceSubject] = useState("");
   const [scienceClass, setScienceClass] = useState(11);
+  const [artsSubject, setArtsSubject] = useState("");
+  const [artsClass, setArtsClass] = useState(11);
+  const [commerceSubject, setCommerceSubject] = useState("");
+  const [commerceClass, setCommerceClass] = useState(11);
+  const [neetSubject, setNeetSubject] = useState("");
+  const [neetClass, setNeetClass] = useState(11);
   const { identity } = useInternetIdentity();
   const { actor, isFetching } = useActor();
   const adminCheckDone = useRef(false);
   const profileCheckDone = useRef(false);
   const lastIdentityPrincipal = useRef<string | null>(null);
   const lastActorRef = useRef<unknown>(null);
+
+  // suppress unused warning - activeTopic used by CommerceSolver for accountancy
+  void activeTopic;
+  void setActiveTopic;
 
   const checkAdmin = useCallback(
     async (retries = 5, delayMs = 800) => {
@@ -149,7 +170,8 @@ export default function App() {
         p === "admin" ||
         p === "quiz" ||
         p === "notes" ||
-        p === "law") &&
+        p === "law" ||
+        p === "commerce") &&
       !identity
     )
       return;
@@ -160,6 +182,24 @@ export default function App() {
     setScienceSubject(subject);
     setScienceClass(classLevel);
     setCurrentPage("scienceSolver");
+  }
+
+  function handleArtsSelect(subject: string, classLevel: number) {
+    setArtsSubject(subject);
+    setArtsClass(classLevel);
+    setCurrentPage("artsSolver");
+  }
+
+  function handleCommerceSelect(subject: string, classLevel: number) {
+    setCommerceSubject(subject);
+    setCommerceClass(classLevel);
+    setCurrentPage("commerceSolver");
+  }
+
+  function handleNeetSelect(subject: string, classLevel: number) {
+    setNeetSubject(subject);
+    setNeetClass(classLevel);
+    setCurrentPage("neetSolver");
   }
 
   function handleUsernameSaved(name: string) {
@@ -194,37 +234,7 @@ export default function App() {
       <UsernameModal open={showUsernameModal} onSaved={handleUsernameSaved} />
 
       <main className="flex-1">
-        {currentPage === "home" && (
-          <>
-            <HeroBanner />
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div>
-                  <TopicGrid
-                    activeTopic={activeTopic}
-                    onSelect={setActiveTopic}
-                  />
-                  <div className="mt-6 bg-navy rounded-xl p-5 text-white">
-                    <h3 className="font-display font-bold text-base mb-3">
-                      Quick Tips 💡
-                    </h3>
-                    <ul className="space-y-2 text-sm text-white/80">
-                      <li>
-                        • Select a topic card on the left to switch the solver
-                      </li>
-                      <li>• Fill in the required fields and click Solve</li>
-                      <li>• Login to save your solutions and track progress</li>
-                      <li>• Solutions follow WBCHSE &amp; CU exam format</li>
-                    </ul>
-                  </div>
-                </div>
-                <div>
-                  <ProblemSolver activeTopic={activeTopic} />
-                </div>
-              </div>
-            </div>
-          </>
-        )}
+        {currentPage === "home" && <HomePage onNavigate={handleNavigate} />}
 
         {currentPage === "quiz" && (
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -258,6 +268,28 @@ export default function App() {
           />
         )}
 
+        {currentPage === "arts" && <ArtsHomePage onSelect={handleArtsSelect} />}
+
+        {currentPage === "commerce" && (
+          <CommerceHomePage onSelect={handleCommerceSelect} />
+        )}
+
+        {currentPage === "commerceSolver" && (
+          <CommerceSolver
+            subject={commerceSubject}
+            classLevel={commerceClass}
+            onBack={() => setCurrentPage("commerce")}
+          />
+        )}
+
+        {currentPage === "artsSolver" && (
+          <ArtsSolver
+            subject={artsSubject}
+            classLevel={artsClass}
+            onBack={() => setCurrentPage("arts")}
+          />
+        )}
+
         {currentPage === "notes" && (
           <ErrorBoundary>
             <PremiumNotesPage />
@@ -265,6 +297,20 @@ export default function App() {
         )}
 
         {currentPage === "law" && <LawPage />}
+
+        {currentPage === "neet" && <NeetHomePage onSelect={handleNeetSelect} />}
+
+        {currentPage === "neetSolver" && (
+          <NeetSolver
+            subject={neetSubject}
+            classLevel={neetClass}
+            onBack={() => setCurrentPage("neet")}
+          />
+        )}
+
+        {currentPage === "terms" && (
+          <TermsFullPage onBack={() => setCurrentPage("home")} />
+        )}
       </main>
 
       <footer className="bg-navy text-white mt-auto">
@@ -275,7 +321,7 @@ export default function App() {
                 <span className="text-xs font-bold">W</span>
               </div>
               <div>
-                <p className="font-display font-bold text-sm">WBCom AI</p>
+                <p className="font-display font-bold text-sm">Vidya Setu AI</p>
                 <p className="text-xs text-white/60">পশ্চিমবঙ্গের শিক্ষক</p>
               </div>
             </div>
@@ -283,6 +329,14 @@ export default function App() {
               <p className="text-xs text-white/70">
                 Founder &amp; CEO: Bikram Mandal | C.R.G.S
               </p>
+              <button
+                type="button"
+                onClick={() => setCurrentPage("terms")}
+                className="text-xs text-white/50 underline hover:text-white/80 transition-colors mt-1"
+                data-ocid="terms.link"
+              >
+                Terms &amp; Conditions
+              </button>
             </div>
             <p className="text-xs text-white/50">
               © {new Date().getFullYear()}. Built with ❤️ using{" "}

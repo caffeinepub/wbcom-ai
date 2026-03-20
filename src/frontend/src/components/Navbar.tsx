@@ -1,15 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
+  BarChart2,
   BookOpen,
   Briefcase,
-  GraduationCap,
+  FlaskConical,
   History,
   Home,
   LogIn,
   LogOut,
   Menu,
   Microscope,
+  Palette,
   Scale,
   ShieldCheck,
   Trophy,
@@ -27,7 +29,13 @@ type Page =
   | "science"
   | "scienceSolver"
   | "notes"
-  | "law";
+  | "law"
+  | "arts"
+  | "artsSolver"
+  | "commerce"
+  | "commerceSolver"
+  | "neet"
+  | "neetSolver";
 
 interface NavbarProps {
   currentPage: string;
@@ -56,6 +64,21 @@ export function Navbar({
         page: "science",
         label: "Science",
         icon: <Microscope className="w-4 h-4" />,
+      },
+      {
+        page: "neet" as Page,
+        label: "NEET",
+        icon: <FlaskConical className="w-4 h-4 text-teal-600" />,
+      },
+      {
+        page: "arts",
+        label: "Arts (কলা)",
+        icon: <Palette className="w-4 h-4" />,
+      },
+      {
+        page: "commerce" as Page,
+        label: "Commerce",
+        icon: <BarChart2 className="w-4 h-4" />,
       },
       ...(isLoggedIn
         ? [
@@ -104,7 +127,10 @@ export function Navbar({
 
   const isActivePage = (page: Page) =>
     currentPage === page ||
-    (page === "science" && currentPage === "scienceSolver");
+    (page === "science" && currentPage === "scienceSolver") ||
+    (page === "arts" && currentPage === "artsSolver") ||
+    (page === "commerce" && currentPage === "commerceSolver") ||
+    (page === "neet" && currentPage === "neetSolver");
 
   function getDesktopClass(page: Page) {
     const active = isActivePage(page);
@@ -123,6 +149,11 @@ export function Navbar({
         ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
         : "text-muted-foreground hover:text-emerald-700 hover:bg-emerald-50";
     }
+    if (page === "arts") {
+      return active
+        ? "bg-amber-100 text-amber-700 border border-amber-200"
+        : "text-muted-foreground hover:text-amber-700 hover:bg-amber-50";
+    }
     if (page === "notes") {
       return active
         ? "bg-purple-100 text-purple-700 border border-purple-200"
@@ -132,6 +163,11 @@ export function Navbar({
       return active
         ? "bg-indigo-100 text-indigo-700 border border-indigo-200"
         : "text-muted-foreground hover:text-indigo-700 hover:bg-indigo-50";
+    }
+    if (page === "commerce") {
+      return active
+        ? "bg-blue-100 text-blue-700 border border-blue-200"
+        : "text-muted-foreground hover:text-blue-700 hover:bg-blue-50";
     }
     return active
       ? "bg-navy/10 text-navy"
@@ -143,8 +179,10 @@ export function Navbar({
     if (active) {
       if (page === "admin" || page === "quiz") return "bg-gold/20 text-gold";
       if (page === "science") return "bg-emerald-100 text-emerald-700";
+      if (page === "arts") return "bg-amber-100 text-amber-700";
       if (page === "notes") return "bg-purple-100 text-purple-700";
       if (page === "law") return "bg-indigo-100 text-indigo-700";
+      if (page === "commerce") return "bg-blue-100 text-blue-700";
       return "bg-navy/10 text-navy";
     }
     return "text-muted-foreground hover:text-navy hover:bg-navy/5";
@@ -158,18 +196,20 @@ export function Navbar({
           <button
             type="button"
             onClick={() => onNavigate("home")}
-            className="flex items-center gap-2 group"
+            className="flex items-center gap-2.5 group"
             data-ocid="nav.link"
           >
-            <div className="w-8 h-8 rounded-lg bg-navy flex items-center justify-center">
-              <GraduationCap className="w-4 h-4 text-white" />
-            </div>
+            <img
+              src="/assets/generated/vidya-setu-logo-transparent.dim_400x200.png"
+              alt="Vidya Setu AI"
+              className="h-9 w-auto object-contain"
+            />
             <div className="leading-tight">
               <span className="block font-display font-bold text-navy text-base leading-none">
-                WBCom AI
+                Vidya Setu AI
               </span>
               <span className="hidden sm:block text-[9px] text-muted-foreground leading-none mt-0.5">
-                পশ্চিমবঙ্গের শিক্ষক
+                Connecting You to Smarter Learning
               </span>
             </div>
           </button>

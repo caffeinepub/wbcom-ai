@@ -5899,6 +5899,834 @@ const LAW_DATABASE: LawDB = {
     ],
     actName: "Code of Criminal Procedure, 1973",
   },
+  crpc_73: {
+    act: "CrPC",
+    actName: "Code of Criminal Procedure, 1973",
+    section: "73",
+    title: "Warrant May Be Directed to Any Person",
+    titleBengali: "ওয়ারেন্ট যেকোনো ব্যক্তিকে নির্দেশ করা যায়",
+    originalText:
+      "Section 73 CrPC: The Chief Judicial Magistrate or a Magistrate of the first class may direct a warrant to any person within his local jurisdiction for the arrest of any escaped convict, proclaimed offender or of any person who is accused of a non-bailable offence and is evading arrest.",
+    summary:
+      "Section 73 allows a Chief Judicial Magistrate or First Class Magistrate to direct a warrant to any person within local jurisdiction to arrest escaped convicts, proclaimed offenders, or those evading arrest in non-bailable offences.",
+    summaryBengali:
+      "ধারা ৭৩ — CrPC: এই ধারা অনুযায়ী, Chief Judicial Magistrate বা প্রথম শ্রেণীর Magistrate পলাতক দোষী, ঘোষিত অপরাধী, বা জামিনযোগ্য নয় এমন মামলায় পলায়নকারী আসামিকে গ্রেফতার করতে তাঁর স্থানীয় এখতিয়ারের মধ্যে যেকোনো ব্যক্তির কাছে ওয়ারেন্ট পাঠাতে পারেন।",
+    keyPoints: [
+      "Applicable to escaped convicts, proclaimed offenders, or non-bailable accused evading arrest",
+      "Only CJM or First Class Magistrate can issue such warrant",
+      "Limited to local jurisdiction of the issuing Magistrate",
+      "The person to whom warrant is directed becomes temporarily vested with arrest authority",
+    ],
+    examples: [
+      "A proclaimed offender hiding in a remote area — Magistrate directs a local person to arrest them.",
+      "An escaped prisoner from jail — CJM issues warrant to a trusted person within jurisdiction.",
+    ],
+    examplesBengali: [
+      "একজন ঘোষিত অপরাধী দূরবর্তী এলাকায় লুকিয়ে আছে — Magistrate স্থানীয় ব্যক্তিকে গ্রেফতারের নির্দেশ দেন।",
+      "জেল থেকে পালানো বন্দি — CJM এখতিয়ারের মধ্যে বিশ্বস্ত ব্যক্তিকে ওয়ারেন্ট ইস্যু করেন।",
+    ],
+    exceptions: [
+      "Cannot be issued for bailable offences",
+      "Only CJM or First Class Magistrate can issue — not lower courts",
+    ],
+    exceptionsBengali: [
+      "জামিনযোগ্য অপরাধে ইস্যু করা যাবে না",
+      "শুধু CJM বা প্রথম শ্রেণীর Magistrate ইস্যু করতে পারবেন",
+    ],
+    landmarkCases: [
+      {
+        name: "State of Maharashtra v. Budhikota Subbarao",
+        citation: "AIR 1993 SC 2014",
+        relevance:
+          "Court clarified that warrant under Section 73 is an extraordinary power limited to specific categories of offenders.",
+      },
+    ],
+    overridingEffect:
+      "BNSS 2023 Section 74 corresponds to CrPC Section 73 with minor procedural updates.",
+    overridingEffectBengali:
+      "BNSS 2023 ধারা ৭৪, CrPC ধারা ৭৩-এর সাথে সামান্য পদ্ধতিগত পরিবর্তন সহ সম্পর্কিত।",
+    relatedSections: ["CrPC 70", "CrPC 72", "CrPC 74", "CrPC 82", "BNSS 74"],
+  },
+  crpc_74: {
+    act: "CrPC",
+    actName: "Code of Criminal Procedure, 1973",
+    section: "74",
+    title: "Warrant Directed to Police Officer",
+    titleBengali: "পুলিশ অফিসারকে ওয়ারেন্ট নির্দেশিত",
+    originalText:
+      "Section 74 CrPC: A warrant directed to any police officer may also be executed by any other police officer whose name is endorsed thereon by the officer to whom it is directed.",
+    summary:
+      "A warrant directed to a police officer can also be executed by another police officer if the original officer endorses that other officer's name on the warrant.",
+    summaryBengali:
+      "ধারা ৭৪ — CrPC: কোনো পুলিশ অফিসারকে দেওয়া ওয়ারেন্ট, সেই অফিসার যদি অন্য পুলিশ অফিসারের নাম ওয়ারেন্টে লিখে দেন, তাহলে সেই অন্য অফিসারও ওয়ারেন্ট কার্যকর করতে পারবেন।",
+    keyPoints: [
+      "Enables delegation of warrant execution between police officers",
+      "Original officer must endorse the name of the executing officer",
+      "Ensures operational flexibility in police force",
+    ],
+    examples: [
+      "Officer A receives a warrant but is on leave; he endorses Officer B's name, who then executes it.",
+    ],
+    examplesBengali: [
+      "অফিসার A ওয়ারেন্ট পেলেন কিন্তু ছুটিতে আছেন; তিনি অফিসার B-এর নাম লিখে দিলেন, B সেটি কার্যকর করলেন।",
+    ],
+    exceptions: ["Endorsement must be explicit and in writing"],
+    exceptionsBengali: ["অনুমোদন অবশ্যই স্পষ্ট এবং লিখিত হতে হবে"],
+    landmarkCases: [],
+    overridingEffect: "BNSS 2023 Section 75 corresponds to CrPC Section 74.",
+    overridingEffectBengali: "BNSS 2023 ধারা ৭৫, CrPC ধারা ৭৪-এর সাথে সম্পর্কিত।",
+    relatedSections: ["CrPC 72", "CrPC 73", "BNSS 75"],
+  },
+  crpc_75: {
+    act: "CrPC",
+    actName: "Code of Criminal Procedure, 1973",
+    section: "75",
+    title: "Notification of Substance of Warrant",
+    titleBengali: "ওয়ারেন্টের বিষয়বস্তু জানানো",
+    originalText:
+      "Section 75 CrPC: The police officer or other person executing a warrant of arrest shall notify the substance thereof to the person to be arrested, and, if so required, shall show him the warrant.",
+    summary:
+      "Before arresting a person, the executing officer must inform the person of the substance (gist) of the warrant, and show the actual warrant if requested.",
+    summaryBengali:
+      "ধারা ৭৫ — CrPC: গ্রেফতারকারী পুলিশ অফিসার বা ব্যক্তি আসামিকে ওয়ারেন্টের বিষয়বস্তু জানাবেন এবং চাইলে আসল ওয়ারেন্ট দেখাবেন।",
+    keyPoints: [
+      "Arrested person has a right to know the reason for arrest",
+      "Officer must disclose the substance of the warrant",
+      "Physical warrant must be shown if demanded",
+      "Protects against arbitrary arrest",
+    ],
+    examples: [
+      "Police arrive with warrant for Ram; they inform him the warrant is for theft under IPC 379 and show the document when asked.",
+    ],
+    examplesBengali: [
+      "পুলিশ রামের কাছে ওয়ারেন্ট নিয়ে আসে; তারা জানায় এটি IPC ৩৭৯-এর চুরির মামলায় এবং চাওয়ামাত্র দলিল দেখায়।",
+    ],
+    exceptions: [
+      "If person attempts to escape, notification may happen simultaneously with arrest",
+    ],
+    exceptionsBengali: ["পালানোর চেষ্টা করলে গ্রেফতারের সাথে সাথে জানানো যাবে"],
+    landmarkCases: [
+      {
+        name: "Joginder Kumar v. State of UP",
+        citation: "(1994) 4 SCC 260",
+        relevance:
+          "Supreme Court held that every arrested person must be informed of grounds of arrest immediately.",
+      },
+    ],
+    overridingEffect:
+      "BNSS 2023 Section 76 corresponds and additionally mandates informing family members.",
+    overridingEffectBengali:
+      "BNSS 2023 ধারা ৭৬ পরিবারকেও জানানোর বাধ্যবাধকতা যোগ করেছে।",
+    relatedSections: [
+      "CrPC 50",
+      "CrPC 41D",
+      "Constitution Article 22",
+      "BNSS 76",
+    ],
+  },
+  crpc_76: {
+    act: "CrPC",
+    actName: "Code of Criminal Procedure, 1973",
+    section: "76",
+    title: "Person Arrested to Be Brought Before Court Without Delay",
+    titleBengali: "গ্রেফতার ব্যক্তিকে বিনা বিলম্বে আদালতে হাজির করা",
+    originalText:
+      "Section 76 CrPC: The police officer or other person executing a warrant of arrest shall, without unnecessary delay, bring the person arrested before the Court before which he is required by law to produce such person.",
+    summary:
+      "After arrest under a warrant, the arrested person must be produced before the court without unnecessary delay — typically within 24 hours.",
+    summaryBengali:
+      "ধারা ৭৬ — CrPC: ওয়ারেন্টে গ্রেফতারের পর, গ্রেফতার ব্যক্তিকে যত দ্রুত সম্ভব — সাধারণত ২৪ ঘণ্টার মধ্যে — নির্দিষ্ট আদালতে হাজির করতে হবে।",
+    keyPoints: [
+      "No unnecessary delay allowed after arrest",
+      "Person must be taken to the court specified in the warrant",
+      "Connects with constitutional right under Article 22 (24-hour rule)",
+      "Failure may make detention illegal (habeas corpus)",
+    ],
+    examples: [
+      "A person arrested under a warrant at 8 AM must be produced before the Magistrate the same day or next morning.",
+    ],
+    examplesBengali: [
+      "সকাল ৮টায় ওয়ারেন্টে গ্রেফতার হওয়া ব্যক্তিকে সেদিন বা পরের দিন সকালে Magistrate-এর সামনে হাজির করতে হবে।",
+    ],
+    exceptions: [
+      "If court is far, officer may apply for extension under Section 71",
+      "Sickness or emergency may cause temporary delay",
+    ],
+    exceptionsBengali: [
+      "আদালত দূরে হলে ধারা ৭১-এর অধীনে সময়সীমা বাড়ানোর আবেদন করা যাবে",
+      "অসুস্থতা বা জরুরি পরিস্থিতিতে সামান্য বিলম্ব ক্ষমার্হ",
+    ],
+    landmarkCases: [
+      {
+        name: "DK Basu v. State of West Bengal",
+        citation: "AIR 1997 SC 610",
+        relevance:
+          "Supreme Court laid down guidelines for arrest and detention; delay in production violates Article 21.",
+      },
+    ],
+    overridingEffect: "BNSS 2023 Section 77 corresponds to CrPC Section 76.",
+    overridingEffectBengali: "BNSS 2023 ধারা ৭৭, CrPC ধারা ৭৬-এর সাথে সম্পর্কিত।",
+    relatedSections: [
+      "CrPC 57",
+      "Constitution Article 22",
+      "BNSS 77",
+      "CrPC 167",
+    ],
+  },
+  crpc_77: {
+    act: "CrPC",
+    actName: "Code of Criminal Procedure, 1973",
+    section: "77",
+    title: "Where Warrant May Be Executed",
+    titleBengali: "ওয়ারেন্ট কোথায় কার্যকর করা যায়",
+    originalText:
+      "Section 77 CrPC: A warrant of arrest may be executed at any place in India.",
+    summary:
+      "A warrant of arrest issued by any court in India can be executed anywhere within India, regardless of state or district boundaries.",
+    summaryBengali:
+      "ধারা ৭৭ — CrPC: ভারতের যেকোনো আদালতের ইস্যু করা গ্রেফতারি ওয়ারেন্ট ভারতের যেকোনো স্থানে কার্যকর করা যায়।",
+    keyPoints: [
+      "Warrant is enforceable across all of India",
+      "No geographical restriction on execution of warrant",
+      "Enables inter-state arrest operations",
+    ],
+    examples: [
+      "A warrant issued by a Delhi court can be executed in Kerala to arrest a fugitive.",
+    ],
+    examplesBengali: [
+      "দিল্লির আদালতের ওয়ারেন্ট কেরালায় পলাতককে গ্রেফতার করতে ব্যবহার করা যাবে।",
+    ],
+    exceptions: [
+      "Diplomatic immunity may restrict execution in certain premises",
+    ],
+    exceptionsBengali: ["কূটনৈতিক অনাক্রম্যতার ক্ষেত্রে ব্যতিক্রম প্রযোজ্য"],
+    landmarkCases: [],
+    overridingEffect: "BNSS 2023 Section 78 corresponds to CrPC Section 77.",
+    overridingEffectBengali: "BNSS 2023 ধারা ৭৮, CrPC ধারা ৭৭-এর সাথে সম্পর্কিত।",
+    relatedSections: ["CrPC 78", "CrPC 79", "BNSS 78"],
+  },
+  crpc_78: {
+    act: "CrPC",
+    actName: "Code of Criminal Procedure, 1973",
+    section: "78",
+    title: "Warrant Forwarded for Execution Outside Jurisdiction",
+    titleBengali: "এখতিয়ারের বাইরে কার্যকর করার জন্য ওয়ারেন্ট পাঠানো",
+    originalText:
+      "Section 78 CrPC: When a warrant is to be executed outside the local jurisdiction of the court issuing it, it shall be forwarded to a Magistrate or a police officer within whose local jurisdiction the person to be arrested is residing.",
+    summary:
+      "When arrest needs to happen outside the issuing court's jurisdiction, the warrant is forwarded to the Magistrate or police officer of that area.",
+    summaryBengali:
+      "ধারা ৭৮ — CrPC: যখন ওয়ারেন্ট ইস্যুকারী আদালতের এখতিয়ারের বাইরে গ্রেফতার করতে হবে, তখন ওয়ারেন্টটি সেই এলাকার Magistrate বা পুলিশ অফিসারের কাছে পাঠানো হয়।",
+    keyPoints: [
+      "Ensures proper legal procedure across jurisdictions",
+      "Warrant must be forwarded to local Magistrate or police officer",
+      "The local officer then executes the warrant",
+      "Avoids jurisdictional conflicts between states/districts",
+    ],
+    examples: [
+      "Court in Kolkata issues warrant for a person living in Mumbai — warrant forwarded to Mumbai Magistrate/police for execution.",
+    ],
+    examplesBengali: [
+      "কলকাতার আদালত মুম্বাইয়ে বসবাসকারী ব্যক্তির বিরুদ্ধে ওয়ারেন্ট ইস্যু করলে মুম্বাইয়ের Magistrate/পুলিশের কাছে পাঠানো হয়।",
+    ],
+    exceptions: [
+      "Urgent cases may allow direct execution under Section 77 without formal forwarding",
+    ],
+    exceptionsBengali: ["জরুরি ক্ষেত্রে ধারা ৭৭-এর অধীনে সরাসরি কার্যকর করা যায়"],
+    landmarkCases: [],
+    overridingEffect: "BNSS 2023 Section 79 corresponds to CrPC Section 78.",
+    overridingEffectBengali: "BNSS 2023 ধারা ৭৯, CrPC ধারা ৭৮-এর সাথে সম্পর্কিত।",
+    relatedSections: ["CrPC 77", "CrPC 79", "BNSS 79"],
+  },
+  crpc_79: {
+    act: "CrPC",
+    actName: "Code of Criminal Procedure, 1973",
+    section: "79",
+    title:
+      "Warrant Directed to Police Officer for Execution Outside Jurisdiction",
+    titleBengali: "এখতিয়ারের বাইরে পুলিশ অফিসারকে ওয়ারেন্ট নির্দেশিত",
+    originalText:
+      "Section 79 CrPC: When a warrant directed to a police officer is to be executed beyond the local jurisdiction of the court issuing it, he shall ordinarily take it for endorsement to a Magistrate or to a police officer not below the rank of an officer in charge of a police station, within the local limits of whose jurisdiction the warrant is to be executed.",
+    summary:
+      "A police officer executing a warrant outside their court's jurisdiction must get the warrant endorsed by a local Magistrate or senior police officer of that area before proceeding.",
+    summaryBengali:
+      "ধারা ৭৯ — CrPC: যখন একজন পুলিশ অফিসার আদালতের এখতিয়ারের বাইরে ওয়ারেন্ট কার্যকর করবেন, তখন সাধারণত সেই এলাকার Magistrate বা থানার দায়িত্বপ্রাপ্ত অফিসারের অনুমোদন নিতে হবে।",
+    keyPoints: [
+      "Endorsement from local Magistrate or SHO required before inter-jurisdictional arrest",
+      "Prevents abuse of power across state/district lines",
+      "Endorsed officer may assist in execution",
+      "Exception: may execute without endorsement if offender likely to escape",
+    ],
+    examples: [
+      "A Bengal police officer travels to Odisha to arrest an accused; must get warrant endorsed by local Odisha Magistrate/SHO first.",
+    ],
+    examplesBengali: [
+      "বাংলার পুলিশ অফিসার ওড়িশায় আসামি গ্রেফতার করতে গেলে প্রথমে ওড়িশার স্থানীয় Magistrate/SHO-এর অনুমোদন নিতে হবে।",
+    ],
+    exceptions: [
+      "If the offender is likely to escape, endorsement may be skipped",
+      "Senior police officers (SP and above) may execute directly",
+    ],
+    exceptionsBengali: [
+      "পলায়নের আশঙ্কা থাকলে অনুমোদন ছাড়াও কার্যকর করা যাবে",
+      "SP বা উচ্চপদের অফিসার সরাসরি কার্যকর করতে পারবেন",
+    ],
+    landmarkCases: [
+      {
+        name: "Serious Fraud Investigation Office v. Rahul Modi",
+        citation: "(2019) 5 SCC 432",
+        relevance:
+          "Court held that inter-state warrant execution requires procedural compliance including endorsement under Section 79.",
+      },
+    ],
+    overridingEffect: "BNSS 2023 Section 80 corresponds to CrPC Section 79.",
+    overridingEffectBengali: "BNSS 2023 ধারা ৮০, CrPC ধারা ৭৯-এর সাথে সম্পর্কিত।",
+    relatedSections: ["CrPC 77", "CrPC 78", "CrPC 80", "BNSS 80"],
+  },
+  crpc_80: {
+    act: "CrPC",
+    actName: "Code of Criminal Procedure, 1973",
+    section: "80",
+    title: "Procedure on Arrest of Person Against Whom Warrant Issued",
+    titleBengali: "ওয়ারেন্টে গ্রেফতারের পর পদ্ধতি",
+    originalText:
+      "Section 80 CrPC: When a warrant of arrest is executed outside the district in which it was issued, the person arrested shall, unless the Court which issued the warrant is within thirty miles of the place of arrest, be taken before a Magistrate of the district in which the arrest is made.",
+    summary:
+      "When someone is arrested outside the district where the warrant was issued, they must be taken before a local Magistrate of the district of arrest (unless the issuing court is very close).",
+    summaryBengali:
+      "ধারা ৮০ — CrPC: যদি ওয়ারেন্ট ইস্যুকারী জেলার বাইরে কাউকে গ্রেফতার করা হয়, তাহলে তাকে গ্রেফতারস্থলের জেলার Magistrate-এর সামনে হাজির করতে হবে।",
+    keyPoints: [
+      "Protects arrested person's rights in inter-district arrests",
+      "Local Magistrate reviews the arrest before transfer",
+      "Exception: issuing court within 30 miles — take directly there",
+      "Ensures no undue transportation without judicial oversight",
+    ],
+    examples: [
+      "A Kolkata warrant is executed in Howrah; the person is taken before Howrah Magistrate first unless the Kolkata court is nearby.",
+    ],
+    examplesBengali: [
+      "কলকাতার ওয়ারেন্ট হাওড়ায় কার্যকর হলে, আসামিকে প্রথমে হাওড়ার Magistrate-এর সামনে হাজির করতে হবে।",
+    ],
+    exceptions: [
+      "If issuing court is within 30 miles, direct production there is permitted",
+    ],
+    exceptionsBengali: [
+      "ইস্যুকারী আদালত ৩০ মাইলের মধ্যে হলে সরাসরি সেখানে নিয়ে যাওয়া যাবে",
+    ],
+    landmarkCases: [],
+    overridingEffect: "BNSS 2023 Section 81 corresponds to CrPC Section 80.",
+    overridingEffectBengali: "BNSS 2023 ধারা ৮১, CrPC ধারা ৮০-এর সাথে সম্পর্কিত।",
+    relatedSections: ["CrPC 76", "CrPC 79", "CrPC 81", "BNSS 81"],
+  },
+  crpc_81: {
+    act: "CrPC",
+    actName: "Code of Criminal Procedure, 1973",
+    section: "81",
+    title: "Procedure by Magistrate Before Whom Person Arrested Is Brought",
+    titleBengali: "গ্রেফতার ব্যক্তিকে Magistrate-এর সামনে উপস্থাপনের পদ্ধতি",
+    originalText:
+      "Section 81 CrPC: The Magistrate before whom a person arrested under a warrant is brought shall, if the person is the person named in the warrant, direct his removal in custody to the Court which issued the warrant.",
+    summary:
+      "When an arrested person is brought before the local Magistrate under Section 80, the Magistrate verifies identity and if confirmed, orders transfer/custody to the court which originally issued the warrant.",
+    summaryBengali:
+      "ধারা ৮১ — CrPC: ধারা ৮০-এর অধীনে গ্রেফতার ব্যক্তিকে স্থানীয় Magistrate-এর সামনে আনলে, Magistrate পরিচয় যাচাই করে ওয়ারেন্ট ইস্যুকারী আদালতে স্থানান্তরের নির্দেশ দেন।",
+    keyPoints: [
+      "Identity verification before transfer",
+      "Magistrate may grant bail if offence is bailable",
+      "Ensures smooth inter-district judicial transfer",
+      "Protects against wrongful transfer of wrong person",
+    ],
+    examples: [
+      "Ram arrested in Howrah under Kolkata warrant; Howrah Magistrate verifies identity, then orders transfer to Kolkata court.",
+    ],
+    examplesBengali: [
+      "কলকাতার ওয়ারেন্টে হাওড়ায় গ্রেফতার রাম; হাওড়া Magistrate পরিচয় যাচাই করে কলকাতায় স্থানান্তরের নির্দেশ দেন।",
+    ],
+    exceptions: [
+      "If offence is bailable, Magistrate at the place of arrest may release on bail",
+    ],
+    exceptionsBengali: [
+      "জামিনযোগ্য অপরাধ হলে গ্রেফতারস্থলের Magistrate জামিন দিতে পারবেন",
+    ],
+    landmarkCases: [],
+    overridingEffect: "BNSS 2023 Section 82 corresponds to CrPC Section 81.",
+    overridingEffectBengali: "BNSS 2023 ধারা ৮২, CrPC ধারা ৮১-এর সাথে সম্পর্কিত।",
+    relatedSections: ["CrPC 80", "CrPC 82", "CrPC 436", "BNSS 82"],
+  },
+  crpc_82: {
+    act: "CrPC",
+    actName: "Code of Criminal Procedure, 1973",
+    section: "82",
+    title: "Proclamation for Person Absconding",
+    titleBengali: "পলাতক ব্যক্তির জন্য উদ্\u200cঘোষণা (Proclamation)",
+    originalText:
+      "Section 82 CrPC: If any Court has reason to believe that any person against whom a warrant has been issued has absconded or is concealing himself so that such warrant cannot be executed, such Court may publish a written proclamation requiring him to appear at a specified place and at a specified time.",
+    summary:
+      "When a person absconds or hides to avoid a warrant, the court can issue a public proclamation declaring them a 'proclaimed offender' and directing them to appear before the court.",
+    summaryBengali:
+      "ধারা ৮২ — CrPC: যদি কোনো ব্যক্তি ওয়ারেন্ট এড়াতে পালায় বা লুকায়, তাহলে আদালত উদ্\u200cঘোষণা (proclamation) জারি করে তাকে 'ঘোষিত অপরাধী' ঘোষণা করতে পারে।",
+    keyPoints: [
+      "Issued when person absconds to evade warrant",
+      "Proclamation published in visible public place, local newspaper",
+      "Person given minimum 30 days to appear",
+      "Non-appearance leads to attachment of property under Section 83",
+      "Person declared 'proclaimed offender' or 'absconder'",
+    ],
+    examples: [
+      "Accused Ram evades arrest for months; court issues proclamation in newspaper and affixes on his last known address, giving 30 days to appear.",
+    ],
+    examplesBengali: [
+      "আসামি রাম মাসের পর মাস গ্রেফতার এড়িয়ে চলেছে; আদালত সংবাদপত্রে proclamation জারি করে ৩০ দিনের সময় দেয়।",
+    ],
+    exceptions: [
+      "Court may simultaneously attach property in serious cases (Section 83 proviso)",
+    ],
+    exceptionsBengali: ["গুরুতর মামলায় ৩০ দিন অপেক্ষা না করেও সম্পত্তি ক্রোক করা যাবে"],
+    landmarkCases: [
+      {
+        name: "Sanjay Dutt v. State",
+        citation: "(1994) 5 SCC 410",
+        relevance:
+          "Court clarified that Section 82 proclamation is a necessary precondition for property attachment under Section 83.",
+      },
+    ],
+    overridingEffect:
+      "BNSS 2023 Section 84 corresponds to CrPC Section 82. BNSS adds digital/online proclamation methods.",
+    overridingEffectBengali:
+      "BNSS 2023 ধারা ৮৪, CrPC ধারা ৮২-এর সাথে সম্পর্কিত। BNSS ডিজিটাল প্রকাশের পদ্ধতি যোগ করেছে।",
+    relatedSections: ["CrPC 73", "CrPC 83", "CrPC 84", "BNSS 84", "IPC 174A"],
+  },
+  crpc_83: {
+    act: "CrPC",
+    actName: "Code of Criminal Procedure, 1973",
+    section: "83",
+    title: "Attachment of Property of Person Absconding",
+    titleBengali: "পলাতক ব্যক্তির সম্পত্তি ক্রোক",
+    originalText:
+      "Section 83 CrPC: The Court issuing a proclamation under section 82 may, for reasons to be recorded in writing, at any time after the issue of the proclamation, order the attachment of any property, movable or immovable, or both, belonging to the proclaimed person.",
+    summary:
+      "After issuing a proclamation, the court can order attachment (seizing) of the absconder's movable or immovable property to compel their appearance.",
+    summaryBengali:
+      "ধারা ৮৩ — CrPC: proclamation জারির পর, আদালত পলাতকের চল বা অচল সম্পত্তি ক্রোক করার নির্দেশ দিতে পারে।",
+    keyPoints: [
+      "Property attachment follows proclamation under Section 82",
+      "Both movable and immovable property can be attached",
+      "Attached property managed by Collector/government",
+      "Property restored if person appears within 2 years",
+      "Serious offences: attachment may happen simultaneously with proclamation",
+    ],
+    examples: [
+      "After proclamation against Ram, court orders attachment of his house and bank accounts.",
+    ],
+    examplesBengali: [
+      "রামের বিরুদ্ধে proclamation-এর পর, আদালত তার বাড়ি ও ব্যাংক অ্যাকাউন্ট ক্রোক করার নির্দেশ দেয়।",
+    ],
+    exceptions: [
+      "Property of innocent third parties cannot be attached",
+      "Attached property restored if person appears within 2 years",
+    ],
+    exceptionsBengali: [
+      "নির্দোষ তৃতীয় পক্ষের সম্পত্তি ক্রোক করা যাবে না",
+      "২ বছরের মধ্যে উপস্থিত হলে সম্পত্তি ফিরিয়ে দেওয়া হবে",
+    ],
+    landmarkCases: [
+      {
+        name: "Sanjay Dutt v. State",
+        citation: "(1994) 5 SCC 410",
+        relevance:
+          "Proclamation under Section 82 is prerequisite for property attachment under Section 83.",
+      },
+    ],
+    overridingEffect: "BNSS 2023 Section 85 corresponds to CrPC Section 83.",
+    overridingEffectBengali: "BNSS 2023 ধারা ৮৫, CrPC ধারা ৮৩-এর সাথে সম্পর্কিত।",
+    relatedSections: ["CrPC 82", "CrPC 84", "CrPC 85", "BNSS 85"],
+  },
+  crpc_84: {
+    act: "CrPC",
+    actName: "Code of Criminal Procedure, 1973",
+    section: "84",
+    title: "Claims and Objections to Attachment",
+    titleBengali: "ক্রোকের বিরুদ্ধে দাবি ও আপত্তি",
+    originalText:
+      "Section 84 CrPC: If any claim is preferred to, or objection made to the attachment of, any property attached under section 83, within six months from the date of such attachment, by any person other than the proclaimed person, on the ground that the claimant has an interest in such property, the claim or objection shall be inquired into.",
+    summary:
+      "Third parties (not the absconder) can challenge attachment of their property within 6 months, claiming their interest in it.",
+    summaryBengali:
+      "ধারা ৮৪ — CrPC: পলাতক ছাড়া অন্য কোনো ব্যক্তি, যদি ক্রোক করা সম্পত্তিতে তার স্বার্থ থাকে, তাহলে ৬ মাসের মধ্যে আপত্তি জানাতে পারবেন।",
+    keyPoints: [
+      "Third party rights protected in property attachment",
+      "Claim must be filed within 6 months of attachment",
+      "Court inquires into the claim and may release property to genuine claimants",
+    ],
+    examples: [
+      "Ram absconds; court attaches his jointly owned house. Co-owner Sita files objection within 6 months claiming her 50% share.",
+    ],
+    examplesBengali: [
+      "রাম পালিয়ে যায়; আদালত তার যৌথমালিকানার বাড়ি ক্রোক করে। সহ-মালিক সীতা ৬ মাসের মধ্যে তার ৫০% অংশের দাবিতে আপত্তি দাখিল করেন।",
+    ],
+    exceptions: [
+      "Proclaimed person himself cannot file objection under this section",
+    ],
+    exceptionsBengali: ["ঘোষিত অপরাধী নিজে এই ধারায় আপত্তি দাখিল করতে পারবেন না"],
+    landmarkCases: [],
+    overridingEffect: "BNSS 2023 Section 86 corresponds to CrPC Section 84.",
+    overridingEffectBengali: "BNSS 2023 ধারা ৮৬, CrPC ধারা ৮৪-এর সাথে সম্পর্কিত।",
+    relatedSections: ["CrPC 83", "CrPC 85", "BNSS 86"],
+  },
+  crpc_85: {
+    act: "CrPC",
+    actName: "Code of Criminal Procedure, 1973",
+    section: "85",
+    title: "Release, Sale and Restoration of Attached Property",
+    titleBengali: "ক্রোক করা সম্পত্তি মুক্তি, বিক্রয় ও পুনরুদ্ধার",
+    originalText:
+      "Section 85 CrPC: If the proclaimed person appears within the time specified in the proclamation, the Court shall make an order releasing the property from attachment. If the proclaimed person does not appear, the attached property shall be at the disposal of the State Government; but it shall not be sold until the expiration of six months from the date of the attachment.",
+    summary:
+      "If the absconder appears on time, attached property is released. If not, after 6 months the State Government may sell it; within 2 years person may claim restoration.",
+    summaryBengali:
+      "ধারা ৮৫ — CrPC: পলাতক সময়মতো হাজির হলে সম্পত্তি ছেড়ে দেওয়া হয়। না হলে ৬ মাস পর রাজ্য সরকার বিক্রি করতে পারে; ২ বছরের মধ্যে হাজির হয়ে নির্দোষ প্রমাণ করলে ফেরত দেওয়া হয়।",
+    keyPoints: [
+      "Property released if person appears in time",
+      "If not, property vests in State Government after 6 months",
+      "2-year window for person to claim restoration",
+      "Sale proceeds held for 2 years before final disposal",
+    ],
+    examples: [
+      "Ram's property attached; he doesn't appear. After 6 months, State Government sells the property but holds proceeds for 2 years.",
+    ],
+    examplesBengali: [
+      "রামের সম্পত্তি ক্রোক হয়; সে আসে না। ৬ মাস পর রাজ্য সরকার বিক্রি করে কিন্তু ২ বছর আয় ধরে রাখে।",
+    ],
+    exceptions: [
+      "Property cannot be sold before 6 months from attachment date",
+    ],
+    exceptionsBengali: ["ক্রোকের তারিখ থেকে ৬ মাস আগে সম্পত্তি বিক্রি করা যাবে না"],
+    landmarkCases: [],
+    overridingEffect: "BNSS 2023 Section 87 corresponds to CrPC Section 85.",
+    overridingEffectBengali: "BNSS 2023 ধারা ৮৭, CrPC ধারা ৮৫-এর সাথে সম্পর্কিত।",
+    relatedSections: ["CrPC 82", "CrPC 83", "CrPC 84", "BNSS 87"],
+  },
+  crpc_86: {
+    act: "CrPC",
+    actName: "Code of Criminal Procedure, 1973",
+    section: "86",
+    title: "Appeal from Order Rejecting Application for Restoration",
+    titleBengali: "সম্পত্তি পুনরুদ্ধার প্রত্যাখ্যানের বিরুদ্ধে আপিল",
+    originalText:
+      "Section 86 CrPC: Any person aggrieved by any order made under section 85 may appeal to the Court to which appeals ordinarily lie from the sentences of the first-mentioned Court.",
+    summary:
+      "A person aggrieved by refusal to restore attached property under Section 85 can appeal to the next higher court.",
+    summaryBengali:
+      "ধারা ৮৬ — CrPC: ধারা ৮৫-এর অধীনে সম্পত্তি পুনরুদ্ধার প্রত্যাখ্যাত হলে, সংক্ষুব্ধ ব্যক্তি উচ্চ আদালতে আপিল করতে পারবেন।",
+    keyPoints: [
+      "Right to appeal against refusal of property restoration",
+      "Appeal goes to court which hears appeals from that court",
+      "Ensures judicial oversight in property disputes",
+    ],
+    examples: [
+      "Court refuses to restore Ram's attached property; Ram appeals to Sessions Court.",
+    ],
+    examplesBengali: [
+      "আদালত রামের ক্রোক সম্পত্তি ফেরত দিতে অস্বীকার করলে রাম Sessions Court-এ আপিল করেন।",
+    ],
+    exceptions: [],
+    exceptionsBengali: [],
+    landmarkCases: [],
+    overridingEffect: "BNSS 2023 Section 88 corresponds to CrPC Section 86.",
+    overridingEffectBengali: "BNSS 2023 ধারা ৮৮, CrPC ধারা ৮৬-এর সাথে সম্পর্কিত।",
+    relatedSections: ["CrPC 85", "CrPC 399", "BNSS 88"],
+  },
+  crpc_87: {
+    act: "CrPC",
+    actName: "Code of Criminal Procedure, 1973",
+    section: "87",
+    title: "Issue of Warrant in Lieu of, or in Addition to, Summons",
+    titleBengali: "সমন-এর পরিবর্তে বা অতিরিক্ত ওয়ারেন্ট জারি",
+    originalText:
+      "Section 87 CrPC: A Court may, in any case in which it is empowered to issue a summons for the appearance of any person, issue, after recording its reasons in writing, a warrant for his arrest if the Court sees reason to believe that he has absconded or will not obey the summons.",
+    summary:
+      "A court may issue a warrant instead of (or in addition to) a summons if it believes the person will abscond or disobey the summons.",
+    summaryBengali:
+      "ধারা ৮৭ — CrPC: আদালত যদি বিশ্বাস করে যে ব্যক্তি সমন অমান্য করবে বা পালিয়ে যাবে, তাহলে সমনের পরিবর্তে বা অতিরিক্তভাবে ওয়ারেন্ট জারি করতে পারে।",
+    keyPoints: [
+      "Escalation from summons to warrant",
+      "Court must record written reasons before issuing warrant",
+      "Applicable where summons is the normal procedure",
+      "Used when court anticipates non-compliance",
+    ],
+    examples: [
+      "A witness summoned to appear but known to be planning to flee — court issues warrant alongside summons.",
+    ],
+    examplesBengali: [
+      "সাক্ষীকে সমন করা হয়েছে কিন্তু পালানোর পরিকল্পনা জানা গেছে — আদালত সমনের সাথে ওয়ারেন্টও জারি করে।",
+    ],
+    exceptions: ["Written reasons mandatory — verbal belief insufficient"],
+    exceptionsBengali: ["লিখিত কারণ আবশ্যক — মৌখিক বিশ্বাস যথেষ্ট নয়"],
+    landmarkCases: [],
+    overridingEffect: "BNSS 2023 Section 89 corresponds to CrPC Section 87.",
+    overridingEffectBengali: "BNSS 2023 ধারা ৮৯, CrPC ধারা ৮৭-এর সাথে সম্পর্কিত।",
+    relatedSections: ["CrPC 61", "CrPC 70", "CrPC 82", "BNSS 89"],
+  },
+  crpc_88: {
+    act: "CrPC",
+    actName: "Code of Criminal Procedure, 1973",
+    section: "88",
+    title: "Power to Take Bond for Appearance",
+    titleBengali: "হাজিরার জন্য বন্ড গ্রহণের ক্ষমতা",
+    originalText:
+      "Section 88 CrPC: When any person for whose appearance or arrest the officer presiding in any Court is empowered to issue a summons or warrant, is present in such Court, such officer may require such person to execute a bond, with or without sureties, for his appearance in such Court.",
+    summary:
+      "When a person is already present in court, the presiding officer can require them to execute a bond (with or without surety) guaranteeing future appearances.",
+    summaryBengali:
+      "ধারা ৮৮ — CrPC: যদি কোনো ব্যক্তি ইতিমধ্যে আদালতে উপস্থিত থাকেন, তাহলে আদালত তাকে ভবিষ্যৎ হাজিরার জন্য বন্ড সম্পাদন করতে বলতে পারে।",
+    keyPoints: [
+      "Preventive measure to ensure future court appearances",
+      "Can be with or without surety",
+      "Applicable when person is voluntarily present in court",
+      "Failure to execute bond may lead to detention",
+    ],
+    examples: [
+      "Witness present in court voluntarily — judge asks them to execute a bond guaranteeing appearance on next date.",
+    ],
+    examplesBengali: [
+      "সাক্ষী স্বেচ্ছায় আদালতে উপস্থিত — বিচারক পরবর্তী তারিখে হাজিরার বন্ড সম্পাদন করতে বলেন।",
+    ],
+    exceptions: ["Cannot compel bond from accused if it violates bail rights"],
+    exceptionsBengali: ["জামিনের অধিকার লঙ্ঘন হলে বন্ড নেওয়া যাবে না"],
+    landmarkCases: [],
+    overridingEffect: "BNSS 2023 Section 90 corresponds to CrPC Section 88.",
+    overridingEffectBengali: "BNSS 2023 ধারা ৯০, CrPC ধারা ৮৮-এর সাথে সম্পর্কিত।",
+    relatedSections: ["CrPC 436", "CrPC 437", "CrPC 438", "BNSS 90"],
+  },
+  crpc_89: {
+    act: "CrPC",
+    actName: "Code of Criminal Procedure, 1973",
+    section: "89",
+    title: "Arrest on Breach of Bond for Appearance",
+    titleBengali: "হাজিরার বন্ড লঙ্ঘনে গ্রেফতার",
+    originalText:
+      "Section 89 CrPC: When any person who is bound by any bond taken under this Code to appear before a Court, does not appear, the Court may issue a warrant for his arrest.",
+    summary:
+      "If a person who has given a bond to appear before court fails to appear, the court can issue an arrest warrant against them.",
+    summaryBengali:
+      "ধারা ৮৯ — CrPC: যদি কোনো ব্যক্তি বন্ড দিয়েও নির্ধারিত দিনে আদালতে না আসেন, তাহলে আদালত তার বিরুদ্ধে গ্রেফতারি ওয়ারেন্ট জারি করতে পারে।",
+    keyPoints: [
+      "Consequence of breaching appearance bond",
+      "Court issues arrest warrant on non-appearance",
+      "Applies to all bonds taken under CrPC",
+      "Surety may also be called upon to show cause",
+    ],
+    examples: [
+      "Ram gave bond to appear on 15th March but doesn't come — court issues warrant for his arrest.",
+    ],
+    examplesBengali: [
+      "রাম ১৫ মার্চ হাজির হওয়ার বন্ড দিয়েছিল কিন্তু আসেনি — আদালত তার গ্রেফতারি ওয়ারেন্ট জারি করে।",
+    ],
+    exceptions: [
+      "Genuine illness or emergency may be accepted as valid excuse if notified",
+    ],
+    exceptionsBengali: ["সত্যিকারের অসুস্থতা বা জরুরি পরিস্থিতি জানানো হলে ক্ষমা করা যাবে"],
+    landmarkCases: [],
+    overridingEffect: "BNSS 2023 Section 91 corresponds to CrPC Section 89.",
+    overridingEffectBengali: "BNSS 2023 ধারা ৯১, CrPC ধারা ৮৯-এর সাথে সম্পর্কিত।",
+    relatedSections: ["CrPC 88", "CrPC 446", "BNSS 91"],
+  },
+  crpc_90: {
+    act: "CrPC",
+    actName: "Code of Criminal Procedure, 1973",
+    section: "90",
+    title:
+      "Provisions of This Chapter Generally Applicable to Summonses and Warrants",
+    titleBengali: "এই অধ্যায়ের বিধান সমন ও ওয়ারেন্টে সাধারণভাবে প্রযোজ্য",
+    originalText:
+      "Section 90 CrPC: The provisions contained in this Chapter relating to a summons and warrant, and relating to the person summoned or arrested, shall apply to every summons and every warrant of arrest issued under this Code.",
+    summary:
+      "All provisions in Chapter VI relating to summons and warrants apply generally to every summons and warrant issued under CrPC.",
+    summaryBengali:
+      "ধারা ৯০ — CrPC: Chapter VI-এর সমন ও ওয়ারেন্ট সংক্রান্ত সমস্ত বিধান CrPC-র অধীনে ইস্যু করা প্রতিটি সমন ও ওয়ারেন্টে প্রযোজ্য হবে।",
+    keyPoints: [
+      "Omnibus provision applying Chapter VI rules to all summons/warrants",
+      "Ensures uniformity in issuance and execution of process",
+      "Acts as an interpretive guide for courts",
+    ],
+    examples: [
+      "Rules about service of summons (Section 62-69) apply equally to all types of summons under CrPC.",
+    ],
+    examplesBengali: [
+      "সমন জারির নিয়ম (ধারা ৬২-৬৯) CrPC-র সব ধরনের সমনে সমানভাবে প্রযোজ্য।",
+    ],
+    exceptions: [],
+    exceptionsBengali: [],
+    landmarkCases: [],
+    overridingEffect: "BNSS 2023 Section 92 corresponds to CrPC Section 90.",
+    overridingEffectBengali: "BNSS 2023 ধারা ৯২, CrPC ধারা ৯০-এর সাথে সম্পর্কিত।",
+    relatedSections: ["CrPC 61", "CrPC 70", "CrPC 88", "BNSS 92"],
+  },
+  crpc_91: {
+    act: "CrPC",
+    actName: "Code of Criminal Procedure, 1973",
+    section: "91",
+    title: "Summons to Produce Document or Other Thing",
+    titleBengali: "দলিল বা অন্য বস্তু হাজির করার সমন",
+    originalText:
+      "Section 91 CrPC: Whenever any Court or any officer in charge of a police station considers that the production of any document or other thing is necessary or desirable for the purposes of any investigation, inquiry, trial or other proceeding under this Code, such Court may issue a summons, or such officer a written order, to the person in whose possession or power such document or thing is believed to be, requiring him to attend and produce it.",
+    summary:
+      "Courts and police officers can issue summons/order to any person to produce specific documents or items needed for investigation, inquiry, or trial.",
+    summaryBengali:
+      "ধারা ৯১ — CrPC: আদালত ও পুলিশ অফিসার তদন্ত, বিচার বা অনুসন্ধানের জন্য প্রয়োজনীয় দলিল বা বস্তু হাজির করতে যেকোনো ব্যক্তির কাছে সমন বা লিখিত নির্দেশ পাঠাতে পারেন।",
+    keyPoints: [
+      "Power to summon documents and physical evidence",
+      "Applicable in investigation, inquiry, and trial stages",
+      "Police officer issues written order (not court summons)",
+      "Person must produce the document or face contempt",
+      "Does not override privilege (e.g., attorney-client privilege)",
+    ],
+    examples: [
+      "In a fraud case, court issues summons to a bank to produce account statements.",
+      "Police officer sends written order to employer to produce CCTV footage.",
+    ],
+    examplesBengali: [
+      "জালিয়াতির মামলায় আদালত ব্যাংককে অ্যাকাউন্ট স্টেটমেন্ট হাজির করতে সমন পাঠায়।",
+      "পুলিশ অফিসার নিয়োগকর্তাকে CCTV ফুটেজ দেওয়ার লিখিত নির্দেশ পাঠান।",
+    ],
+    exceptions: [
+      "State documents protected by public interest immunity",
+      "Communications between advocate and client (professional privilege)",
+    ],
+    exceptionsBengali: [
+      "জনস্বার্থ অনাক্রম্যতায় সুরক্ষিত রাষ্ট্রীয় দলিল",
+      "উকিল-মক্কেলের মধ্যকার যোগাযোগ (পেশাদার অনাক্রম্যতা)",
+    ],
+    landmarkCases: [
+      {
+        name: "State of Gujarat v. Shyamlal Mohanlal Choksi",
+        citation: "AIR 1965 SC 1251",
+        relevance:
+          "Section 91 power to summon documents is broad but subject to privilege protections.",
+      },
+    ],
+    overridingEffect:
+      "BNSS 2023 Section 94 corresponds to CrPC Section 91. BNSS extends it to electronic documents explicitly.",
+    overridingEffectBengali:
+      "BNSS 2023 ধারা ৯৪, CrPC ধারা ৯১-এর সাথে সম্পর্কিত। BNSS ইলেকট্রনিক দলিলকে স্পষ্টভাবে অন্তর্ভুক্ত করেছে।",
+    relatedSections: ["CrPC 92", "CrPC 93", "BNSS 94", "IT Act 65B"],
+  },
+  crpc_92: {
+    act: "CrPC",
+    actName: "Code of Criminal Procedure, 1973",
+    section: "92",
+    title: "Procedure as to Letters and Telegrams",
+    titleBengali: "চিঠি ও টেলিগ্রামের ক্ষেত্রে পদ্ধতি",
+    originalText:
+      "Section 92 CrPC: The District Magistrate, Chief Judicial Magistrate, Court of Session or High Court may, if satisfied that the interests of justice so require, require the postal or telegraph authority to detain, and to produce before it, the contents of any postal article, parcel, telegram, message or other document, which is in the custody of a postal or telegraph authority.",
+    summary:
+      "Senior courts and magistrates can direct postal/telegraph authorities to detain and produce mail, parcels, telegrams, or messages when justice requires it.",
+    summaryBengali:
+      "ধারা ৯২ — CrPC: জেলা Magistrate, CJM, Sessions Court বা High Court ন্যায়বিচারের স্বার্থে ডাক বা টেলিগ্রাফ কর্তৃপক্ষকে চিঠি, পার্সেল, বা বার্তা আটক রেখে আদালতে হাজির করতে নির্দেশ দিতে পারে।",
+    keyPoints: [
+      "Interception of postal/telegraph communications for justice",
+      "Only senior courts/magistrates have this power",
+      "Must be satisfied that interests of justice require it",
+      "Extends to modern equivalents under interpretation",
+    ],
+    examples: [
+      "In a kidnapping case, court directs postal authority to intercept and produce ransom letters being sent by the accused.",
+    ],
+    examplesBengali: [
+      "অপহরণ মামলায় আদালত ডাক কর্তৃপক্ষকে আসামির পাঠানো মুক্তিপণের চিঠি আটক করে হাজির করতে নির্দেশ দেয়।",
+    ],
+    exceptions: [
+      "Cannot intercept without court/magistrate order",
+      "Bulk surveillance not permitted under this section",
+    ],
+    exceptionsBengali: [
+      "আদালত/Magistrate-এর নির্দেশ ছাড়া আটক করা যাবে না",
+      "এই ধারায় ব্যাপক নজরদারি অনুমোদিত নয়",
+    ],
+    landmarkCases: [
+      {
+        name: "PUCL v. Union of India",
+        citation: "AIR 1997 SC 568",
+        relevance:
+          "Telephone tapping/interception must be done under lawful authority with procedural safeguards.",
+      },
+    ],
+    overridingEffect:
+      "BNSS 2023 Section 95 corresponds and explicitly includes electronic communications, emails, and digital data.",
+    overridingEffectBengali:
+      "BNSS 2023 ধারা ৯৫ ইলেকট্রনিক যোগাযোগ, ইমেইল, ও ডিজিটাল ডেটাকে স্পষ্টভাবে অন্তর্ভুক্ত করেছে।",
+    relatedSections: [
+      "CrPC 91",
+      "CrPC 93",
+      "IT Act 69",
+      "BNSS 95",
+      "Constitution Article 21",
+    ],
+  },
+  crpc_93: {
+    act: "CrPC",
+    actName: "Code of Criminal Procedure, 1973",
+    section: "93",
+    title: "When Search Warrant May Be Issued",
+    titleBengali: "তল্লাশি পরোয়ানা কখন জারি করা যায়",
+    originalText:
+      "Section 93 CrPC: Where any Court has reason to believe that a person to whom a summons or order under section 91 has been or might be addressed, will not produce the document or thing as required; or where such document or thing is not known to the Court to be in the possession of any person; or where the Court considers that the purposes of any inquiry, trial or other proceeding will be served by a general search or inspection, it may issue a search-warrant.",
+    summary:
+      "A court may issue a search warrant when a person refuses to produce required documents, when possession is unknown, or when a general search is necessary for the investigation/trial.",
+    summaryBengali:
+      "ধারা ৯৩ — CrPC: আদালত search warrant জারি করতে পারে যখন: (১) ব্যক্তি দলিল দিতে অস্বীকার করতে পারে, (২) দলিল কার কাছে আছে অজানা, বা (৩) সাধারণ তল্লাশি বিচার/তদন্তের জন্য জরুরি।",
+    keyPoints: [
+      "Three grounds for issuing search warrant under Section 93",
+      "More intrusive than summons — enters premises",
+      "General search warrant possible for wide-area investigation",
+      "Must be specific about what to search for",
+      "Executed by police officer named in warrant",
+    ],
+    examples: [
+      "Accused likely has incriminating documents at home but refuses to produce them — court issues search warrant for their residence.",
+      "Police investigation of drug network — court issues general search warrant for a warehouse.",
+    ],
+    examplesBengali: [
+      "আসামির বাড়িতে অপরাধমূলক দলিল থাকার সম্ভাবনা আছে কিন্তু দিতে অস্বীকার করছে — আদালত search warrant জারি করে।",
+      "মাদক নেটওয়ার্ক তদন্তে — আদালত একটি গুদামের জন্য সাধারণ search warrant জারি করে।",
+    ],
+    exceptions: [
+      "Cannot search diplomatic premises",
+      "Women's quarters to be searched by female officer",
+      "Attorney-client privileged documents exempt",
+    ],
+    exceptionsBengali: [
+      "কূটনৈতিক প্রাঙ্গণ তল্লাশি করা যাবে না",
+      "মহিলাদের কক্ষ মহিলা অফিসার কর্তৃক তল্লাশি করতে হবে",
+      "উকিল-মক্কেল বিশেষাধিকারের দলিল ব্যতিক্রম",
+    ],
+    landmarkCases: [
+      {
+        name: "Pooran Mal v. Director of Inspection",
+        citation: "AIR 1974 SC 348",
+        relevance:
+          "Search under proper warrant is valid even if it yields incriminating evidence.",
+      },
+      {
+        name: "State of Punjab v. Balbir Singh",
+        citation: "(1994) 3 SCC 299",
+        relevance:
+          "Search without warrant or without following procedure is illegal and evidence obtained may be inadmissible.",
+      },
+    ],
+    overridingEffect:
+      "BNSS 2023 Section 96 corresponds to CrPC Section 93. BNSS extends to search of electronic devices and digital storage.",
+    overridingEffectBengali:
+      "BNSS 2023 ধারা ৯৬, CrPC ধারা ৯৩-এর সাথে সম্পর্কিত। BNSS ইলেকট্রনিক ডিভাইস ও ডিজিটাল স্টোরেজ তল্লাশিতে প্রসারিত।",
+    relatedSections: [
+      "CrPC 91",
+      "CrPC 92",
+      "CrPC 94",
+      "CrPC 165",
+      "BNSS 96",
+      "IT Act 80",
+    ],
+  },
 };
 
 const KEY_ALIASES: Record<string, string> = {
@@ -6380,6 +7208,80 @@ const KEY_ALIASES: Record<string, string> = {
   crpc72: "crpc_72",
   "warrants to whom directed": "crpc_72",
   "warrant directed civilian": "crpc_72",
+  "crpc 73": "crpc_73",
+  crpc73: "crpc_73",
+  "warrant any person": "crpc_73",
+  "warrant proclaimed offender": "crpc_73",
+  "crpc 74": "crpc_74",
+  crpc74: "crpc_74",
+  "warrant police officer delegation": "crpc_74",
+  "crpc 75": "crpc_75",
+  crpc75: "crpc_75",
+  "notify warrant": "crpc_75",
+  "show warrant": "crpc_75",
+  "crpc 76": "crpc_76",
+  crpc76: "crpc_76",
+  "produce before court": "crpc_76",
+  "produce without delay": "crpc_76",
+  "crpc 77": "crpc_77",
+  crpc77: "crpc_77",
+  "warrant anywhere india": "crpc_77",
+  "crpc 78": "crpc_78",
+  crpc78: "crpc_78",
+  "warrant outside jurisdiction": "crpc_78",
+  "crpc 79": "crpc_79",
+  crpc79: "crpc_79",
+  "warrant endorsement": "crpc_79",
+  "inter state arrest": "crpc_79",
+  "crpc 80": "crpc_80",
+  crpc80: "crpc_80",
+  "arrest outside district": "crpc_80",
+  "crpc 81": "crpc_81",
+  crpc81: "crpc_81",
+  "magistrate after arrest": "crpc_81",
+  "crpc 82": "crpc_82",
+  crpc82: "crpc_82",
+  "proclamation absconder": "crpc_82",
+  "proclaimed offender": "crpc_82",
+  "absconding accused": "crpc_82",
+  "crpc 83": "crpc_83",
+  crpc83: "crpc_83",
+  "attachment property absconder": "crpc_83",
+  "attach property proclaimed": "crpc_83",
+  "crpc 84": "crpc_84",
+  crpc84: "crpc_84",
+  "objection attachment": "crpc_84",
+  "third party attachment": "crpc_84",
+  "crpc 85": "crpc_85",
+  crpc85: "crpc_85",
+  "restore attached property": "crpc_85",
+  "sale attached property": "crpc_85",
+  "crpc 86": "crpc_86",
+  crpc86: "crpc_86",
+  "appeal attachment": "crpc_86",
+  "crpc 87": "crpc_87",
+  crpc87: "crpc_87",
+  "warrant in lieu of summons": "crpc_87",
+  "crpc 88": "crpc_88",
+  crpc88: "crpc_88",
+  "bond appearance": "crpc_88",
+  "crpc 89": "crpc_89",
+  crpc89: "crpc_89",
+  "breach of bond": "crpc_89",
+  "crpc 90": "crpc_90",
+  crpc90: "crpc_90",
+  "crpc 91": "crpc_91",
+  crpc91: "crpc_91",
+  "produce document": "crpc_91",
+  "summons document": "crpc_91",
+  "crpc 92": "crpc_92",
+  crpc92: "crpc_92",
+  "intercept letters": "crpc_92",
+  "postal interception": "crpc_92",
+  "crpc 93": "crpc_93",
+  crpc93: "crpc_93",
+  "search warrant": "crpc_93",
+  "issue search warrant": "crpc_93",
 };
 
 function findLawKey(query: string): string | null {
@@ -6464,7 +7366,43 @@ function normalizeEntry(result: any, language: LawLanguage): LawResult {
   const isNewSchema =
     !result.sectionText && (result.summary || result.summaryBengali);
   if (!isNewSchema) {
-    return result as LawResult;
+    // Old schema: ensure all required fields exist with safe defaults
+    const useBengali = language === "bengali";
+    const explanation = useBengali
+      ? result.bengaliExplanation || result.explanation || ""
+      : result.explanation || "";
+    const examples = Array.isArray(result.examples) ? result.examples : [];
+    const exceptions = Array.isArray(result.exceptions)
+      ? result.exceptions
+      : typeof result.exceptions === "string" && result.exceptions
+        ? [result.exceptions]
+        : [];
+    const landmarkCases = Array.isArray(result.landmarkCases)
+      ? result.landmarkCases.map((lc: any) => ({
+          name: lc.name || "",
+          summary:
+            lc.summary || lc.relevance || lc.principle || lc.holding || "",
+          citation: lc.citation || "",
+          principle: lc.principle || "",
+        }))
+      : [];
+    const relatedSections = Array.isArray(result.relatedSections)
+      ? result.relatedSections.map((r: any) =>
+          typeof r === "string" ? { ref: r, description: r } : r,
+        )
+      : [];
+    return {
+      title: result.title || "",
+      actName: result.actName || result.act || "",
+      sectionNumber: result.sectionNumber || result.section || "",
+      sectionText: result.sectionText || "",
+      explanation,
+      examples,
+      landmarkCases,
+      exceptions,
+      overridingEffect: result.overridingEffect || "",
+      relatedSections,
+    };
   }
 
   const useBengali = language === "bengali";

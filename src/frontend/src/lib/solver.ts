@@ -1,5 +1,5 @@
 // ============================================================
-// WBCom AI — Client-Side Accounting Solver Engine
+// Vidya Setu AI — Client-Side Accounting Solver Engine
 // ============================================================
 
 export interface DepreciationRow {

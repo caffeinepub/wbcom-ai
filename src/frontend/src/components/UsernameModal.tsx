@@ -61,7 +61,7 @@ export function UsernameModal({ open, onSaved }: UsernameModalProps) {
             <GraduationCap className="w-7 h-7 text-gold" />
           </div>
           <DialogTitle className="text-navy text-xl font-display font-bold">
-            Welcome to WBCom AI! 🎉
+            Welcome to Vidya Setu AI! 🎉
           </DialogTitle>
           <DialogDescription className="text-center text-sm mt-1">
             আপনার নাম সেট করুন — এটি অ্যাপে প্রদর্শিত হবে।

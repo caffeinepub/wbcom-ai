@@ -15,6 +15,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   BookOpen,
   Clock,
+  FileText,
+  ImageIcon,
   Instagram,
   Lock,
   Search,
@@ -83,6 +85,123 @@ function MarkdownContent({ content }: { content: string }) {
           </p>
         );
       })}
+    </div>
+  );
+}
+
+interface NoteAttachment {
+  name: string;
+  type: string;
+  data: string;
+}
+
+function parseNoteContent(rawContent: string): {
+  content: string;
+  attachments: NoteAttachment[];
+} {
+  if (!rawContent.startsWith("__ATTACHMENTS__")) {
+    return { content: rawContent, attachments: [] };
+  }
+  try {
+    const firstNewline = rawContent.indexOf("\n");
+    const attachmentsJson = rawContent.slice(
+      "__ATTACHMENTS__".length,
+      firstNewline,
+    );
+    const attachments = JSON.parse(attachmentsJson) as NoteAttachment[];
+    const contentStart = rawContent.indexOf("\n__CONTENT__\n");
+    const parsedContent =
+      contentStart !== -1
+        ? rawContent.slice(contentStart + "\n__CONTENT__\n".length)
+        : "";
+    return { content: parsedContent, attachments };
+  } catch {
+    return { content: rawContent, attachments: [] };
+  }
+}
+
+function AttachmentsSection({
+  attachments,
+}: { attachments: NoteAttachment[] }) {
+  if (attachments.length === 0) return null;
+  const images = attachments.filter((a) => a.type.startsWith("image/"));
+  const pdfs = attachments.filter((a) => a.type === "application/pdf");
+  const others = attachments.filter(
+    (a) => !a.type.startsWith("image/") && a.type !== "application/pdf",
+  );
+  return (
+    <div className="mb-4 space-y-4">
+      {images.length > 0 && (
+        <div>
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground mb-2">
+            <ImageIcon className="w-3.5 h-3.5" />
+            ছবি ({images.length})
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {images.map((a, i) => (
+              <div
+                key={`img-${a.name}-${i}`}
+                className="rounded-lg overflow-hidden border border-border"
+              >
+                <img
+                  src={`data:${a.type};base64,${a.data}`}
+                  alt={a.name}
+                  className="w-full object-contain max-h-64"
+                />
+                <p className="text-[10px] text-muted-foreground px-2 py-1 truncate bg-muted/30">
+                  {a.name}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      {pdfs.length > 0 && (
+        <div className="space-y-3">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground mb-2">
+            <FileText className="w-3.5 h-3.5" />
+            PDF ফাইল ({pdfs.length})
+          </div>
+          {pdfs.map((a, i) => (
+            <div
+              key={`pdf-${a.name}-${i}`}
+              className="border border-border rounded-lg overflow-hidden"
+            >
+              <div className="flex items-center justify-between px-3 py-2 bg-muted/30 border-b border-border">
+                <span className="text-xs font-medium truncate">{a.name}</span>
+                <a
+                  href={`data:application/pdf;base64,${a.data}`}
+                  download={a.name}
+                  className="text-xs text-blue-600 hover:underline ml-2 shrink-0"
+                >
+                  ডাউনলোড
+                </a>
+              </div>
+              <iframe
+                src={`data:application/pdf;base64,${a.data}`}
+                title={a.name}
+                className="w-full"
+                style={{ height: "600px" }}
+              />
+            </div>
+          ))}
+        </div>
+      )}
+      {others.length > 0 && (
+        <div className="space-y-1">
+          {others.map((a, i) => (
+            <a
+              key={`other-${a.name}-${i}`}
+              href={`data:${a.type};base64,${a.data}`}
+              download={a.name}
+              className="flex items-center gap-2 text-xs text-blue-600 hover:underline"
+            >
+              <FileText className="w-3.5 h-3.5" />
+              {a.name}
+            </a>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -504,7 +623,17 @@ export function PremiumNotesPage() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <MarkdownContent content={note.content} />
+                    {(() => {
+                      const parsed = parseNoteContent(note.content);
+                      return (
+                        <>
+                          <AttachmentsSection
+                            attachments={parsed.attachments}
+                          />
+                          <MarkdownContent content={parsed.content} />
+                        </>
+                      );
+                    })()}
                   </CardContent>
                 </Card>
               ))}

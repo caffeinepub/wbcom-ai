@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { GraduationCap, Lock, Star } from "lucide-react";
+import { Lock, Star } from "lucide-react";
 import { motion } from "motion/react";
 import { useInternetIdentity } from "../hooks/useInternetIdentity";
 
@@ -48,18 +48,20 @@ export function LoginPage() {
       >
         {/* Logo */}
         <div className="flex flex-col items-center gap-4">
-          <div className="w-20 h-20 rounded-2xl bg-gold/20 border border-gold/40 flex items-center justify-center shadow-lg">
-            <GraduationCap className="w-10 h-10 text-gold" />
-          </div>
+          <img
+            src="/assets/generated/vidya-setu-logo-transparent.dim_400x200.png"
+            alt="Vidya Setu AI"
+            className="h-20 w-auto object-contain drop-shadow-lg"
+          />
           <div className="text-center">
             <h1 className="font-display font-bold text-5xl text-gold tracking-tight">
-              WBCom AI
+              Vidya Setu AI
             </h1>
-            <p className="text-white text-xl mt-2 font-medium">
-              পশ্চিমবঙ্গের হিসাবরক্ষণ শিক্ষক
+            <p className="text-white text-lg mt-2 font-medium">
+              Connecting You to Smarter Learning
             </p>
-            <p className="text-white/60 text-sm mt-1">
-              WBCHSE &amp; Calcutta University Accountancy Tutor
+            <p className="text-gold/70 text-sm mt-1 font-medium">
+              স্মার্ট শিক্ষার দিকে আপনাকে সংযুক্ত করছি
             </p>
           </div>
         </div>

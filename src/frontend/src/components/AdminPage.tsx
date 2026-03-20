@@ -16,6 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Principal } from "@dfinity/principal";
 import { useQueryClient } from "@tanstack/react-query";
 import {
+  Bell,
   BookOpen,
   CheckCircle,
   FileText,
@@ -27,9 +28,12 @@ import {
   ShieldCheck,
   Trash2,
   Trophy,
+  Upload,
   Users,
+  X,
   XCircle,
 } from "lucide-react";
+import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useActor } from "../hooks/useActor";
@@ -63,6 +67,26 @@ const QUIZ_TOPICS = [
   { label: "Biology - Class 12", value: "biology_12" },
   { label: "Mathematics - Class 11", value: "math_11" },
   { label: "Mathematics - Class 12", value: "math_12" },
+  // Arts
+  { label: "Arts - Bengali", value: "arts_bengali" },
+  { label: "Arts - English", value: "arts_english" },
+  { label: "Arts - History", value: "arts_history" },
+  { label: "Arts - Geography", value: "arts_geography" },
+  { label: "Arts - Political Science", value: "arts_politicalscience" },
+  { label: "Arts - Philosophy", value: "arts_philosophy" },
+  { label: "Arts - Sociology", value: "arts_sociology" },
+  { label: "Arts - Sanskrit", value: "arts_sanskrit" },
+  // Commerce
+  { label: "Commerce - Business Studies", value: "commerce_businessstudies" },
+  { label: "Commerce - Economics", value: "commerce_economics" },
+  {
+    label: "Commerce - Commercial Mathematics",
+    value: "commerce_commercialmathematics",
+  },
+  {
+    label: "Commerce - Computer Application",
+    value: "commerce_computerapplication",
+  },
 ];
 
 function safeTimestamp(ts: unknown): number {
@@ -137,11 +161,28 @@ export function AdminPage() {
     subject: "",
     content: "",
   });
+  const [newNoteAttachments, setNewNoteAttachments] = useState<
+    Array<{ name: string; type: string; data: string }>
+  >([]);
+  const [editNoteAttachments, setEditNoteAttachments] = useState<
+    Array<{ name: string; type: string; data: string }>
+  >([]);
   const [savingEdit, setSavingEdit] = useState(false);
   const [deletingNoteId, setDeletingNoteId] = useState<bigint | null>(null);
   const [processingRequestId, setProcessingRequestId] = useState<string | null>(
     null,
   );
+
+  // Notice Board state
+  const [newNotice, setNewNotice] = useState({ title: "", content: "" });
+  const [addingNotice, setAddingNotice] = useState(false);
+  const [editingNoticeId, setEditingNoticeId] = useState<bigint | null>(null);
+  const [editNoticeData, setEditNoticeData] = useState({
+    title: "",
+    content: "",
+  });
+  const [savingNoticeEdit, setSavingNoticeEdit] = useState(false);
+  const [deletingNoticeId, setDeletingNoticeId] = useState<bigint | null>(null);
 
   async function waitForActor() {
     for (let i = 0; i < 30; i++) {
@@ -245,13 +286,51 @@ export function AdminPage() {
     }
   }
 
+  function buildContentWithAttachments(
+    content: string,
+    attachments: Array<{ name: string; type: string; data: string }>,
+  ): string {
+    if (attachments.length === 0) return content;
+    return `__ATTACHMENTS__${JSON.stringify(attachments)}\n__CONTENT__\n${content}`;
+  }
+
+  async function handleFileSelect(
+    files: FileList,
+    setter: React.Dispatch<
+      React.SetStateAction<Array<{ name: string; type: string; data: string }>>
+    >,
+  ) {
+    const MAX_FILE_SIZE = 2 * 1024 * 1024;
+    let totalSize = 0;
+    const results: Array<{ name: string; type: string; data: string }> = [];
+    for (const file of Array.from(files)) {
+      totalSize += file.size;
+      if (totalSize > 5 * 1024 * 1024) {
+        toast.error("মোট file size 5MB-এর বেশি হতে পারবে না");
+        return;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        toast.error(`${file.name} 2MB-এর বেশি বড়`);
+        continue;
+      }
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve((reader.result as string).split(",")[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      results.push({ name: file.name, type: file.type, data: base64 });
+    }
+    setter((prev) => [...prev, ...results]);
+  }
+
   async function handleAddNote() {
-    if (
-      !newNote.title.trim() ||
-      !newNote.subject.trim() ||
-      !newNote.content.trim()
-    ) {
-      toast.error("সব field পূরণ করুন");
+    if (!newNote.title.trim() || !newNote.subject.trim()) {
+      toast.error("শিরোনাম এবং বিষয় লিখুন");
+      return;
+    }
+    if (!newNote.content.trim() && newNoteAttachments.length === 0) {
+      toast.error("Content লিখুন অথবা ফাইল সংযুক্ত করুন");
       return;
     }
     const readyActor = await waitForActor();
@@ -264,10 +343,11 @@ export function AdminPage() {
       await readyActor.addPremiumNote(
         newNote.title.trim(),
         newNote.subject.trim(),
-        newNote.content.trim(),
+        buildContentWithAttachments(newNote.content.trim(), newNoteAttachments),
       );
       toast.success("Note যোগ হয়েছে!");
       setNewNote({ title: "", subject: "", content: "" });
+      setNewNoteAttachments([]);
       queryClient.invalidateQueries({ queryKey: ["premiumNotesList"] });
       queryClient.invalidateQueries({ queryKey: ["premiumNotesWithContent"] });
     } catch {
@@ -299,9 +379,13 @@ export function AdminPage() {
         editingNoteId,
         editNote.title.trim(),
         editNote.subject.trim(),
-        editNote.content.trim(),
+        buildContentWithAttachments(
+          editNote.content.trim(),
+          editNoteAttachments,
+        ),
       );
       toast.success("Note আপডেট হয়েছে");
+      setEditNoteAttachments([]);
       setEditingNoteId(null);
       queryClient.invalidateQueries({ queryKey: ["premiumNotesList"] });
       queryClient.invalidateQueries({ queryKey: ["premiumNotesWithContent"] });
@@ -328,6 +412,84 @@ export function AdminPage() {
       toast.error("Note মুছতে বিফল");
     } finally {
       setDeletingNoteId(null);
+    }
+  }
+
+  // Notice Board handlers
+  async function handleAddNotice() {
+    if (!newNotice.title.trim() || !newNotice.content.trim()) {
+      toast.error("শিরোনাম এবং বার্তা লিখুন");
+      return;
+    }
+    const readyActor = await waitForActor();
+    if (!readyActor) {
+      toast.error("সংযোগ নেই");
+      return;
+    }
+    setAddingNotice(true);
+    try {
+      await readyActor.addPremiumNote(
+        newNotice.title.trim(),
+        "notice",
+        newNotice.content.trim(),
+      );
+      toast.success("Notice পোস্ট হয়েছে!");
+      setNewNotice({ title: "", content: "" });
+      queryClient.invalidateQueries({ queryKey: ["premiumNotesList"] });
+      queryClient.invalidateQueries({ queryKey: ["premiumNotesWithContent"] });
+    } catch {
+      toast.error("Notice পোস্ট করা যায়নি");
+    } finally {
+      setAddingNotice(false);
+    }
+  }
+
+  async function handleSaveNoticeEdit() {
+    if (!editingNoticeId) return;
+    if (!editNoticeData.title.trim()) {
+      toast.error("শিরোনাম লিখুন");
+      return;
+    }
+    const readyActor = await waitForActor();
+    if (!readyActor) {
+      toast.error("সংযোগ নেই");
+      return;
+    }
+    setSavingNoticeEdit(true);
+    try {
+      await readyActor.editPremiumNote(
+        editingNoticeId,
+        editNoticeData.title.trim(),
+        "notice",
+        editNoticeData.content.trim(),
+      );
+      toast.success("Notice আপডেট হয়েছে");
+      setEditingNoticeId(null);
+      queryClient.invalidateQueries({ queryKey: ["premiumNotesList"] });
+      queryClient.invalidateQueries({ queryKey: ["premiumNotesWithContent"] });
+    } catch {
+      toast.error("Notice আপডেট বিফল");
+    } finally {
+      setSavingNoticeEdit(false);
+    }
+  }
+
+  async function handleDeleteNotice(id: bigint) {
+    const readyActor = await waitForActor();
+    if (!readyActor) {
+      toast.error("সংযোগ নেই");
+      return;
+    }
+    setDeletingNoticeId(id);
+    try {
+      await readyActor.deletePremiumNote(id);
+      toast.success("Notice মুছে ফেলা হয়েছে");
+      queryClient.invalidateQueries({ queryKey: ["premiumNotesList"] });
+      queryClient.invalidateQueries({ queryKey: ["premiumNotesWithContent"] });
+    } catch {
+      toast.error("Notice মুছতে বিফল");
+    } finally {
+      setDeletingNoticeId(null);
     }
   }
 
@@ -630,6 +792,13 @@ export function AdminPage() {
           >
             <FileText className="w-3.5 h-3.5 mr-1.5" />
             Premium Notes
+          </TabsTrigger>
+          <TabsTrigger
+            value="noticeboard"
+            className="data-[state=active]:bg-navy data-[state=active]:text-white text-navy"
+          >
+            <Bell className="w-3.5 h-3.5 mr-1.5" />
+            Notice Board
           </TabsTrigger>
         </TabsList>
 
@@ -954,6 +1123,66 @@ export function AdminPage() {
                     data-ocid="admin.textarea"
                   />
                 </div>
+                <div className="sm:col-span-2">
+                  <Label className="text-xs font-semibold text-navy mb-1 block">
+                    ফাইল সংযুক্ত করুন (PDF/Image)
+                  </Label>
+                  <label className="flex items-center gap-2 cursor-pointer w-fit">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="border-navy/30 text-navy"
+                      onClick={() =>
+                        document.getElementById("add-note-file-input")?.click()
+                      }
+                      data-ocid="admin.upload_button"
+                    >
+                      <Upload className="w-3.5 h-3.5 mr-1" />
+                      ফাইল বেছে নিন
+                    </Button>
+                    <input
+                      id="add-note-file-input"
+                      type="file"
+                      accept="application/pdf,image/*"
+                      multiple
+                      className="hidden"
+                      onChange={(e) =>
+                        e.target.files &&
+                        handleFileSelect(e.target.files, setNewNoteAttachments)
+                      }
+                    />
+                  </label>
+                  {newNoteAttachments.length > 0 && (
+                    <div className="mt-2 space-y-1">
+                      {newNoteAttachments.map((att, i) => (
+                        <div
+                          key={`${att.name}-${i}`}
+                          className="flex items-center gap-2 text-xs bg-navy/5 rounded px-2 py-1"
+                        >
+                          <span>
+                            {att.type === "application/pdf" ? "📄" : "🖼️"}
+                          </span>
+                          <span className="flex-1 truncate">{att.name}</span>
+                          <span className="text-muted-foreground">
+                            {((att.data.length * 0.75) / 1024).toFixed(1)}KB
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setNewNoteAttachments((p) =>
+                                p.filter((_, j) => j !== i),
+                              )
+                            }
+                            className="text-red-400 hover:text-red-600"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
               <Button
                 className="bg-navy text-white hover:bg-navy/90"
@@ -1045,6 +1274,79 @@ export function AdminPage() {
                             placeholder="Content (leave empty to keep existing)"
                             data-ocid="admin.textarea"
                           />
+                          <div>
+                            <Label className="text-xs font-semibold text-navy mb-1 block">
+                              নতুন ফাইল যোগ করুন (পুরনো ফাইল replace হবে না)
+                            </Label>
+                            <label className="flex items-center gap-2 cursor-pointer w-fit">
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                className="border-navy/30 text-navy"
+                                onClick={() =>
+                                  document
+                                    .getElementById("edit-note-file-input")
+                                    ?.click()
+                                }
+                                data-ocid="admin.upload_button"
+                              >
+                                <Upload className="w-3.5 h-3.5 mr-1" />
+                                ফাইল বেছে নিন
+                              </Button>
+                              <input
+                                id="edit-note-file-input"
+                                type="file"
+                                accept="application/pdf,image/*"
+                                multiple
+                                className="hidden"
+                                onChange={(e) =>
+                                  e.target.files &&
+                                  handleFileSelect(
+                                    e.target.files,
+                                    setEditNoteAttachments,
+                                  )
+                                }
+                              />
+                            </label>
+                            {editNoteAttachments.length > 0 && (
+                              <div className="mt-2 space-y-1">
+                                {editNoteAttachments.map((att, i) => (
+                                  <div
+                                    key={`${att.name}-${i}`}
+                                    className="flex items-center gap-2 text-xs bg-navy/5 rounded px-2 py-1"
+                                  >
+                                    <span>
+                                      {att.type === "application/pdf"
+                                        ? "📄"
+                                        : "🖼️"}
+                                    </span>
+                                    <span className="flex-1 truncate">
+                                      {att.name}
+                                    </span>
+                                    <span className="text-muted-foreground">
+                                      {(
+                                        (att.data.length * 0.75) /
+                                        1024
+                                      ).toFixed(1)}
+                                      KB
+                                    </span>
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        setEditNoteAttachments((p) =>
+                                          p.filter((_, j) => j !== i),
+                                        )
+                                      }
+                                      className="text-red-400 hover:text-red-600"
+                                    >
+                                      <X className="w-3 h-3" />
+                                    </button>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                           <div className="flex gap-2">
                             <Button
                               size="sm"
@@ -1234,6 +1536,182 @@ export function AdminPage() {
                   })}
                 </div>
               )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Notice Board Tab */}
+        <TabsContent value="noticeboard">
+          <Card className="border-navy/20 shadow-sm">
+            <CardHeader>
+              <CardTitle className="text-base font-semibold text-navy flex items-center gap-2">
+                <Bell className="w-4 h-4" />
+                Notice Board পরিচালনা
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Add new notice */}
+              <div className="bg-navy/5 rounded-lg p-4 space-y-3">
+                <h3 className="font-medium text-navy text-sm">
+                  নতুন Notice যোগ করুন
+                </h3>
+                <div className="space-y-2">
+                  <Label className="text-xs text-navy/70">শিরোনাম (Title)</Label>
+                  <Input
+                    value={newNotice.title}
+                    onChange={(e) =>
+                      setNewNotice((p) => ({ ...p, title: e.target.value }))
+                    }
+                    placeholder="Notice-এর শিরোনাম লিখুন"
+                    className="border-navy/20"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs text-navy/70">বার্তা (Message)</Label>
+                  <Textarea
+                    value={newNotice.content}
+                    onChange={(e) =>
+                      setNewNotice((p) => ({ ...p, content: e.target.value }))
+                    }
+                    placeholder="Notice-এর বিবরণ লিখুন"
+                    rows={3}
+                    className="border-navy/20 resize-none"
+                  />
+                </div>
+                <Button
+                  onClick={handleAddNotice}
+                  disabled={addingNotice}
+                  size="sm"
+                  className="bg-navy hover:bg-navy/90 text-white"
+                >
+                  {addingNotice ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <Plus className="w-4 h-4 mr-2" />
+                  )}
+                  Notice পোস্ট করুন
+                </Button>
+              </div>
+
+              {/* Existing notices */}
+              <div className="space-y-3">
+                <h3 className="font-medium text-navy text-sm">বর্তমান Notices</h3>
+                {loadingNotesList ? (
+                  <Skeleton className="h-20 w-full" />
+                ) : (notesList ?? []).filter(
+                    (n: { subject: string }) => n.subject === "notice",
+                  ).length === 0 ? (
+                  <p className="text-sm text-navy/50">কোনো notice নেই।</p>
+                ) : (
+                  <div className="space-y-3">
+                    {(notesList ?? [])
+                      .filter(
+                        (n: { subject: string }) => n.subject === "notice",
+                      )
+                      .map(
+                        (notice: {
+                          id: bigint;
+                          title: string;
+                          subject: string;
+                          content?: string;
+                        }) => (
+                          <div
+                            key={String(notice.id)}
+                            className="border border-navy/10 rounded-lg p-3 space-y-2"
+                          >
+                            {editingNoticeId === notice.id ? (
+                              <div className="space-y-2">
+                                <Input
+                                  value={editNoticeData.title}
+                                  onChange={(e) =>
+                                    setEditNoticeData((p) => ({
+                                      ...p,
+                                      title: e.target.value,
+                                    }))
+                                  }
+                                  placeholder="শিরোনাম"
+                                  className="border-navy/20 text-sm"
+                                />
+                                <Textarea
+                                  value={editNoticeData.content}
+                                  onChange={(e) =>
+                                    setEditNoticeData((p) => ({
+                                      ...p,
+                                      content: e.target.value,
+                                    }))
+                                  }
+                                  placeholder="বার্তা"
+                                  rows={2}
+                                  className="border-navy/20 resize-none text-sm"
+                                />
+                                <div className="flex gap-2">
+                                  <Button
+                                    size="sm"
+                                    onClick={handleSaveNoticeEdit}
+                                    disabled={savingNoticeEdit}
+                                    className="bg-navy text-white hover:bg-navy/90 text-xs"
+                                  >
+                                    {savingNoticeEdit ? (
+                                      <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                                    ) : null}
+                                    সংরক্ষণ
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => setEditingNoticeId(null)}
+                                    className="text-xs border-navy/20"
+                                  >
+                                    বাতিল
+                                  </Button>
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                <div className="flex items-start justify-between gap-2">
+                                  <p className="font-medium text-navy text-sm">
+                                    {notice.title}
+                                  </p>
+                                  <div className="flex gap-1 shrink-0">
+                                    <Button
+                                      size="icon"
+                                      variant="ghost"
+                                      className="h-7 w-7 text-navy/60 hover:text-navy"
+                                      onClick={() => {
+                                        setEditingNoticeId(notice.id);
+                                        setEditNoticeData({
+                                          title: notice.title,
+                                          content: "",
+                                        });
+                                      }}
+                                    >
+                                      <Pencil className="w-3.5 h-3.5" />
+                                    </Button>
+                                    <Button
+                                      size="icon"
+                                      variant="ghost"
+                                      className="h-7 w-7 text-red-400 hover:text-red-600"
+                                      onClick={() =>
+                                        handleDeleteNotice(notice.id)
+                                      }
+                                      disabled={deletingNoticeId === notice.id}
+                                    >
+                                      {deletingNoticeId === notice.id ? (
+                                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                      ) : (
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                      )}
+                                    </Button>
+                                  </div>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        ),
+                      )}
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

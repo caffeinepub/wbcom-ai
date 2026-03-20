@@ -367,7 +367,7 @@ function generateLocalSolution(problem: string): string {
     hint =
       "\n\n[Goodwill Methods]\nAverage Profit Method: Avg Profit × Years of Purchase\nSuper Profit Method: (Avg Profit - Normal Profit) × Years\nCapitalisation: Super Profit × (100 ÷ Normal Rate%)";
   }
-  return `📚 WBCom AI — Step-by-Step Solution
+  return `📚 Vidya Setu AI — Step-by-Step Solution
 ════════════════════════════════════
 
 Problem analysed: ${problem.slice(0, 120)}${problem.length > 120 ? "..." : ""}
@@ -385,5 +385,5 @@ ${hint}
 
 💡 টিপস: নির্দিষ্ট বিষয়ের সমাধানের জন্য Home পেজে Topic Grid থেকে বিষয়টি বেছে নিন।
 
-— WBCom AI | Founder: Bikram Mandal, C.R.G.S`;
+— Vidya Setu AI | Founder: Bikram Mandal, C.R.G.S`;
 }
