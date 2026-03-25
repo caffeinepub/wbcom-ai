@@ -1,25 +1,35 @@
 import { Toaster } from "@/components/ui/sonner";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { AppContextProvider } from "./AppContext";
 import { AdminPage } from "./components/AdminPage";
 import { ArtsHomePage } from "./components/ArtsHomePage";
 import { ArtsSolver } from "./components/ArtsSolver";
+import { BookmarksPage } from "./components/BookmarksPage";
+import { CAHomePage } from "./components/CAHomePage";
+import { CASolver } from "./components/CASolver";
 import { CommerceHomePage } from "./components/CommerceHomePage";
 import { CommerceSolver } from "./components/CommerceSolver";
 import { CustomerCasePage } from "./components/CustomerCasePage";
+import { DoubtPage } from "./components/DoubtPage";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { HistoryPage } from "./components/HistoryPage";
 import { HomePage } from "./components/HomePage";
 import { LawPage } from "./components/LawPage";
+import { LeaderboardPage } from "./components/LeaderboardPage";
 import { LoginPage } from "./components/LoginPage";
+import { MockTestPage } from "./components/MockTestPage";
 import { Navbar } from "./components/Navbar";
 import { NeetHomePage } from "./components/NeetHomePage";
 import { NeetSolver } from "./components/NeetSolver";
 import { PremiumNotesPage } from "./components/PremiumNotesPage";
+import { ProgressTrackerPage } from "./components/ProgressTrackerPage";
+import { QAPage } from "./components/QAPage";
 import { QuizPage } from "./components/QuizPage";
 import { ScienceHomePage } from "./components/ScienceHomePage";
 import { ScienceSolver } from "./components/ScienceSolver";
 import { TermsFullPage, TermsModal } from "./components/TermsPage";
 import { UsernameModal } from "./components/UsernameModal";
+import type { CALevel } from "./data/caSubjects";
 import { useActor } from "./hooks/useActor";
 import { useInternetIdentity } from "./hooks/useInternetIdentity";
 
@@ -39,15 +49,22 @@ type Page =
   | "commerceSolver"
   | "terms"
   | "neet"
-  | "neetSolver";
+  | "neetSolver"
+  | "ca"
+  | "caSolver"
+  | "qa"
+  | "mockTest"
+  | "progress"
+  | "bookmarks"
+  | "doubt"
+  | "leaderboard";
 
 function getLocalStorageKey(principalId: string) {
   return `wbcom_username_${principalId}`;
 }
 
-export default function App() {
+function AppInner() {
   const [currentPage, setCurrentPage] = useState<Page>("home");
-  const [activeTopic, setActiveTopic] = useState("journal");
   const [isAdmin, setIsAdmin] = useState(false);
   const [isAdminLoading, setIsAdminLoading] = useState(false);
   const [username, setUsername] = useState("");
@@ -60,16 +77,15 @@ export default function App() {
   const [commerceClass, setCommerceClass] = useState(11);
   const [neetSubject, setNeetSubject] = useState("");
   const [neetClass, setNeetClass] = useState(11);
+  const [caLevel, setCaLevel] = useState<CALevel>("foundation");
+  const [caSubject, setCaSubject] = useState("");
   const { identity } = useInternetIdentity();
   const { actor, isFetching } = useActor();
   const adminCheckDone = useRef(false);
   const profileCheckDone = useRef(false);
   const lastIdentityPrincipal = useRef<string | null>(null);
   const lastActorRef = useRef<unknown>(null);
-
-  // suppress unused warning - activeTopic used by CommerceSolver for accountancy
-  void activeTopic;
-  void setActiveTopic;
+  const loginRecorded = useRef(false);
 
   const checkAdmin = useCallback(
     async (retries = 5, delayMs = 800) => {
@@ -82,16 +98,13 @@ export default function App() {
           setIsAdmin(result);
           if (!result && i === 0) {
             const claimed = await actor.forceClaimAdmin();
-            if (claimed) {
-              setIsAdmin(true);
-            }
+            if (claimed) setIsAdmin(true);
           }
           setIsAdminLoading(false);
           return;
         } catch {
-          if (i < retries - 1) {
+          if (i < retries - 1)
             await new Promise((r) => setTimeout(r, delayMs * (i + 1)));
-          }
         }
       }
       setIsAdminLoading(false);
@@ -104,13 +117,15 @@ export default function App() {
     const principalId = identity.getPrincipal().toString();
     const localKey = getLocalStorageKey(principalId);
     const savedName = localStorage.getItem(localKey);
-
     if (savedName?.trim()) {
       setUsername(savedName.trim());
       setShowUsernameModal(false);
+      if (!loginRecorded.current) {
+        loginRecorded.current = true;
+        actor.recordLogin(savedName.trim()).catch(() => {});
+      }
       return;
     }
-
     try {
       const profile = await actor.getCallerUserProfile();
       if (profile?.name?.trim()) {
@@ -128,26 +143,21 @@ export default function App() {
 
   useEffect(() => {
     const currentPrincipal = identity?.getPrincipal().toString() ?? null;
-
     if (
       currentPrincipal !== lastIdentityPrincipal.current ||
       actor !== lastActorRef.current
     ) {
       adminCheckDone.current = false;
       profileCheckDone.current = false;
+      loginRecorded.current = false;
       lastIdentityPrincipal.current = currentPrincipal;
       lastActorRef.current = actor;
     }
-
-    if (!identity || !actor || isFetching) {
-      return;
-    }
-
+    if (!identity || !actor || isFetching) return;
     if (!adminCheckDone.current) {
       adminCheckDone.current = true;
       checkAdmin();
     }
-
     if (!profileCheckDone.current) {
       profileCheckDone.current = true;
       checkProfile();
@@ -171,7 +181,9 @@ export default function App() {
         p === "quiz" ||
         p === "notes" ||
         p === "law" ||
-        p === "commerce") &&
+        p === "commerce" ||
+        p === "doubt" ||
+        p === "leaderboard") &&
       !identity
     )
       return;
@@ -202,12 +214,22 @@ export default function App() {
     setCurrentPage("neetSolver");
   }
 
+  function handleCASelect(level: CALevel, subject: string) {
+    setCaLevel(level);
+    setCaSubject(subject);
+    setCurrentPage("caSolver");
+  }
+
   function handleUsernameSaved(name: string) {
     setUsername(name);
     setShowUsernameModal(false);
     if (identity) {
       const principalId = identity.getPrincipal().toString();
       localStorage.setItem(getLocalStorageKey(principalId), name);
+    }
+    if (!loginRecorded.current && actor) {
+      loginRecorded.current = true;
+      actor.recordLogin(name).catch(() => {});
     }
   }
 
@@ -221,7 +243,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background">
       <Navbar
         currentPage={currentPage}
         onNavigate={handleNavigate}
@@ -230,121 +252,170 @@ export default function App() {
         username={username}
       />
       <Toaster richColors position="top-right" />
-
       <UsernameModal open={showUsernameModal} onSaved={handleUsernameSaved} />
 
       <main className="flex-1">
-        {currentPage === "home" && <HomePage onNavigate={handleNavigate} />}
+        <div key={currentPage}>
+          {currentPage === "home" && <HomePage onNavigate={handleNavigate} />}
 
-        {currentPage === "quiz" && (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <QuizPage onNavigate={handleNavigate} />
-          </div>
-        )}
+          {currentPage === "quiz" && (
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+              <QuizPage onNavigate={handleNavigate} />
+            </div>
+          )}
 
-        {currentPage === "history" && (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <HistoryPage />
-          </div>
-        )}
+          {currentPage === "history" && (
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+              <HistoryPage />
+            </div>
+          )}
 
-        {currentPage === "customerCase" && <CustomerCasePage />}
+          {currentPage === "customerCase" && <CustomerCasePage />}
 
-        {currentPage === "admin" && isAdmin && (
-          <ErrorBoundary>
-            <AdminPage />
-          </ErrorBoundary>
-        )}
+          {currentPage === "admin" && isAdmin && (
+            <ErrorBoundary>
+              <AdminPage />
+            </ErrorBoundary>
+          )}
 
-        {currentPage === "science" && (
-          <ScienceHomePage onSelect={handleScienceSelect} />
-        )}
+          {currentPage === "science" && (
+            <ScienceHomePage onSelect={handleScienceSelect} />
+          )}
 
-        {currentPage === "scienceSolver" && (
-          <ScienceSolver
-            subject={scienceSubject}
-            classLevel={scienceClass}
-            onBack={() => setCurrentPage("science")}
-          />
-        )}
+          {currentPage === "scienceSolver" && (
+            <ScienceSolver
+              subject={scienceSubject}
+              classLevel={scienceClass}
+              onBack={() => setCurrentPage("science")}
+            />
+          )}
 
-        {currentPage === "arts" && <ArtsHomePage onSelect={handleArtsSelect} />}
+          {currentPage === "arts" && (
+            <ArtsHomePage onSelect={handleArtsSelect} />
+          )}
 
-        {currentPage === "commerce" && (
-          <CommerceHomePage onSelect={handleCommerceSelect} />
-        )}
+          {currentPage === "commerce" && (
+            <CommerceHomePage onSelect={handleCommerceSelect} />
+          )}
 
-        {currentPage === "commerceSolver" && (
-          <CommerceSolver
-            subject={commerceSubject}
-            classLevel={commerceClass}
-            onBack={() => setCurrentPage("commerce")}
-          />
-        )}
+          {currentPage === "commerceSolver" && (
+            <CommerceSolver
+              subject={commerceSubject}
+              classLevel={commerceClass}
+              onBack={() => setCurrentPage("commerce")}
+            />
+          )}
 
-        {currentPage === "artsSolver" && (
-          <ArtsSolver
-            subject={artsSubject}
-            classLevel={artsClass}
-            onBack={() => setCurrentPage("arts")}
-          />
-        )}
+          {currentPage === "artsSolver" && (
+            <ArtsSolver
+              subject={artsSubject}
+              classLevel={artsClass}
+              onBack={() => setCurrentPage("arts")}
+            />
+          )}
 
-        {currentPage === "notes" && (
-          <ErrorBoundary>
-            <PremiumNotesPage />
-          </ErrorBoundary>
-        )}
+          {currentPage === "notes" && (
+            <ErrorBoundary>
+              <PremiumNotesPage />
+            </ErrorBoundary>
+          )}
 
-        {currentPage === "law" && <LawPage />}
+          {currentPage === "law" && <LawPage />}
 
-        {currentPage === "neet" && <NeetHomePage onSelect={handleNeetSelect} />}
+          {currentPage === "neet" && (
+            <NeetHomePage onSelect={handleNeetSelect} />
+          )}
 
-        {currentPage === "neetSolver" && (
-          <NeetSolver
-            subject={neetSubject}
-            classLevel={neetClass}
-            onBack={() => setCurrentPage("neet")}
-          />
-        )}
+          {currentPage === "neetSolver" && (
+            <NeetSolver
+              subject={neetSubject}
+              classLevel={neetClass}
+              onBack={() => setCurrentPage("neet")}
+            />
+          )}
 
-        {currentPage === "terms" && (
-          <TermsFullPage onBack={() => setCurrentPage("home")} />
-        )}
+          {currentPage === "ca" && <CAHomePage onSelect={handleCASelect} />}
+
+          {currentPage === "caSolver" && (
+            <CASolver
+              level={caLevel}
+              subjectId={caSubject}
+              onBack={() => setCurrentPage("ca")}
+            />
+          )}
+
+          {currentPage === "qa" && <QAPage />}
+
+          {currentPage === "terms" && (
+            <TermsFullPage onBack={() => setCurrentPage("home")} />
+          )}
+
+          {currentPage === "mockTest" && (
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+              <MockTestPage />
+            </div>
+          )}
+
+          {currentPage === "progress" && (
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+              <ProgressTrackerPage />
+            </div>
+          )}
+
+          {currentPage === "bookmarks" && (
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+              <BookmarksPage />
+            </div>
+          )}
+
+          {currentPage === "doubt" && (
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+              <DoubtPage username={username} />
+            </div>
+          )}
+
+          {currentPage === "leaderboard" && (
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+              <LeaderboardPage />
+            </div>
+          )}
+        </div>
       </main>
 
-      <footer className="bg-navy text-white mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <footer className="border-t border-border bg-background/80">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center">
-                <span className="text-xs font-bold">W</span>
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-primary/15 border border-primary/30">
+                <span className="text-xs font-bold text-primary">V</span>
               </div>
               <div>
                 <p className="font-display font-bold text-sm">Vidya Setu AI</p>
-                <p className="text-xs text-white/60">পশ্চিমবঙ্গের শিক্ষক</p>
+                <p className="text-xs text-muted-foreground">
+                  পশ্চিমবঙ্গের শিক্ষক
+                </p>
               </div>
             </div>
             <div className="text-center">
-              <p className="text-xs text-white/70">
+              <p className="text-xs text-muted-foreground">
                 Founder &amp; CEO: Bikram Mandal | C.R.G.S
               </p>
               <button
                 type="button"
                 onClick={() => setCurrentPage("terms")}
-                className="text-xs text-white/50 underline hover:text-white/80 transition-colors mt-1"
+                className="text-xs text-muted-foreground underline hover:text-foreground mt-1"
                 data-ocid="terms.link"
               >
                 Terms &amp; Conditions
               </button>
             </div>
-            <p className="text-xs text-white/50">
+            <p className="text-xs text-muted-foreground">
               © {new Date().getFullYear()}. Built with ❤️ using{" "}
               <a
                 href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(typeof window !== "undefined" ? window.location.hostname : "")}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline hover:text-white/80"
+                className="underline hover:text-foreground"
               >
                 caffeine.ai
               </a>
@@ -354,5 +425,13 @@ export default function App() {
       </footer>
       <TermsModal />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AppContextProvider>
+      <AppInner />
+    </AppContextProvider>
   );
 }

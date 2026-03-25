@@ -19,6 +19,38 @@ actor {
   ///////////////////
   // Stable Storage//
   ///////////////////
+  stable var _stableLoginHistory : [LoginRecord] = [];
+
+  var loginHistory : [LoginRecord] = [];
+
+  type LoginRecord = {
+    principal : Principal;
+    name : Text;
+    loginAt : Int;
+  };
+
+  public shared ({ caller }) func recordLogin(name : Text) : async () {
+    if (not isUserOrAdmin(caller)) {
+      Runtime.trap("Unauthorized: Must be user or admin");
+    };
+    let newRecord : LoginRecord = {
+      principal = caller;
+      name;
+      loginAt = Time.now();
+    };
+    loginHistory := loginHistory.concat([newRecord]);
+  };
+
+  public query ({ caller }) func getLoginHistory() : async [LoginRecord] {
+    if (not AccessControl.isAdmin(accessControlState, caller)) {
+      Runtime.trap("Unauthorized: Admin only");
+    };
+    let sorted = loginHistory.sort(
+      func(a, b) { Int.compare(b.loginAt, a.loginAt) }
+    );
+    sorted;
+  };
+
   stable var _stableUserRoles : [(Principal, {#admin; #user; #guest})] = [];
   stable var _stableAdminAssigned : Bool = false;
   stable var _stableUserProfiles : [(Principal, { name : Text; studentId : ?Text; institution : ?Text })] = [];
@@ -1346,6 +1378,7 @@ actor {
   };
 
   system func preupgrade() {
+    _stableLoginHistory := loginHistory;
     _stableUserRoles := accessControlState.userRoles.entries().toArray();
     _stableAdminAssigned := accessControlState.adminAssigned;
     _stableUserProfiles := userProfiles.entries().toArray();
@@ -1363,6 +1396,7 @@ actor {
   };
 
   system func postupgrade() {
+    loginHistory := _stableLoginHistory;
     for ((k, v) in _stableUserRoles.vals()) {
       accessControlState.userRoles.add(k, v);
     };

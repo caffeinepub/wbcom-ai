@@ -23,9 +23,14 @@ const subjects = [
     label: "Bengali",
     bengali: "বাংলা",
     icon: BookOpen,
-    bgClass: "bg-rose-50 border-rose-200",
-    iconClass: "text-rose-600 bg-rose-100",
-    btnClass: "bg-rose-600 hover:bg-rose-700 text-white",
+    borderColor: "rgba(244, 114, 182, 0.3)",
+    iconColor: "#f472b6",
+    iconBg: "rgba(244, 114, 182, 0.15)",
+    btnStyle: {
+      background: "rgba(244,114,182,0.2)",
+      color: "#f472b6",
+      border: "1px solid rgba(244,114,182,0.3)",
+    },
     desc: "গল্প, কবিতা, নাটক, প্রবন্ধ, ব্যাকরণ ও রচনা",
   },
   {
@@ -33,9 +38,14 @@ const subjects = [
     label: "English",
     bengali: "ইংরেজি",
     icon: BookMarked,
-    bgClass: "bg-blue-50 border-blue-200",
-    iconClass: "text-blue-600 bg-blue-100",
-    btnClass: "bg-blue-600 hover:bg-blue-700 text-white",
+    borderColor: "rgba(96, 180, 255, 0.3)",
+    iconColor: "#60b4ff",
+    iconBg: "rgba(96, 180, 255, 0.15)",
+    btnStyle: {
+      background: "rgba(96,180,255,0.2)",
+      color: "#60b4ff",
+      border: "1px solid rgba(96,180,255,0.3)",
+    },
     desc: "Prose, Poetry, Drama, Grammar & Writing Skills",
   },
   {
@@ -43,9 +53,14 @@ const subjects = [
     label: "History",
     bengali: "ইতিহাস",
     icon: Landmark,
-    bgClass: "bg-amber-50 border-amber-200",
-    iconClass: "text-amber-600 bg-amber-100",
-    btnClass: "bg-amber-600 hover:bg-amber-700 text-white",
+    borderColor: "rgba(245, 200, 66, 0.3)",
+    iconColor: "#f5c842",
+    iconBg: "rgba(245, 200, 66, 0.15)",
+    btnStyle: {
+      background: "rgba(245,200,66,0.2)",
+      color: "#f5c842",
+      border: "1px solid rgba(245,200,66,0.3)",
+    },
     desc: "প্রাচীন ভারত, মধ্যযুগ, আধুনিক ইতিহাস ও বিশ্বযুদ্ধ",
   },
   {
@@ -53,9 +68,14 @@ const subjects = [
     label: "Geography",
     bengali: "ভূগোল",
     icon: Globe,
-    bgClass: "bg-green-50 border-green-200",
-    iconClass: "text-green-600 bg-green-100",
-    btnClass: "bg-green-600 hover:bg-green-700 text-white",
+    borderColor: "rgba(52, 211, 153, 0.3)",
+    iconColor: "#34d399",
+    iconBg: "rgba(52, 211, 153, 0.15)",
+    btnStyle: {
+      background: "rgba(52,211,153,0.2)",
+      color: "#34d399",
+      border: "1px solid rgba(52,211,153,0.3)",
+    },
     desc: "ভূমিরূপ, বায়ুমণ্ডল, জলবায়ু ও ভারতের ভূগোল",
   },
   {
@@ -63,9 +83,14 @@ const subjects = [
     label: "Political Science",
     bengali: "রাষ্ট্রবিজ্ঞান",
     icon: Scale,
-    bgClass: "bg-indigo-50 border-indigo-200",
-    iconClass: "text-indigo-600 bg-indigo-100",
-    btnClass: "bg-indigo-600 hover:bg-indigo-700 text-white",
+    borderColor: "rgba(157, 78, 221, 0.3)",
+    iconColor: "#9d4edd",
+    iconBg: "rgba(157, 78, 221, 0.15)",
+    btnStyle: {
+      background: "rgba(157,78,221,0.2)",
+      color: "#c084fc",
+      border: "1px solid rgba(157,78,221,0.3)",
+    },
     desc: "গণতন্ত্র, সংবিধান, মৌলিক অধিকার ও আন্তর্জাতিক সম্পর্ক",
   },
   {
@@ -73,9 +98,14 @@ const subjects = [
     label: "Philosophy",
     bengali: "দর্শন",
     icon: Brain,
-    bgClass: "bg-violet-50 border-violet-200",
-    iconClass: "text-violet-600 bg-violet-100",
-    btnClass: "bg-violet-600 hover:bg-violet-700 text-white",
+    borderColor: "rgba(192, 132, 252, 0.3)",
+    iconColor: "#c084fc",
+    iconBg: "rgba(192, 132, 252, 0.15)",
+    btnStyle: {
+      background: "rgba(192,132,252,0.2)",
+      color: "#c084fc",
+      border: "1px solid rgba(192,132,252,0.3)",
+    },
     desc: "ভারতীয় দর্শন, যুক্তিবিজ্ঞান, নৈতিকতা ও মেটাফিজিক্স",
   },
   {
@@ -83,9 +113,14 @@ const subjects = [
     label: "Sociology",
     bengali: "সমাজবিজ্ঞান",
     icon: Users,
-    bgClass: "bg-teal-50 border-teal-200",
-    iconClass: "text-teal-600 bg-teal-100",
-    btnClass: "bg-teal-600 hover:bg-teal-700 text-white",
+    borderColor: "rgba(45, 212, 191, 0.3)",
+    iconColor: "#2dd4bf",
+    iconBg: "rgba(45, 212, 191, 0.15)",
+    btnStyle: {
+      background: "rgba(45,212,191,0.2)",
+      color: "#2dd4bf",
+      border: "1px solid rgba(45,212,191,0.3)",
+    },
     desc: "পরিবার, সমাজ, সংস্কৃতি, নগরায়ণ ও বিশ্বায়ন",
   },
   {
@@ -93,12 +128,24 @@ const subjects = [
     label: "Sanskrit",
     bengali: "সংস্কৃত",
     icon: ScrollText,
-    bgClass: "bg-orange-50 border-orange-200",
-    iconClass: "text-orange-600 bg-orange-100",
-    btnClass: "bg-orange-600 hover:bg-orange-700 text-white",
+    borderColor: "rgba(251, 146, 60, 0.3)",
+    iconColor: "#fb923c",
+    iconBg: "rgba(251, 146, 60, 0.15)",
+    btnStyle: {
+      background: "rgba(251,146,60,0.2)",
+      color: "#fb923c",
+      border: "1px solid rgba(251,146,60,0.3)",
+    },
     desc: "সংস্কৃত গদ্য, পদ্য, ব্যাকরণ ও অনুবাদ",
   },
 ];
+
+const glassCard = (borderColor: string) => ({
+  background: "rgba(255,255,255,0.04)",
+  border: `1px solid ${borderColor}`,
+  backdropFilter: "blur(8px)",
+  borderRadius: "1rem",
+});
 
 export function ArtsHomePage({ onSelect }: ArtsHomePageProps) {
   return (
@@ -110,34 +157,38 @@ export function ArtsHomePage({ onSelect }: ArtsHomePageProps) {
         className="mb-8"
       >
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-amber-600 flex items-center justify-center">
-            <Palette className="w-5 h-5 text-white" />
+          <div
+            className="w-10 h-10 rounded-xl flex items-center justify-center"
+            style={{
+              background: "rgba(245,200,66,0.15)",
+              border: "1px solid rgba(245,200,66,0.3)",
+            }}
+          >
+            <Palette className="w-5 h-5" style={{ color: "#f5c842" }} />
           </div>
           <div>
-            <h1 className="font-display font-bold text-2xl text-navy leading-none">
+            <h1 className="font-display font-bold text-2xl text-white leading-none">
               Arts Tutor
             </h1>
-            <p className="text-sm text-muted-foreground">
-              কলা বিভাগ — WBCHSE Syllabus
-            </p>
+            <p className="text-sm text-white/50">কলা বিভাগ — WBCHSE Syllabus</p>
           </div>
         </div>
         <div className="mt-3 flex items-center gap-2 flex-wrap">
           <Badge
             variant="secondary"
-            className="bg-navy/10 text-navy border-0 text-xs"
+            className="bg-white/10 text-white/70 border-white/10 text-xs"
           >
             Class XI &amp; XII
           </Badge>
           <Badge
             variant="secondary"
-            className="bg-amber-100 text-amber-700 border-0 text-xs"
+            className="bg-white/10 text-white/70 border-white/10 text-xs"
           >
             Step-by-Step Answers
           </Badge>
           <Badge
             variant="secondary"
-            className="bg-rose-100 text-rose-700 border-0 text-xs"
+            className="bg-white/10 text-white/70 border-white/10 text-xs"
           >
             Essay + MCQ
           </Badge>
@@ -154,31 +205,35 @@ export function ArtsHomePage({ onSelect }: ArtsHomePageProps) {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.06 }}
-              className={`rounded-2xl border-2 p-5 ${subject.bgClass} flex flex-col gap-4`}
+              style={glassCard(subject.borderColor)}
+              className="p-5 flex flex-col gap-4"
               data-ocid="arts.card"
             >
               <div className="flex items-center gap-3">
                 <div
-                  className={`w-11 h-11 rounded-xl flex items-center justify-center ${subject.iconClass}`}
+                  className="w-11 h-11 rounded-xl flex items-center justify-center"
+                  style={{ background: subject.iconBg }}
                 >
-                  <Icon className="w-6 h-6" />
+                  <Icon
+                    className="w-6 h-6"
+                    style={{ color: subject.iconColor }}
+                  />
                 </div>
                 <div>
-                  <h2 className="font-display font-bold text-lg text-foreground leading-tight">
+                  <h2 className="font-display font-bold text-lg text-white leading-tight">
                     {subject.label}
                   </h2>
-                  <p className="text-sm text-muted-foreground">
-                    {subject.bengali}
-                  </p>
+                  <p className="text-sm text-white/50">{subject.bengali}</p>
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <p className="text-xs text-white/40 leading-relaxed">
                 {subject.desc}
               </p>
               <div className="flex gap-2 mt-1">
                 <Button
                   size="sm"
-                  className={`flex-1 text-sm font-semibold ${subject.btnClass}`}
+                  className="flex-1 text-sm font-semibold border-0"
+                  style={subject.btnStyle}
                   onClick={() => onSelect(subject.id, 11)}
                   data-ocid="arts.primary_button"
                 >
@@ -186,7 +241,8 @@ export function ArtsHomePage({ onSelect }: ArtsHomePageProps) {
                 </Button>
                 <Button
                   size="sm"
-                  className={`flex-1 text-sm font-semibold ${subject.btnClass}`}
+                  className="flex-1 text-sm font-semibold border-0"
+                  style={subject.btnStyle}
                   onClick={() => onSelect(subject.id, 12)}
                   data-ocid="arts.secondary_button"
                 >
@@ -202,14 +258,23 @@ export function ArtsHomePage({ onSelect }: ArtsHomePageProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="mt-6 bg-navy rounded-xl p-5 text-white"
+        className="mt-6 rounded-xl p-5"
+        style={{
+          background: "rgba(245,200,66,0.08)",
+          border: "1px solid rgba(245,200,66,0.2)",
+        }}
       >
-        <h3 className="font-display font-bold text-base mb-3">Arts Tips 🎨</h3>
-        <ul className="space-y-2 text-sm text-white/80">
+        <h3
+          className="font-display font-bold text-base mb-3"
+          style={{ color: "#f5c842" }}
+        >
+          Arts Tips 🎨
+        </h3>
+        <ul className="space-y-2 text-sm text-white/60">
           <li>• বিষয় ও শ্রেণি বেছে নিন এবং অধ্যায় সিলেক্ট করুন</li>
           <li>• রচনামূলক, সংক্ষিপ্ত বা বহুনির্বাচনি ধরন বেছে নিন</li>
           <li>• প্রশ্ন লিখুন — WBCHSE সিলেবাস মেনে বিস্তারিত উত্তর পাবেন</li>
-          <li>• সমাধান History-তে সংরক্ষিত হবে পুনরায় পড়ার জন্য</li>
+          <li>• সমাধান History-তে সংরক্ষিত হবে পুনরায় পড়ার জন্য</li>
         </ul>
       </motion.div>
     </div>

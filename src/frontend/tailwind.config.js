@@ -25,8 +25,13 @@ export default {
         ring: "oklch(var(--ring) / <alpha-value>)",
         background: "oklch(var(--background))",
         foreground: "oklch(var(--foreground))",
-        navy: "oklch(var(--primary))",
+        navy: "oklch(var(--navy))",
         gold: "oklch(var(--gold))",
+        neon: {
+          cyan: "oklch(0.75 0.18 200)",
+          violet: "oklch(0.55 0.22 290)",
+          amber: "oklch(0.78 0.18 70)",
+        },
         primary: {
           DEFAULT: "oklch(var(--primary) / <alpha-value>)",
           foreground: "oklch(var(--primary-foreground))",
@@ -81,6 +86,10 @@ export default {
       boxShadow: {
         xs: "0 1px 2px 0 rgba(0,0,0,0.05)",
         card: "0 2px 8px 0 rgba(15,58,90,0.08), 0 1px 2px 0 rgba(15,58,90,0.04)",
+        "glow-cyan": "0 0 20px oklch(0.75 0.18 200 / 0.6), 0 0 40px oklch(0.75 0.18 200 / 0.3)",
+        "glow-violet": "0 0 20px oklch(0.55 0.22 290 / 0.6), 0 0 40px oklch(0.55 0.22 290 / 0.3)",
+        "glow-amber": "0 0 16px oklch(0.78 0.18 70 / 0.5)",
+        glass: "0 4px 24px rgba(0,0,0,0.4)",
       },
       keyframes: {
         "accordion-down": {

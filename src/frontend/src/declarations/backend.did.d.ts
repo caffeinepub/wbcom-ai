@@ -18,6 +18,11 @@ export interface CustomerMessageWithReply {
   'timestamp' : Time,
   'senderName' : string,
 }
+export interface LoginRecord {
+  'principal' : Principal,
+  'name' : string,
+  'loginAt' : bigint,
+}
 export interface NoteAccessRequest {
   'id' : bigint,
   'status' : string,
@@ -98,6 +103,7 @@ export interface _SERVICE {
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getCustomerMessages' : ActorMethod<[], Array<CustomerMessageWithReply>>,
   'getIsAdmin' : ActorMethod<[], boolean>,
+  'getLoginHistory' : ActorMethod<[], Array<LoginRecord>>,
   'getMyAccessStatus' : ActorMethod<[], string>,
   'getMyCustomerMessages' : ActorMethod<[], Array<CustomerMessageWithReply>>,
   'getPremiumNotesList' : ActorMethod<[], Array<PremiumNote>>,
@@ -110,6 +116,7 @@ export interface _SERVICE {
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'listProblemTypes' : ActorMethod<[], Array<string>>,
+  'recordLogin' : ActorMethod<[string], undefined>,
   'registerUser' : ActorMethod<[], undefined>,
   'rejectAccessRequest' : ActorMethod<[Principal], undefined>,
   'replyToCustomerMessage' : ActorMethod<[bigint, string], undefined>,

@@ -51,6 +51,11 @@ export const CustomerMessageWithReply = IDL.Record({
   'timestamp' : Time,
   'senderName' : IDL.Text,
 });
+export const LoginRecord = IDL.Record({
+  'principal' : IDL.Principal,
+  'name' : IDL.Text,
+  'loginAt' : IDL.Int,
+});
 export const PremiumNote = IDL.Record({
   'id' : IDL.Nat,
   'title' : IDL.Text,
@@ -119,6 +124,7 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'getIsAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'getLoginHistory' : IDL.Func([], [IDL.Vec(LoginRecord)], ['query']),
   'getMyAccessStatus' : IDL.Func([], [IDL.Text], ['query']),
   'getMyCustomerMessages' : IDL.Func(
       [],
@@ -147,6 +153,7 @@ export const idlService = IDL.Service({
     ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'listProblemTypes' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
+  'recordLogin' : IDL.Func([IDL.Text], [], []),
   'registerUser' : IDL.Func([], [], []),
   'rejectAccessRequest' : IDL.Func([IDL.Principal], [], []),
   'replyToCustomerMessage' : IDL.Func([IDL.Nat, IDL.Text], [], []),
@@ -207,6 +214,11 @@ export const idlFactory = ({ IDL }) => {
     'message' : IDL.Text,
     'timestamp' : Time,
     'senderName' : IDL.Text,
+  });
+  const LoginRecord = IDL.Record({
+    'principal' : IDL.Principal,
+    'name' : IDL.Text,
+    'loginAt' : IDL.Int,
   });
   const PremiumNote = IDL.Record({
     'id' : IDL.Nat,
@@ -288,6 +300,7 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'getIsAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'getLoginHistory' : IDL.Func([], [IDL.Vec(LoginRecord)], ['query']),
     'getMyAccessStatus' : IDL.Func([], [IDL.Text], ['query']),
     'getMyCustomerMessages' : IDL.Func(
         [],
@@ -316,6 +329,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'listProblemTypes' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
+    'recordLogin' : IDL.Func([IDL.Text], [], []),
     'registerUser' : IDL.Func([], [], []),
     'rejectAccessRequest' : IDL.Func([IDL.Principal], [], []),
     'replyToCustomerMessage' : IDL.Func([IDL.Nat, IDL.Text], [], []),

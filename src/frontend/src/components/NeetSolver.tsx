@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { NEET_CHAPTERS } from "@/data/neetChapters";
 import {
   ArrowLeft,
   BookOpen,
@@ -582,6 +583,7 @@ export function NeetSolver({ subject, classLevel, onBack }: NeetSolverProps) {
   const [answerType, setAnswerType] = useState<AnswerType>("concept");
   const [answer, setAnswer] = useState<NeetAnswer | null>(null);
   const [loading, setLoading] = useState(false);
+  const [selectedChapter, setSelectedChapter] = useState<string | null>(null);
 
   const meta = subjectMeta[subject] ?? subjectMeta.physics;
 
@@ -624,10 +626,62 @@ export function NeetSolver({ subject, classLevel, onBack }: NeetSolverProps) {
               {meta.label}
             </span>
             <span className="ml-2 text-sm text-muted-foreground">
-              {meta.bengali} — Class {classLevel}
+              {meta.bengali}
             </span>
           </div>
         </div>
+      </motion.div>
+
+      {/* Chapter Panel */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-4"
+      >
+        {(() => {
+          const chapters = NEET_CHAPTERS[subject] ?? [];
+          if (chapters.length === 0) return null;
+          return (
+            <div className="bg-white border border-teal-100 rounded-xl p-4 shadow-sm">
+              <p className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">
+                Chapters
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {chapters.map((ch) => (
+                  <button
+                    type="button"
+                    key={ch.id}
+                    onClick={() => {
+                      setSelectedChapter(ch.id);
+                      setQuestion(ch.name);
+                    }}
+                    className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${selectedChapter === ch.id ? "bg-teal-600 text-white border-teal-600" : "bg-white text-gray-600 border-gray-200 hover:border-teal-300"}`}
+                    data-ocid="neet.tab"
+                  >
+                    {ch.name}
+                  </button>
+                ))}
+              </div>
+              {selectedChapter && (
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {chapters
+                    .find((c) => c.id === selectedChapter)
+                    ?.topics.map((t) => (
+                      <button
+                        type="button"
+                        key={t}
+                        onClick={() => setQuestion(t)}
+                        className="px-2 py-0.5 rounded text-xs bg-teal-50 text-teal-700 border border-teal-200 hover:bg-teal-100"
+                        data-ocid="neet.button"
+                      >
+                        {t}
+                      </button>
+                    ))}
+                </div>
+              )}
+            </div>
+          );
+        })()}
       </motion.div>
 
       {/* Input Card */}

@@ -11,6 +11,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Principal } from "@dfinity/principal";
@@ -19,7 +27,10 @@ import {
   Bell,
   BookOpen,
   CheckCircle,
+  Clock,
   FileText,
+  History,
+  Library,
   Loader2,
   MessageSquare,
   Pencil,
@@ -36,6 +47,12 @@ import {
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import type { LoginRecord } from "../backend";
+import {
+  QA_DATABASE,
+  QUESTION_TYPE_LABELS,
+  SUBJECT_AREA_LABELS,
+} from "../data/qaDatabase";
 import { useActor } from "../hooks/useActor";
 import {
   useAddAdminQuestion,
@@ -183,6 +200,16 @@ export function AdminPage() {
   });
   const [savingNoticeEdit, setSavingNoticeEdit] = useState(false);
   const [deletingNoticeId, setDeletingNoticeId] = useState<bigint | null>(null);
+  const [loginHistory, setLoginHistory] = useState<LoginRecord[]>([]);
+  const [noticePublishAt, setNoticePublishAt] = useState("");
+  const [bulkJson, setBulkJson] = useState("");
+  const [bulkPreview, setBulkPreview] = useState<
+    Array<{ title: string; subject: string; content: string }>
+  >([]);
+  const [bulkUploading, setBulkUploading] = useState(false);
+  const [bulkCount, setBulkCount] = useState(0);
+  const [loadingLoginHistory, setLoadingLoginHistory] = useState(false);
+  const loginHistoryFetched = useRef(false);
 
   async function waitForActor() {
     for (let i = 0; i < 30; i++) {
@@ -428,10 +455,16 @@ export function AdminPage() {
     }
     setAddingNotice(true);
     try {
+      const noticeContent = noticePublishAt
+        ? JSON.stringify({
+            publishAt: new Date(noticePublishAt).getTime(),
+            text: newNotice.content.trim(),
+          })
+        : newNotice.content.trim();
       await readyActor.addPremiumNote(
         newNotice.title.trim(),
         "notice",
-        newNotice.content.trim(),
+        noticeContent,
       );
       toast.success("Notice পোস্ট হয়েছে!");
       setNewNotice({ title: "", content: "" });
@@ -799,6 +832,43 @@ export function AdminPage() {
           >
             <Bell className="w-3.5 h-3.5 mr-1.5" />
             Notice Board
+          </TabsTrigger>
+          <TabsTrigger
+            value="qabank"
+            className="data-[state=active]:bg-navy data-[state=active]:text-white text-navy"
+            data-ocid="admin.tab"
+          >
+            <Library className="w-3.5 h-3.5 mr-1.5" />
+            Q&A Bank
+          </TabsTrigger>
+          <TabsTrigger
+            value="analytics"
+            className="data-[state=active]:bg-navy data-[state=active]:text-white text-navy"
+            data-ocid="admin.tab"
+          >
+            <Users className="w-3.5 h-3.5 mr-1.5" />
+            Analytics
+          </TabsTrigger>
+          <TabsTrigger
+            value="loginhistory"
+            className="data-[state=active]:bg-navy data-[state=active]:text-white text-navy"
+            data-ocid="admin.tab"
+            onClick={async () => {
+              if (loginHistoryFetched.current) return;
+              loginHistoryFetched.current = true;
+              setLoadingLoginHistory(true);
+              try {
+                const data = await actor?.getLoginHistory();
+                setLoginHistory(data ?? []);
+              } catch {
+                toast.error("Failed to load login history");
+              } finally {
+                setLoadingLoginHistory(false);
+              }
+            }}
+          >
+            <History className="w-3.5 h-3.5 mr-1.5" />
+            লগইন ইতিহাস
           </TabsTrigger>
         </TabsList>
 
@@ -1205,6 +1275,112 @@ export function AdminPage() {
             </CardContent>
           </Card>
 
+          {/* Bulk Upload */}
+          <Card className="border-navy/20 shadow-sm mb-6">
+            <CardHeader>
+              <CardTitle className="text-base font-semibold text-navy flex items-center gap-2">
+                <Upload className="w-4 h-4" />
+                Bulk Notes Upload
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-xs text-muted-foreground">
+                JSON array format: [{"{"}
+                "title":"...","subject":"...","content":"..."{"}"}, ...]
+              </p>
+              <Textarea
+                rows={5}
+                placeholder='[{"title":"Note 1","subject":"Physics","content":"Content..."}]'
+                value={bulkJson}
+                onChange={(e) => {
+                  setBulkJson(e.target.value);
+                  try {
+                    const parsed = JSON.parse(e.target.value);
+                    if (Array.isArray(parsed))
+                      setBulkPreview(parsed.slice(0, 30));
+                    else setBulkPreview([]);
+                  } catch {
+                    setBulkPreview([]);
+                  }
+                }}
+                className="border-navy/20 font-mono text-xs resize-none"
+                data-ocid="admin.textarea"
+              />
+              {bulkPreview.length > 0 && (
+                <div className="bg-navy/5 rounded-lg p-3 text-xs space-y-1">
+                  <p className="font-semibold text-navy mb-1">
+                    Preview — {bulkPreview.length} notes:
+                  </p>
+                  {bulkPreview.slice(0, 5).map((n, i) => (
+                    <p
+                      key={`${n.title}-${i}`}
+                      className="text-muted-foreground truncate"
+                    >
+                      {i + 1}. [{n.subject}] {n.title}
+                    </p>
+                  ))}
+                  {bulkPreview.length > 5 && (
+                    <p className="text-muted-foreground">
+                      ...and {bulkPreview.length - 5} more
+                    </p>
+                  )}
+                </div>
+              )}
+              {bulkCount > 0 && (
+                <p className="text-xs text-emerald-600 font-semibold">
+                  ✅ {bulkCount} notes uploaded!
+                </p>
+              )}
+              <Button
+                size="sm"
+                disabled={bulkPreview.length === 0 || bulkUploading}
+                className="bg-navy text-white hover:bg-navy/90"
+                onClick={async () => {
+                  const readyActor = await waitForActor();
+                  if (!readyActor) {
+                    toast.error("সংযোগ নেই");
+                    return;
+                  }
+                  setBulkUploading(true);
+                  let count = 0;
+                  for (const n of bulkPreview) {
+                    try {
+                      await readyActor.addPremiumNote(
+                        n.title || "Untitled",
+                        n.subject || "general",
+                        n.content || "",
+                      );
+                      count++;
+                    } catch {
+                      /* skip */
+                    }
+                  }
+                  setBulkCount(count);
+                  setBulkUploading(false);
+                  setBulkJson("");
+                  setBulkPreview([]);
+                  toast.success(`${count} notes uploaded!`);
+                  queryClient.invalidateQueries({
+                    queryKey: ["premiumNotesList"],
+                  });
+                  queryClient.invalidateQueries({
+                    queryKey: ["premiumNotesWithContent"],
+                  });
+                }}
+                data-ocid="admin.primary_button"
+              >
+                {bulkUploading ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Upload className="w-4 h-4 mr-2" />
+                )}
+                {bulkUploading
+                  ? "Uploading..."
+                  : `Upload All (${bulkPreview.length})`}
+              </Button>
+            </CardContent>
+          </Card>
+
           {/* Notes List */}
           <Card className="border-navy/20 shadow-sm mb-6">
             <CardHeader>
@@ -1578,6 +1754,18 @@ export function AdminPage() {
                     className="border-navy/20 resize-none"
                   />
                 </div>
+                <div className="space-y-2">
+                  <Label className="text-xs text-navy/70">
+                    Scheduled Publish Time (optional)
+                  </Label>
+                  <input
+                    type="datetime-local"
+                    value={noticePublishAt}
+                    onChange={(e) => setNoticePublishAt(e.target.value)}
+                    className="w-full border border-navy/20 rounded-md px-3 py-1.5 text-sm bg-background"
+                    data-ocid="admin.input"
+                  />
+                </div>
                 <Button
                   onClick={handleAddNotice}
                   disabled={addingNotice}
@@ -1712,6 +1900,314 @@ export function AdminPage() {
                   </div>
                 )}
               </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Analytics Tab */}
+        <TabsContent value="analytics">
+          <Card className="border-navy/20 shadow-sm">
+            <CardHeader>
+              <CardTitle className="text-base font-semibold text-navy flex items-center gap-2">
+                <Users className="w-4 h-4" />
+                Platform Analytics
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div className="bg-navy/5 rounded-xl p-4 text-center border border-navy/10">
+                  <p className="text-3xl font-bold text-navy">
+                    {loadingCount ? "..." : String(userCount ?? "0")}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Total Users
+                  </p>
+                </div>
+                <div className="bg-navy/5 rounded-xl p-4 text-center border border-navy/10">
+                  <p className="text-3xl font-bold text-navy">
+                    {loadingMessages ? "..." : String(messages?.length ?? 0)}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Support Messages
+                  </p>
+                </div>
+                <div className="bg-navy/5 rounded-xl p-4 text-center border border-navy/10">
+                  <p className="text-3xl font-bold text-navy">
+                    {loadingNotesList
+                      ? "..."
+                      : String(
+                          notesList?.filter(
+                            (n: { subject: string }) => n.subject !== "notice",
+                          ).length ?? 0,
+                        )}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Premium Notes
+                  </p>
+                </div>
+                <div className="bg-navy/5 rounded-xl p-4 text-center border border-navy/10">
+                  <p className="text-3xl font-bold text-navy">
+                    {loadingRequests
+                      ? "..."
+                      : String(accessRequests?.length ?? 0)}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Access Requests
+                  </p>
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold text-navy text-sm mb-3">
+                  Q&amp;A Bank by Subject
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {(
+                    [
+                      "arts",
+                      "science",
+                      "commerce",
+                      "law",
+                      "neet",
+                      "ca",
+                    ] as const
+                  ).map((area) => {
+                    const count = QA_DATABASE.filter(
+                      (q) => q.subjectArea === area,
+                    ).length;
+                    return (
+                      <div
+                        key={area}
+                        className="bg-navy/3 border border-navy/10 rounded-xl p-3 text-center"
+                      >
+                        <p className="text-xl font-bold text-navy">{count}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {SUBJECT_AREA_LABELS[area].en}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold text-navy text-sm mb-3">
+                  Quiz Questions by Topic (Admin-Added)
+                </h3>
+                {loadingQuiz ? (
+                  <p className="text-sm text-muted-foreground">Loading...</p>
+                ) : quizQuestions && quizQuestions.length > 0 ? (
+                  <div className="space-y-2">
+                    {QUIZ_TOPICS.slice(0, 8).map((topic) => {
+                      const count = (quizQuestions ?? []).filter(
+                        (q: { topic: string }) => q.topic === topic.value,
+                      ).length;
+                      return (
+                        <div
+                          key={topic.value}
+                          className="flex items-center gap-3"
+                        >
+                          <span className="text-xs text-navy/70 w-48 truncate">
+                            {topic.label}
+                          </span>
+                          <div className="flex-1 h-2 rounded-full bg-navy/10 overflow-hidden">
+                            <div
+                              className="h-full rounded-full bg-navy/40"
+                              style={{ width: count > 0 ? "100%" : "0" }}
+                            />
+                          </div>
+                          <span className="text-xs font-bold text-navy w-8 text-right">
+                            {count}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    No admin-added quiz questions yet.
+                  </p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Q&A Bank Tab */}
+        <TabsContent value="qabank">
+          <Card className="border-navy/20 shadow-sm mb-4">
+            <CardHeader>
+              <CardTitle className="text-base font-semibold text-navy flex items-center gap-2">
+                <Library className="w-4 h-4" />
+                Q&A Question Bank — Overview
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-4 bg-blue-50 border border-blue-100 rounded-lg p-3">
+                ℹ️ This is a read-only overview of the built-in Q&A database.
+                Custom quiz questions can be added via the{" "}
+                <strong>Quiz Questions</strong> tab above.
+              </p>
+              {/* Stats by subject area */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
+                {(
+                  ["arts", "science", "commerce", "law", "neet", "ca"] as const
+                ).map((area) => {
+                  const count = QA_DATABASE.filter(
+                    (q) => q.subjectArea === area,
+                  ).length;
+                  return (
+                    <div
+                      key={area}
+                      className="bg-navy/3 border border-navy/10 rounded-xl p-3 text-center"
+                    >
+                      <p className="text-xl font-bold text-navy">{count}</p>
+                      <p className="text-xs text-muted-foreground font-medium">
+                        {SUBJECT_AREA_LABELS[area].en}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="text-xs font-semibold text-muted-foreground mb-2">
+                Total: {QA_DATABASE.length} Questions
+              </p>
+              {/* Question list */}
+              <div className="space-y-2" data-ocid="admin.table">
+                {QA_DATABASE.map((q, idx) => (
+                  <div
+                    key={q.id}
+                    className="flex items-start gap-3 p-3 rounded-lg border border-navy/8 bg-white hover:bg-navy/2 transition-colors"
+                    data-ocid={`admin.item.${idx + 1}`}
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-navy truncate">
+                        {q.questionEn}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">
+                        {q.subject} — {q.chapter}
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-end gap-1 shrink-0">
+                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-navy/8 text-navy font-medium">
+                        {SUBJECT_AREA_LABELS[q.subjectArea].en}
+                      </span>
+                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-navy/5 text-muted-foreground">
+                        {QUESTION_TYPE_LABELS[q.questionType].en}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="loginhistory">
+          <Card className="border-navy/20 shadow-sm">
+            <CardHeader>
+              <CardTitle className="text-base font-semibold text-navy flex items-center gap-2">
+                <History className="w-4 h-4" />
+                User Login History
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {loadingLoginHistory ? (
+                <div
+                  className="flex flex-col gap-3"
+                  data-ocid="loginhistory.loading_state"
+                >
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <Skeleton key={i} className="h-10 w-full rounded" />
+                  ))}
+                </div>
+              ) : loginHistory.length === 0 ? (
+                <div
+                  className="text-center py-12 text-muted-foreground"
+                  data-ocid="loginhistory.empty_state"
+                >
+                  <Clock className="w-8 h-8 mx-auto mb-2 opacity-40" />
+                  <p className="text-sm">No login records found yet.</p>
+                  <p className="text-xs mt-1">
+                    Records will appear here once users log in.
+                  </p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto" data-ocid="loginhistory.table">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="text-navy font-semibold">
+                          #
+                        </TableHead>
+                        <TableHead className="text-navy font-semibold">
+                          Name / Username
+                        </TableHead>
+                        <TableHead className="text-navy font-semibold">
+                          Login Date & Time
+                        </TableHead>
+                        <TableHead className="text-navy font-semibold">
+                          Principal
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {loginHistory.map((record, idx) => {
+                        const loginDate = new Date(
+                          Number(record.loginAt / 1_000_000n),
+                        );
+                        const principalStr = record.principal.toString();
+                        const shortPrincipal = `${principalStr.slice(0, 8)}...`;
+                        return (
+                          <TableRow
+                            key={`${principalStr}-${record.loginAt}`}
+                            data-ocid={`loginhistory.row.${idx + 1}`}
+                          >
+                            <TableCell className="text-muted-foreground text-xs">
+                              {idx + 1}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <div className="w-7 h-7 rounded-full bg-navy/10 flex items-center justify-center text-navy font-semibold text-xs">
+                                  {record.name.slice(0, 1).toUpperCase()}
+                                </div>
+                                <span className="font-medium text-sm text-navy">
+                                  {record.name}
+                                </span>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-sm text-foreground">
+                              <div className="flex items-center gap-1.5">
+                                <Clock className="w-3.5 h-3.5 text-muted-foreground" />
+                                <span>
+                                  {loginDate.toLocaleDateString("en-IN", {
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                  })}{" "}
+                                  {loginDate.toLocaleTimeString("en-IN", {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    hour12: true,
+                                  })}
+                                </span>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant="outline"
+                                className="font-mono text-xs text-muted-foreground border-navy/20"
+                              >
+                                {shortPrincipal}
+                              </Badge>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                  <p className="text-xs text-muted-foreground mt-3 text-right">
+                    Total records: {loginHistory.length}
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

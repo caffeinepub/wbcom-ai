@@ -51,6 +51,11 @@ export interface QuizResult {
     timestamp: Time;
 }
 export type ProblemId = bigint;
+export interface LoginRecord {
+    principal: Principal;
+    name: string;
+    loginAt: bigint;
+}
 export interface CustomerMessageWithReply {
     id: bigint;
     adminReply?: string;
@@ -95,6 +100,7 @@ export interface backendInterface {
     getCallerUserRole(): Promise<UserRole>;
     getCustomerMessages(): Promise<Array<CustomerMessageWithReply>>;
     getIsAdmin(): Promise<boolean>;
+    getLoginHistory(): Promise<Array<LoginRecord>>;
     getMyAccessStatus(): Promise<string>;
     getMyCustomerMessages(): Promise<Array<CustomerMessageWithReply>>;
     getPremiumNotesList(): Promise<Array<PremiumNote>>;
@@ -107,6 +113,7 @@ export interface backendInterface {
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
     listProblemTypes(): Promise<Array<string>>;
+    recordLogin(name: string): Promise<void>;
     registerUser(): Promise<void>;
     rejectAccessRequest(userId: Principal): Promise<void>;
     replyToCustomerMessage(messageId: bigint, replyText: string): Promise<void>;

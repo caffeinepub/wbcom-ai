@@ -133,6 +133,11 @@ export interface QuizResult {
     timestamp: Time;
 }
 export type ProblemId = bigint;
+export interface LoginRecord {
+    principal: Principal;
+    name: string;
+    loginAt: bigint;
+}
 export interface CustomerMessageWithReply {
     id: bigint;
     adminReply?: string;
@@ -178,6 +183,7 @@ export interface backendInterface {
     getCallerUserRole(): Promise<UserRole>;
     getCustomerMessages(): Promise<Array<CustomerMessageWithReply>>;
     getIsAdmin(): Promise<boolean>;
+    getLoginHistory(): Promise<Array<LoginRecord>>;
     getMyAccessStatus(): Promise<string>;
     getMyCustomerMessages(): Promise<Array<CustomerMessageWithReply>>;
     getPremiumNotesList(): Promise<Array<PremiumNote>>;
@@ -190,6 +196,7 @@ export interface backendInterface {
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
     listProblemTypes(): Promise<Array<string>>;
+    recordLogin(name: string): Promise<void>;
     registerUser(): Promise<void>;
     rejectAccessRequest(userId: Principal): Promise<void>;
     replyToCustomerMessage(messageId: bigint, replyText: string): Promise<void>;
@@ -455,6 +462,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async getLoginHistory(): Promise<Array<LoginRecord>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getLoginHistory();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getLoginHistory();
+            return result;
+        }
+    }
     async getMyAccessStatus(): Promise<string> {
         if (this.processError) {
             try {
@@ -620,6 +641,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.listProblemTypes();
+            return result;
+        }
+    }
+    async recordLogin(arg0: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.recordLogin(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.recordLogin(arg0);
             return result;
         }
     }
