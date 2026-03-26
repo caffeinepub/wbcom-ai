@@ -327,17 +327,17 @@ export function AdminPage() {
       React.SetStateAction<Array<{ name: string; type: string; data: string }>>
     >,
   ) {
-    const MAX_FILE_SIZE = 2 * 1024 * 1024;
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
     let totalSize = 0;
     const results: Array<{ name: string; type: string; data: string }> = [];
     for (const file of Array.from(files)) {
       totalSize += file.size;
-      if (totalSize > 5 * 1024 * 1024) {
-        toast.error("মোট file size 5MB-এর বেশি হতে পারবে না");
+      if (totalSize > 50 * 1024 * 1024) {
+        toast.error("মোট file size 50MB-এর বেশি হতে পারবে না");
         return;
       }
       if (file.size > MAX_FILE_SIZE) {
-        toast.error(`${file.name} 2MB-এর বেশি বড়`);
+        toast.error(`${file.name} 10MB-এর বেশি বড়`);
         continue;
       }
       const base64 = await new Promise<string>((resolve, reject) => {
