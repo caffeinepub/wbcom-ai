@@ -1,28 +1,50 @@
-# Vidya Setu AI
+# Vidya Setu AI — Law Section Professional Upgrade
 
 ## Current State
-Full educational platform with Law section (lawSolver.ts, 8124 lines), navbar with hamburger, dark/light theme toggle, font size controls in AppContext, PDF upload in notes. Recent build adding large law database failed.
+The Law section (LawPage.tsx + lawSolver.ts) has:
+- Search bar for law sections by keyword/section number
+- Popular Acts quick chips
+- Result display with sectionText, explanation, examples, landmark cases, exceptions, overriding effect, cross-laws, related sections
+- Tabs: Search, Case Finder (landmark cases search), IPC vs BNS Comparison table, Legal Glossary
+- Language toggle (Bengali/English)
+- normalizeEntry() for schema compatibility
+- Standard app styling (dark/light mode, glassmorphism)
 
 ## Requested Changes (Diff)
 
 ### Add
-- Additional IPC sections: 1-5 (preliminary), 34 (acts done by several persons), 96-106 (private defence), 107-120 (abetment), 121-130 (offences against state), 141-160 (unlawful assembly), 299-304 (culpable homicide), 319-338 (hurt), 359-374 (kidnapping), 375-377 (sexual offences), 380-388 (property), 415-424 (cheating/mischief), 441-462 (house trespass/forgery), 493-498A (marriage), 499-502 (defamation)
-- BNS key sections: 2-20 (definitions, punishments, general exceptions), 45-56 (hurt), 57-63 (grievous hurt), 84-102 (culpable homicide/murder alt sections), 115-127 (kidnapping), 155-176 (sexual offences updates), 303-320 (property), 318-330 (cheating)
-- Contract Act key sections: 2 (definitions), 10-11 (valid contract), 13-19 (consent), 23-30 (object/consideration), 37-67 (performance), 73-75 (breach/damages), 148-181 (bailment), 182-238 (agency)
-- Constitution key articles: 12-13, 17-18, 19-22, 23-24, 25-30, 32-35, 44, 51A, 72-74, 123, 141, 226, 368
+- Dark navy (#0a1628) + gold (#c9a84c) color scheme throughout the Law section only
+- Official seal/badge header design (court emblem style using SVG or CSS)
+- Slide-in animation for search result cards (CSS keyframes or framer-style)
+- Filter system: filter by Act (IPC/BNS/CrPC/IT Act/Contract Act/HMA/Constitution), Category (Criminal/Civil/Constitutional), Punishment type (Imprisonment/Fine/Both/Death)
+- Advanced search (keyword, section number, topic) — enhance existing search
+- Recently Viewed: localStorage-based, last 10 sections viewed, shown in sidebar/panel
+- Share button on each section card — copies URL with section ID as query param (e.g. ?law=IPC_302)
+- Export to PDF button on each section — uses browser print/window.print() with a styled printable div for that section
+- Punishment Severity Indicator badge: Minor/Moderate/Severe/Capital — map based on punishment data
+- Legal disclaimer footer on every section card with link to indiacode.nic.in
+- Two-column layout for section detail: left = original section text (English), right = Bengali explanation
 
 ### Modify
-- PDF upload size limit: increase from current 2MB/5MB to 10MB per file, 50MB total in AdminPage
-- Ensure font size CSS variable is actually applied to `html` element (currently on `body` but `--base-font-size` may not cascade)
-- Color contrast: ensure all text on cards, badges, inputs have sufficient contrast in both dark and light modes
-- Light mode: ensure card backgrounds, input backgrounds, text colors all visible
+- LawPage.tsx: Full visual overhaul with navy/gold theme, new layout, new components integrated
+- Section result card: redesign as official seal-style card with severity badge, share button, export button, recently viewed tracking
+- IPC vs BNS Comparison: already exists, keep but restyle in navy/gold
+- Case Finder: already exists, keep but restyle
+- Legal Glossary: already exists, keep but restyle
 
 ### Remove
-- Nothing
+- Nothing removed; all existing features preserved
 
 ## Implementation Plan
-1. In AdminPage.tsx: increase PDF/image size limits to 10MB per file, 50MB total
-2. In index.css: apply font-size on `html` element to ensure full cascade
-3. Add ~60 new law entries to lawSolver.ts spanning IPC, BNS, Contract Act, Constitution
-4. Light mode contrast: review card/input/text colors in LawPage, HomePage, PremiumNotesPage
-5. Validate and deploy
+1. Redesign LawPage.tsx with dark navy + gold CSS custom properties scoped to the law section wrapper
+2. Add official seal SVG header badge and legal-themed typography
+3. Add CSS slide-in animation for result cards (translateY + opacity keyframe)
+4. Add filter bar component (Act, Category, Punishment type dropdowns/chips) — filter operates on search results
+5. Enhance search to explicitly support keyword, section number, and topic patterns
+6. Add Recently Viewed panel using localStorage (track last 10 viewed section IDs)
+7. Add Share button (copies window.location + ?section= param to clipboard)
+8. Add Export PDF button (opens print dialog with styled hidden printable div)
+9. Add PunishmentSeverityBadge component — map section data to Minor/Moderate/Severe/Capital
+10. Add two-column layout in result detail view (original text | Bengali explanation)
+11. Add legal disclaimer footer with indiacode.nic.in link on each section card
+12. Restyle existing tabs (Case Finder, IPC vs BNS, Glossary) in navy/gold theme

@@ -7,6 +7,11 @@ import {
   ArrowRight,
   BookMarked,
   BookOpen,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  Download,
+  Filter,
   Gavel,
   Globe2,
   Languages,
@@ -14,9 +19,10 @@ import {
   Link2,
   Scale,
   Search,
+  Share2,
   Star,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { LawLanguage, LawResult } from "../lib/lawSolver";
 import { generateLawExplanation } from "../lib/lawSolver";
 
@@ -35,7 +41,6 @@ const POPULAR_ACTS = [
   { label: "HMA 13", query: "HMA 13", desc: "Divorce" },
 ];
 
-// ====== Case Finder Data ======
 const LANDMARK_CASES = [
   {
     name: "Kesavananda Bharati v. State of Kerala",
@@ -152,7 +157,7 @@ const LANDMARK_CASES = [
     year: 1979,
     topics: ["Bail", "Undertrial", "CrPC 436A", "Right to Speedy Trial"],
     summary:
-      "Right to speedy trial is implicit in Article 21. Undertrial prisoners cannot be detained beyond maximum sentence period. | দ্রুত বিচারের অধিকার আর্টিকেল 21-এ নিহিত।",
+      "Right to speedy trial is implicit in Article 21. | দ্রুত বিচারের অধিকার আর্টিকেল 21-এ নিহিত।",
   },
   {
     name: "M.C. Mehta v. Union of India",
@@ -162,24 +167,6 @@ const LANDMARK_CASES = [
     topics: ["Environment", "Article 21", "Absolute Liability"],
     summary:
       "Introduced Absolute Liability rule — industry engaged in hazardous activity is strictly liable for harm. | শিল্প সংস্থা বিপজ্জনক কার্যকলাপে নিরঙ্কুশ দায়বদ্ধ।",
-  },
-  {
-    name: "Baxi Amrik Singh v. Union of India",
-    citation: "(2019) Case",
-    court: "Supreme Court of India",
-    year: 2019,
-    topics: ["Anticipatory Bail", "CrPC 438"],
-    summary:
-      "Anticipatory bail cannot be time-bound; once granted, it operates till end of trial. | অ্যান্টিসিপেটোরি জামিন সময়সীমাবদ্ধ নয়।",
-  },
-  {
-    name: "Union Carbide v. Union of India",
-    citation: "AIR 1992 SC 248",
-    court: "Supreme Court of India",
-    year: 1992,
-    topics: ["Bhopal Gas Tragedy", "Compensation", "IPC"],
-    summary:
-      "Settled Bhopal gas tragedy compensation. Established precedent for industrial disaster liability. | ভোপাল গ্যাস দুর্যোগের ক্ষতিপূরণ নির্ধারণ।",
   },
   {
     name: "Bachan Singh v. State of Punjab",
@@ -226,9 +213,26 @@ const LANDMARK_CASES = [
     summary:
       "Freedom of speech includes freedom of internet. Internet shutdowns must pass proportionality test. | ইন্টারনেট বন্ধ বাকস্বাধীনতার লঙ্ঘন হতে পারে।",
   },
+  {
+    name: "Union Carbide v. Union of India",
+    citation: "AIR 1992 SC 248",
+    court: "Supreme Court of India",
+    year: 1992,
+    topics: ["Bhopal Gas Tragedy", "Compensation", "IPC"],
+    summary:
+      "Settled Bhopal gas tragedy compensation. Established precedent for industrial disaster liability. | ভোপাল গ্যাস দুর্যোগের ক্ষতিপূরণ নির্ধারণ।",
+  },
+  {
+    name: "Baxi Amrik Singh v. Union of India",
+    citation: "(2019) Case",
+    court: "Supreme Court of India",
+    year: 2019,
+    topics: ["Anticipatory Bail", "CrPC 438"],
+    summary:
+      "Anticipatory bail cannot be time-bound; once granted, it operates till end of trial. | অ্যান্টিসিপেটোরি জামিন সময়সীমাবদ্ধ নয়।",
+  },
 ];
 
-// ====== IPC vs BNS Data ======
 const IPC_BNS_COMPARISON = [
   {
     ipcSec: "302",
@@ -347,111 +351,13 @@ const IPC_BNS_COMPARISON = [
     ipcTitle: "Cheating",
     bnsSec: "318",
     bnsTitle: "Cheating",
-    note: "Broadened scope",
-  },
-  {
-    ipcSec: "463",
-    ipcTitle: "Forgery",
-    bnsSec: "336",
-    bnsTitle: "Forgery",
     note: "Similar provision",
   },
   {
     ipcSec: "498A",
-    ipcTitle: "Cruelty by Husband/Relatives",
+    ipcTitle: "Cruelty by Husband",
     bnsSec: "85",
-    bnsTitle: "Husband or relative subjecting woman to cruelty",
-    note: "Similar provision",
-  },
-  {
-    ipcSec: "499",
-    ipcTitle: "Defamation",
-    bnsSec: "356",
-    bnsTitle: "Defamation",
-    note: "Similar provision",
-  },
-  {
-    ipcSec: "500",
-    ipcTitle: "Punishment for Defamation",
-    bnsSec: "356(2)",
-    bnsTitle: "Punishment for defamation",
-    note: "Similar provision",
-  },
-  {
-    ipcSec: "503",
-    ipcTitle: "Criminal Intimidation",
-    bnsSec: "351",
-    bnsTitle: "Criminal intimidation",
-    note: "Similar provision",
-  },
-  {
-    ipcSec: "504",
-    ipcTitle: "Intentional insult",
-    bnsSec: "352",
-    bnsTitle: "Intentional insult with intent to provoke",
-    note: "Similar provision",
-  },
-  {
-    ipcSec: "506",
-    ipcTitle: "Punishment for Criminal Intimidation",
-    bnsSec: "351(2)",
-    bnsTitle: "Punishment for criminal intimidation",
-    note: "Similar provision",
-  },
-  {
-    ipcSec: "509",
-    ipcTitle: "Word, gesture or act to insult modesty of woman",
-    bnsSec: "79",
-    bnsTitle: "Act intended to insult modesty of a woman",
-    note: "Broader scope",
-  },
-  {
-    ipcSec: "34",
-    ipcTitle: "Acts done by several persons in furtherance of common intention",
-    bnsSec: "3(5)",
-    bnsTitle: "Common intention",
-    note: "Restructured but similar",
-  },
-  {
-    ipcSec: "120B",
-    ipcTitle: "Punishment of criminal conspiracy",
-    bnsSec: "61",
-    bnsTitle: "Punishment for criminal conspiracy",
-    note: "Similar provision",
-  },
-  {
-    ipcSec: "141",
-    ipcTitle: "Unlawful Assembly",
-    bnsSec: "189",
-    bnsTitle: "Unlawful assembly",
-    note: "Similar provision",
-  },
-  {
-    ipcSec: "149",
-    ipcTitle: "Every member of unlawful assembly guilty",
-    bnsSec: "190",
-    bnsTitle: "Liability of members of unlawful assembly",
-    note: "Similar provision",
-  },
-  {
-    ipcSec: "323",
-    ipcTitle: "Punishment for voluntarily causing hurt",
-    bnsSec: "115",
-    bnsTitle: "Voluntarily causing hurt",
-    note: "Similar provision",
-  },
-  {
-    ipcSec: "324",
-    ipcTitle: "Voluntarily causing hurt by dangerous weapons",
-    bnsSec: "117",
-    bnsTitle: "Voluntarily causing hurt by dangerous weapons",
-    note: "Similar provision",
-  },
-  {
-    ipcSec: "325",
-    ipcTitle: "Punishment for grievous hurt",
-    bnsSec: "116",
-    bnsTitle: "Voluntarily causing grievous hurt",
+    bnsTitle: "Cruelty by husband or relatives",
     note: "Similar provision",
   },
   {
@@ -459,41 +365,41 @@ const IPC_BNS_COMPARISON = [
     ipcTitle: "Murder (definition)",
     bnsSec: "100",
     bnsTitle: "Murder (definition)",
-    note: "Slightly modified",
-  },
-  {
-    ipcSec: "304A",
-    ipcTitle: "Causing death by negligence",
-    bnsSec: "106",
-    bnsTitle: "Causing death by negligence",
-    note: "Enhanced punishment for hit-and-run",
-  },
-  {
-    ipcSec: "509",
-    ipcTitle: "Insult modesty of woman",
-    bnsSec: "79",
-    bnsTitle: "Act intended to insult modesty of woman",
     note: "Similar provision",
   },
   {
-    ipcSec: "153A",
-    ipcTitle: "Promoting enmity between classes",
-    bnsSec: "196",
-    bnsTitle: "Promoting enmity between groups",
+    ipcSec: "323",
+    ipcTitle: "Voluntarily causing hurt",
+    bnsSec: "115",
+    bnsTitle: "Voluntarily causing hurt",
     note: "Similar provision",
   },
   {
-    ipcSec: "295A",
-    ipcTitle: "Deliberate acts to outrage religious feelings",
-    bnsSec: "299",
-    bnsTitle: "Deliberate and malicious acts to outrage religious feelings",
+    ipcSec: "324",
+    ipcTitle: "Causing hurt by dangerous weapons",
+    bnsSec: "117",
+    bnsTitle: "Voluntarily causing hurt by dangerous weapons",
     note: "Similar provision",
   },
   {
-    ipcSec: "468",
-    ipcTitle: "Forgery for purpose of cheating",
-    bnsSec: "339",
-    bnsTitle: "Forgery for purpose of cheating",
+    ipcSec: "363",
+    ipcTitle: "Kidnapping",
+    bnsSec: "137",
+    bnsTitle: "Kidnapping",
+    note: "Similar provision",
+  },
+  {
+    ipcSec: "364A",
+    ipcTitle: "Kidnapping for Ransom",
+    bnsSec: "140",
+    bnsTitle: "Kidnapping for ransom",
+    note: "Similar provision",
+  },
+  {
+    ipcSec: "465",
+    ipcTitle: "Forgery",
+    bnsSec: "336",
+    bnsTitle: "Forgery",
     note: "Similar provision",
   },
   {
@@ -512,7 +418,6 @@ const IPC_BNS_COMPARISON = [
   },
 ];
 
-// ====== Legal Glossary ======
 const LEGAL_GLOSSARY = [
   {
     term: "Acquittal",
@@ -559,8 +464,7 @@ const LEGAL_GLOSSARY = [
   {
     term: "Cognizable Offence",
     bengali: "আমলযোগ্য অপরাধ",
-    definition:
-      "Serious crime where police can arrest without warrant (e.g., murder, rape, robbery).",
+    definition: "Serious crime where police can arrest without warrant.",
     definitionBn: "গুরুতর অপরাধ যেখানে পুলিশ পরোয়ানা ছাড়াই গ্রেফতার করতে পারে।",
   },
   {
@@ -585,17 +489,10 @@ const LEGAL_GLOSSARY = [
     definitionBn: "আদালতের নির্দেশ না মানা বা অবমাননা।",
   },
   {
-    term: "Cross-examination",
-    bengali: "জেরা",
-    definition:
-      "Questioning of a witness by the opposing party after the examination-in-chief.",
-    definitionBn: "প্রধান পরীক্ষার পর বিপক্ষ দল সাক্ষীকে প্রশ্ন করা।",
-  },
-  {
     term: "Default Bail",
     bengali: "ডিফল্ট জামিন",
     definition:
-      "Bail granted under CrPC 167(2) when police fail to complete investigation within statutory period (60/90 days).",
+      "Bail granted under CrPC 167(2) when police fail to complete investigation within statutory period.",
     definitionBn: "নির্ধারিত সময়ের মধ্যে তদন্ত শেষ না হলে প্রদত্ত জামিন।",
   },
   {
@@ -603,35 +500,26 @@ const LEGAL_GLOSSARY = [
     bengali: "ডিক্রি",
     definition:
       "A formal order of a civil court that determines the rights of parties in a dispute.",
-    definitionBn: "দেওযানি আদালতের লিখিত আদেশ।",
-  },
-  {
-    term: "Detenu",
-    bengali: "আটক ব্যক্তি",
-    definition:
-      "A person kept in custody/detention, especially under preventive detention laws.",
-    definitionBn: "যে ব্যক্তি রেমান্ড বা নিরাপত্তামূ঳ক বন্দীত্বে আটক।",
+    definitionBn: "দেওয়ানি আদালতের লিখিত আদেশ।",
   },
   {
     term: "Ex parte",
     bengali: "একতরফা রায়",
-    definition:
-      "A legal proceeding done with only one party present (other party absent).",
+    definition: "A legal proceeding done with only one party present.",
     definitionBn: "একতরফা বিচার যেখানে বিপক্ষ অনুপস্থিত।",
   },
   {
     term: "FIR (First Information Report)",
     bengali: "প্রথম তথ্য প্রতিবেদন",
-    definition:
-      "Report filed at police station regarding cognizable offence. Starts formal investigation.",
+    definition: "Report filed at police station regarding cognizable offence.",
     definitionBn: "আমলযোগ্য অপরাধে থানায় দায়ের অভিযোগ।",
   },
   {
     term: "Habeas Corpus",
     bengali: "হেবিয়াস কর্পাস",
     definition:
-      "A writ requiring a person under arrest to be brought before a judge, used to prevent unlawful detention.",
-    definitionBn: "अবৈধ বন্দীত্ব প্রতিরোধে রিট।",
+      "A writ requiring a person under arrest to be brought before a judge.",
+    definitionBn: "অবৈধ বন্দীত্ব প্রতিরোধে রিট।",
   },
   {
     term: "Injunction",
@@ -645,11 +533,11 @@ const LEGAL_GLOSSARY = [
     bengali: "বিচারিক হেফাজত",
     definition:
       "Custody under orders of a Magistrate (remanded to jail, not police custody).",
-    definitionBn: "ম্যাজিস্ট্রেটের আদেশে দারোগারে প্রেরণ।",
+    definitionBn: "ম্যাজিস্ট্রেটের আদেশে কারাগারে প্রেরণ।",
   },
   {
     term: "Jurisdiction",
-    bengali: "সিমা/এখতিয়ার",
+    bengali: "এখতিয়ার",
     definition:
       "The official power to make legal decisions and judgements in a particular area.",
     definitionBn: "আদালতের বিচারিক ক্ষমতা বা এলাকা।",
@@ -672,7 +560,7 @@ const LEGAL_GLOSSARY = [
     bengali: "আমল অযোগ্য অপরাধ",
     definition:
       "Less serious offence where police cannot arrest without warrant.",
-    definitionBn: "যে অপরাধে পুলিশ পরোয়ানা ছাড়া গ্রেফতার করতে পারে না।",
+    definitionBn: "যে অপরাধে পুলিশ পরোয়ানা ছাড়া গ্রেফতার করতে পারে না।",
   },
   {
     term: "Plea Bargaining",
@@ -686,7 +574,7 @@ const LEGAL_GLOSSARY = [
     bengali: "ফেরারি অপরাধী",
     definition:
       "A person declared fugitive by court for absconding to avoid legal proceedings (CrPC 82).",
-    definitionBn: "আদালত থেকে পালিয়ে যাওয়া অপরাধী, যাকে রাষ্ট্র ফেরারি ঘোষণা করে।",
+    definitionBn: "আদালত থেকে পালিয়ে যাওয়া অপরাধী।",
   },
   {
     term: "Quash",
@@ -699,8 +587,8 @@ const LEGAL_GLOSSARY = [
     term: "Remand",
     bengali: "রিমান্ড",
     definition:
-      "Order sending accused back to custody (police or judicial) for further investigation or trial.",
-    definitionBn: "অভিযুক্তকে পুলিশ বা বিচারিক হেফাজতে ফেরত পাঠান।",
+      "Order sending accused back to custody for further investigation or trial.",
+    definitionBn: "অভিযুক্তকে হেফাজতে ফেরত পাঠান।",
   },
   {
     term: "Res Judicata",
@@ -767,7 +655,7 @@ const LEGAL_GLOSSARY = [
     bengali: "রিট",
     definition:
       "A formal written order issued by a court commanding someone to do or refrain from an act.",
-    definitionBn: "আদালতের লিখিত নির্দেশ যা কাউকে কিছু করতে বা না করতে বলে।",
+    definitionBn: "আদালতের লিখিত নির্দেশ।",
   },
   {
     term: "Zero FIR",
@@ -780,31 +668,210 @@ const LEGAL_GLOSSARY = [
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
+const LAW_STYLES = `
+  @keyframes slideInUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes lawSpin {
+    to { transform: rotate(360deg); }
+  }
+  .law-result-card {
+    animation: slideInUp 0.4s ease-out;
+  }
+  .law-card {
+    background: #0f2040;
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 12px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .law-card:hover {
+    border-color: rgba(201,168,76,0.6);
+    background: #132850;
+  }
+  .law-badge-capital { background: #8b0000; color: #ffd0d0; border: 1px solid #c00; }
+  .law-badge-severe { background: #7a3000; color: #ffd4b0; border: 1px solid #c45000; }
+  .law-badge-moderate { background: #5a4000; color: #ffe8a0; border: 1px solid #c9a84c; }
+  .law-badge-minor { background: #0d3d30; color: #a0f0d8; border: 1px solid #2a6b5e; }
+  @media print {
+    body > * { display: none !important; }
+    .law-print-section { display: block !important; position: fixed; top: 0; left: 0; width: 100%; padding: 40px; font-family: Georgia, serif; color: #000; background: #fff; }
+  }
+  @media (max-width: 640px) {
+    .law-two-col { grid-template-columns: 1fr !important; }
+  }
+`;
+
+interface RecentlyViewedItem {
+  id: string;
+  title: string;
+  query: string;
+  timestamp: number;
+}
+
+function getPunishmentSeverity(
+  result: LawResult,
+): "Capital" | "Severe" | "Moderate" | "Minor" {
+  const text =
+    `${result.sectionText ?? ""} ${result.explanation ?? ""}`.toLowerCase();
+  if (
+    text.includes("death penalty") ||
+    text.includes("capital punishment") ||
+    text.includes("death")
+  )
+    return "Capital";
+  if (
+    text.includes("life imprisonment") ||
+    text.includes("rigorous imprisonment") ||
+    text.includes("7 years")
+  )
+    return "Severe";
+  if (text.includes("imprisonment") || text.includes("3 years"))
+    return "Moderate";
+  return "Minor";
+}
+
+function SealSVG() {
+  return (
+    <svg
+      width="64"
+      height="64"
+      viewBox="0 0 64 64"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <circle
+        cx="32"
+        cy="32"
+        r="30"
+        stroke="#c9a84c"
+        strokeWidth="2"
+        fill="none"
+      />
+      <circle
+        cx="32"
+        cy="32"
+        r="26"
+        stroke="#c9a84c"
+        strokeWidth="0.8"
+        strokeDasharray="4 3"
+        fill="none"
+      />
+      <line
+        x1="32"
+        y1="20"
+        x2="32"
+        y2="44"
+        stroke="#c9a84c"
+        strokeWidth="1.5"
+      />
+      <line
+        x1="18"
+        y1="26"
+        x2="46"
+        y2="26"
+        stroke="#c9a84c"
+        strokeWidth="1.5"
+      />
+      <line x1="20" y1="26" x2="18" y2="34" stroke="#c9a84c" strokeWidth="1" />
+      <line x1="20" y1="26" x2="22" y2="34" stroke="#c9a84c" strokeWidth="1" />
+      <path
+        d="M16 34 Q20 37 24 34"
+        stroke="#c9a84c"
+        strokeWidth="1.5"
+        fill="none"
+      />
+      <line x1="44" y1="26" x2="42" y2="34" stroke="#c9a84c" strokeWidth="1" />
+      <line x1="44" y1="26" x2="46" y2="34" stroke="#c9a84c" strokeWidth="1" />
+      <path
+        d="M40 34 Q44 37 48 34"
+        stroke="#c9a84c"
+        strokeWidth="1.5"
+        fill="none"
+      />
+      <line
+        x1="26"
+        y1="44"
+        x2="38"
+        y2="44"
+        stroke="#c9a84c"
+        strokeWidth="1.5"
+      />
+    </svg>
+  );
+}
+
 export function LawPage() {
   const [query, setQuery] = useState("");
   const [language, setLanguage] = useState<LawLanguage>("english");
   const [result, setResult] = useState<LawResult | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
-  // Case Finder
+  const [recentlyViewed, setRecentlyViewed] = useState<RecentlyViewedItem[]>(
+    [],
+  );
+  const [showRecent, setShowRecent] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
+  const [filterAct, setFilterAct] = useState("All");
+  const [filterCategory, setFilterCategory] = useState("All");
+  const [filterPunishment, setFilterPunishment] = useState("All");
   const [caseQuery, setCaseQuery] = useState("");
   const [caseTopicFilter, setCaseTopicFilter] = useState("");
-  // IPC vs BNS
   const [ipcBnsQuery, setIpcBnsQuery] = useState("");
-  // Glossary
   const [glossaryQuery, setGlossaryQuery] = useState("");
   const [glossaryLetter, setGlossaryLetter] = useState("");
 
-  function handleSearch(q?: string) {
-    const searchQuery = q ?? query;
-    if (!searchQuery.trim()) return;
+  const printRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("law_recently_viewed");
+      if (stored) setRecentlyViewed(JSON.parse(stored));
+    } catch (_) {
+      /* ignore */
+    }
+  }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const lawParam = params.get("law");
+    if (lawParam) {
+      setQuery(lawParam);
+      runSearch(lawParam);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function saveToRecent(res: LawResult, q: string) {
+    const item: RecentlyViewedItem = {
+      id: q.trim().toLowerCase().replace(/\s+/g, "_"),
+      title: res.title ?? q,
+      query: q,
+      timestamp: Date.now(),
+    };
+    setRecentlyViewed((prev) => {
+      const filtered = prev.filter((r) => r.id !== item.id);
+      const updated = [item, ...filtered].slice(0, 10);
+      try {
+        localStorage.setItem("law_recently_viewed", JSON.stringify(updated));
+      } catch (_) {
+        /* ignore */
+      }
+      return updated;
+    });
+  }
+
+  function runSearch(q: string) {
+    if (!q.trim()) return;
     setIsSearching(true);
     setNotFound(false);
     setTimeout(() => {
-      const res = generateLawExplanation(searchQuery, language);
+      const res = generateLawExplanation(q, language);
       if (res) {
         setResult(res);
         setNotFound(false);
+        saveToRecent(res, q);
       } else {
         setResult(null);
         setNotFound(true);
@@ -812,6 +879,57 @@ export function LawPage() {
       setIsSearching(false);
     }, 200);
   }
+
+  function handleSearch(q?: string) {
+    runSearch(q ?? query);
+  }
+
+  function handleShare() {
+    const url = `${window.location.origin}${window.location.pathname}?law=${encodeURIComponent(query)}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 2000);
+    });
+  }
+
+  function resultPassesFilter(): boolean {
+    if (!result) return true;
+    if (filterAct !== "All") {
+      const actUpper = (result.actName ?? "").toUpperCase();
+      const queryUpper = query.toUpperCase();
+      const actMap: Record<string, string[]> = {
+        IPC: ["IPC", "INDIAN PENAL"],
+        BNS: ["BNS", "BHARATIYA NYAYA"],
+        CrPC: ["CRPC", "CRIMINAL PROCEDURE"],
+        "IT Act": ["IT ACT", "INFORMATION TECHNOLOGY"],
+        "Contract Act": ["CONTRACT"],
+        HMA: ["HMA", "HINDU MARRIAGE"],
+        Constitution: ["CONSTITUTION", "ARTICLE"],
+      };
+      const keys = actMap[filterAct] ?? [filterAct.toUpperCase()];
+      if (!keys.some((k) => actUpper.includes(k) || queryUpper.includes(k)))
+        return false;
+    }
+    return true;
+  }
+
+  const severity = result ? getPunishmentSeverity(result) : null;
+  const severityBadgeClass =
+    severity === "Capital"
+      ? "law-badge-capital"
+      : severity === "Severe"
+        ? "law-badge-severe"
+        : severity === "Moderate"
+          ? "law-badge-moderate"
+          : "law-badge-minor";
+  const severityIcon =
+    severity === "Capital"
+      ? "☠️"
+      : severity === "Severe"
+        ? "🔴"
+        : severity === "Moderate"
+          ? "🟡"
+          : "🟢";
 
   const filteredCases = LANDMARK_CASES.filter((c) => {
     const q = caseQuery.toLowerCase();
@@ -850,477 +968,1496 @@ export function LawPage() {
     return letterMatch && textMatch;
   });
 
+  // Shared style helpers
+  const navyCard = {
+    background: "#0f2040",
+    border: "1px solid rgba(201,168,76,0.3)",
+    borderRadius: "12px",
+  };
+  const goldText = { color: "#c9a84c" };
+  const mutedText = { color: "#a89060" };
+  const primaryText = { color: "#f0e6d0" };
+  const inputStyle = {
+    background: "#0f2040",
+    border: "1px solid rgba(201,168,76,0.4)",
+    borderRadius: "8px",
+    padding: "10px 14px",
+    color: "#f0e6d0",
+    fontSize: "13px",
+    outline: "none",
+    width: "100%",
+    boxSizing: "border-box" as const,
+  };
+  const labelStyle = {
+    fontSize: "11px",
+    fontWeight: "700" as const,
+    letterSpacing: "0.1em",
+    textTransform: "uppercase" as const,
+    marginBottom: "10px",
+    display: "flex",
+    alignItems: "center",
+    gap: "6px",
+  };
+
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center border border-primary/25">
-          <Scale className="w-5 h-5 text-primary" />
-        </div>
-        <div>
-          <h1 className="font-display font-bold text-2xl">Law Section</h1>
-          <p className="text-muted-foreground text-sm">
-            ভারতীয় আইন সংক্রান্ত তথ্য বাংলা ও ইংরেজিতে
-          </p>
-        </div>
-      </div>
+    <div
+      style={{ background: "#0a1628", color: "#f0e6d0", minHeight: "100vh" }}
+    >
+      <style>{LAW_STYLES}</style>
 
-      <Tabs defaultValue="search">
-        <TabsList className="mb-6 flex-wrap h-auto gap-1 p-1">
-          <TabsTrigger value="search" data-ocid="law.search.tab">
-            <Search className="w-3.5 h-3.5 mr-1.5" />
-            Search
-          </TabsTrigger>
-          <TabsTrigger value="cases" data-ocid="law.cases.tab">
-            <Gavel className="w-3.5 h-3.5 mr-1.5" />
-            Case Finder
-          </TabsTrigger>
-          <TabsTrigger value="comparison" data-ocid="law.comparison.tab">
-            <Globe2 className="w-3.5 h-3.5 mr-1.5" />
-            IPC vs BNS
-          </TabsTrigger>
-          <TabsTrigger value="glossary" data-ocid="law.glossary.tab">
-            <BookOpen className="w-3.5 h-3.5 mr-1.5" />
-            Legal Glossary
-          </TabsTrigger>
-        </TabsList>
-
-        {/* ====== SEARCH TAB ====== */}
-        <TabsContent value="search">
-          {/* Language Toggle */}
-          <div className="flex gap-2 mb-4">
-            {(["english", "bengali"] as const).map((lang) => (
-              <Button
-                key={lang}
-                variant={language === lang ? "default" : "outline"}
-                size="sm"
-                onClick={() => setLanguage(lang)}
-                className="text-xs h-7"
-                data-ocid="law.language.toggle"
-              >
-                <Languages className="w-3.5 h-3.5 mr-1" />
-                {lang === "english" ? "English" : "বাংলা"}
-              </Button>
-            ))}
-          </div>
-
-          {/* Search box */}
-          <div className="flex gap-2 mb-4" data-ocid="law.search.input">
-            <Input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search: IPC 302, BNS 64, CrPC 41, Article 21..."
-              className="flex-1"
-              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-              data-ocid="law.input"
-            />
-            <Button
-              onClick={() => handleSearch()}
-              disabled={isSearching}
-              data-ocid="law.search.button"
-            >
-              <Search className="w-4 h-4" />
-            </Button>
-          </div>
-
-          {/* Popular quick buttons */}
-          <div className="flex flex-wrap gap-2 mb-6">
-            {POPULAR_ACTS.map((a) => (
-              <button
-                key={a.query}
-                type="button"
-                onClick={() => {
-                  setQuery(a.query);
-                  handleSearch(a.query);
-                }}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-border text-xs hover:bg-primary/10"
-                data-ocid="law.quick.button"
-              >
-                <Star className="w-3 h-3 text-primary" />
-                <span className="font-medium">{a.label}</span>
-                <span className="text-muted-foreground">— {a.desc}</span>
-              </button>
-            ))}
-          </div>
-
-          {/* Loading */}
-          {isSearching && (
+      {/* Print section */}
+      <div
+        className="law-print-section"
+        ref={printRef}
+        style={{ display: "none" }}
+      >
+        {result && (
+          <div
+            style={{
+              fontFamily: "Georgia, serif",
+              maxWidth: "800px",
+              margin: "0 auto",
+            }}
+          >
             <div
-              className="text-center py-12 text-muted-foreground"
-              data-ocid="law.loading_state"
+              style={{
+                textAlign: "center",
+                borderBottom: "3px double #000",
+                paddingBottom: "16px",
+                marginBottom: "24px",
+              }}
             >
-              <Search className="w-8 h-8 mx-auto mb-2 opacity-40" />
-              <p>অনুসন্ধান হচ্ছে...</p>
-            </div>
-          )}
-
-          {/* Not Found */}
-          {!isSearching && notFound && (
-            <div className="text-center py-12" data-ocid="law.error_state">
-              <Scale className="w-10 h-10 mx-auto mb-3 text-muted-foreground/40" />
-              <p className="font-semibold">কোনো ফলাফল পাওয়া যায়নি</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                Try: IPC 302, BNS 103, CrPC 41, Article 21
+              <h1 style={{ fontSize: "22px", fontWeight: "bold" }}>
+                REPUBLIC OF INDIA — LEGAL REFERENCE
+              </h1>
+              <p style={{ fontSize: "12px", color: "#555" }}>
+                Source: India Code — indiacode.nic.in | Ministry of Law &
+                Justice
               </p>
             </div>
-          )}
-
-          {/* Result */}
-          {!isSearching && result && (
-            <div
-              className="rounded-xl border border-border bg-card p-5 space-y-5"
-              data-ocid="law.result.card"
+            <h2 style={{ fontSize: "18px", marginBottom: "4px" }}>
+              {result.title}
+            </h2>
+            <p
+              style={{ fontSize: "13px", color: "#444", marginBottom: "16px" }}
             >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <h2 className="font-bold text-xl">{result.title}</h2>
-                  <p className="text-sm text-muted-foreground font-medium mt-0.5">
-                    {result.actName}
-                  </p>
-                </div>
-                <Badge variant="outline" className="shrink-0">
-                  {result.sectionNumber}
-                </Badge>
-              </div>
-
-              {result.sectionText && (
-                <div>
-                  <h3 className="font-semibold text-sm mb-2 flex items-center gap-1.5">
-                    <BookMarked className="w-4 h-4 text-primary" />
-                    Original Section Text
-                  </h3>
-                  <p className="text-sm leading-relaxed whitespace-pre-wrap bg-muted/30 p-3 rounded-lg border border-border">
-                    {result.sectionText}
-                  </p>
-                </div>
-              )}
-
-              <Separator />
-
-              <div>
-                <h3 className="font-semibold text-sm mb-2 flex items-center gap-1.5">
-                  <Lightbulb className="w-4 h-4 text-primary" />
-                  Explanation
-                </h3>
-                <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                  {result.explanation}
+              {result.actName}
+            </p>
+            {result.sectionText && (
+              <div
+                style={{
+                  background: "#f5f5f5",
+                  padding: "12px",
+                  borderLeft: "4px solid #333",
+                  marginBottom: "16px",
+                }}
+              >
+                <strong>Original Section Text:</strong>
+                <p
+                  style={{
+                    fontFamily: "monospace",
+                    fontSize: "12px",
+                    marginTop: "8px",
+                  }}
+                >
+                  {result.sectionText}
                 </p>
               </div>
-
-              {result.examples && result.examples.length > 0 && (
-                <div>
-                  <h3 className="font-semibold text-sm mb-2">
-                    📌 Practical Examples
-                  </h3>
-                  <ul className="space-y-1">
-                    {result.examples.map((ex) => (
-                      <li key={ex} className="text-sm flex gap-2">
-                        <ArrowRight className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                        <span>{ex}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {result.landmarkCases && result.landmarkCases.length > 0 && (
-                <div>
-                  <h3 className="font-semibold text-sm mb-2">
-                    ⚖️ Landmark Cases
-                  </h3>
-                  <ul className="space-y-2">
-                    {result.landmarkCases.map((c) => (
-                      <li
-                        key={c.name}
-                        className="text-sm p-2 rounded-lg bg-muted/40 border border-border"
-                      >
-                        <p className="font-medium">{c.name}</p>
-                        {c.citation && (
-                          <p className="text-xs text-muted-foreground">
-                            {c.citation}
-                          </p>
-                        )}
-                        {(c.principle || c.summary) && (
-                          <p className="text-xs mt-1">
-                            {c.principle ?? c.summary}
-                          </p>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {result.exceptions && (
-                <div>
-                  <h3 className="font-semibold text-sm mb-2">
-                    ⚠️ Exceptions & Provisos
-                  </h3>
-                  {Array.isArray(result.exceptions) ? (
-                    <ul className="space-y-1">
-                      {result.exceptions.map((ex) => (
-                        <li key={ex} className="text-sm text-muted-foreground">
-                          • {ex}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">
-                      {result.exceptions}
-                    </p>
-                  )}
-                </div>
-              )}
-
-              {result.overridingEffect && (
-                <div className="p-3 rounded-lg bg-orange-400/10 border border-orange-400/30">
-                  <h3 className="font-semibold text-sm text-orange-400 mb-1">
-                    🔄 Overriding Effect & Cross-Laws
-                  </h3>
-                  <p className="text-sm">{result.overridingEffect}</p>
-                </div>
-              )}
-
-              {result.relatedSections && result.relatedSections.length > 0 && (
-                <div>
-                  <h3 className="font-semibold text-sm mb-2 flex items-center gap-1.5">
-                    <Link2 className="w-4 h-4 text-primary" />
-                    Related Sections
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {result.relatedSections.map((sec) => (
-                      <Button
-                        key={sec.ref}
-                        variant="outline"
-                        size="sm"
-                        className="text-xs h-7"
-                        onClick={() => {
-                          setQuery(sec.ref);
-                          handleSearch(sec.ref);
-                        }}
-                        data-ocid="law.related.button"
-                      >
-                        {sec.ref}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <p className="text-xs text-muted-foreground border-t border-border pt-3">
-                Source: India Code (
-                <a
-                  href="https://www.indiacode.nic.in"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline hover:text-foreground"
-                >
-                  indiacode.nic.in
-                </a>
-                ) — Legislative Department, Ministry of Law and Justice
+            )}
+            <div style={{ marginBottom: "16px" }}>
+              <strong>Explanation:</strong>
+              <p style={{ marginTop: "8px", lineHeight: "1.6" }}>
+                {result.explanation}
               </p>
             </div>
-          )}
-        </TabsContent>
-
-        {/* ====== CASE FINDER TAB ====== */}
-        <TabsContent value="cases">
-          <div className="space-y-4">
-            <div className="flex gap-2">
-              <Input
-                value={caseQuery}
-                onChange={(e) => setCaseQuery(e.target.value)}
-                placeholder="Search cases by name, topic (e.g. bail, FIR, murder)..."
-                className="flex-1"
-                data-ocid="casefinder.search_input"
-              />
-              <Input
-                value={caseTopicFilter}
-                onChange={(e) => setCaseTopicFilter(e.target.value)}
-                placeholder="Filter by topic..."
-                className="w-40"
-                data-ocid="casefinder.filter_input"
-              />
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {filteredCases.length} cases found
-            </p>
-            <div className="space-y-3" data-ocid="casefinder.list">
-              {filteredCases.map((c, idx) => (
-                <div
-                  key={c.name}
-                  className="rounded-xl border border-border bg-card p-4"
-                  data-ocid={`casefinder.item.${idx + 1}`}
-                >
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <div>
-                      <h3 className="font-semibold text-sm">{c.name}</h3>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        {c.citation} · {c.court} · {c.year}
+            {result.landmarkCases && result.landmarkCases.length > 0 && (
+              <div style={{ marginBottom: "16px" }}>
+                <strong>Landmark Cases:</strong>
+                {result.landmarkCases.map((c) => (
+                  <div
+                    key={c.name}
+                    style={{
+                      marginTop: "8px",
+                      paddingLeft: "12px",
+                      borderLeft: "2px solid #ccc",
+                    }}
+                  >
+                    <p style={{ fontWeight: "bold", fontSize: "13px" }}>
+                      {c.name}
+                    </p>
+                    {c.citation && (
+                      <p style={{ fontSize: "11px", color: "#666" }}>
+                        {c.citation}
                       </p>
-                    </div>
+                    )}
                   </div>
-                  <div className="flex flex-wrap gap-1.5 mb-2">
-                    {c.topics.map((t) => (
-                      <Badge key={t} variant="secondary" className="text-xs">
-                        {t}
-                      </Badge>
-                    ))}
-                  </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {c.summary}
-                  </p>
-                </div>
-              ))}
-              {filteredCases.length === 0 && (
-                <div
-                  className="text-center py-12 text-muted-foreground"
-                  data-ocid="casefinder.empty_state"
-                >
-                  <Gavel className="w-8 h-8 mx-auto mb-2 opacity-40" />
-                  <p>No cases found. Try a different search term.</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </TabsContent>
-
-        {/* ====== IPC vs BNS TAB ====== */}
-        <TabsContent value="comparison">
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              The Bharatiya Nyaya Sanhita, 2023 (BNS) replaces the Indian Penal
-              Code, 1860 (IPC). Below is a section-wise comparison.
-            </p>
-            <Input
-              value={ipcBnsQuery}
-              onChange={(e) => setIpcBnsQuery(e.target.value)}
-              placeholder="Search by section number or title..."
-              data-ocid="comparison.search_input"
-            />
-            <p className="text-xs text-muted-foreground">
-              {filteredComparison.length} rows found
-            </p>
-            <div
-              className="rounded-xl border border-border overflow-hidden"
-              data-ocid="comparison.table"
-            >
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-border bg-muted/50">
-                      <th className="text-left px-4 py-2 font-semibold text-xs w-16">
-                        IPC §
-                      </th>
-                      <th className="text-left px-4 py-2 font-semibold text-xs">
-                        IPC Title
-                      </th>
-                      <th className="text-left px-4 py-2 font-semibold text-xs w-16">
-                        BNS §
-                      </th>
-                      <th className="text-left px-4 py-2 font-semibold text-xs">
-                        BNS Title
-                      </th>
-                      <th className="text-left px-4 py-2 font-semibold text-xs w-40 hidden sm:table-cell">
-                        Note
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredComparison.map((r, idx) => (
-                      <tr
-                        key={`${r.ipcSec}-${r.bnsSec}`}
-                        className="border-b border-border/50 hover:bg-muted/30"
-                        data-ocid={`comparison.row.${idx + 1}`}
-                      >
-                        <td className="px-4 py-2 font-mono text-xs font-bold text-primary">
-                          {r.ipcSec}
-                        </td>
-                        <td className="px-4 py-2 text-xs">{r.ipcTitle}</td>
-                        <td className="px-4 py-2 font-mono text-xs font-bold text-orange-400">
-                          {r.bnsSec}
-                        </td>
-                        <td className="px-4 py-2 text-xs">{r.bnsTitle}</td>
-                        <td className="px-4 py-2 text-xs text-muted-foreground hidden sm:table-cell">
-                          {r.note}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                ))}
               </div>
+            )}
+            <div
+              style={{
+                borderTop: "1px solid #ccc",
+                paddingTop: "12px",
+                marginTop: "24px",
+                fontSize: "11px",
+                color: "#666",
+              }}
+            >
+              <p>
+                ⚖️ Legal Disclaimer: Educational purposes only. Not legal advice.
+              </p>
+              <p>
+                Authoritative Source: indiacode.nic.in — Legislative Department,
+                Ministry of Law and Justice
+              </p>
             </div>
           </div>
-        </TabsContent>
+        )}
+      </div>
 
-        {/* ====== GLOSSARY TAB ====== */}
-        <TabsContent value="glossary">
-          <div className="space-y-4">
-            <Input
-              value={glossaryQuery}
-              onChange={(e) => {
-                setGlossaryQuery(e.target.value);
-                setGlossaryLetter("");
+      {/* Official Seal Header */}
+      <header
+        style={{
+          background:
+            "linear-gradient(135deg, #07101f 0%, #0a1628 50%, #0d1f3c 100%)",
+          borderBottom: "2px solid rgba(201,168,76,0.5)",
+          padding: "40px 24px 32px",
+          textAlign: "center",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundImage:
+              "radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 70%)",
+          }}
+        />
+        <div
+          style={{
+            position: "relative",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "16px",
+          }}
+        >
+          <SealSVG />
+          <div>
+            <h1
+              style={{
+                fontFamily: "Georgia, 'Times New Roman', serif",
+                fontSize: "clamp(22px, 4vw, 36px)",
+                fontWeight: "700",
+                color: "#f0e6d0",
+                letterSpacing: "0.04em",
+                margin: 0,
+                lineHeight: 1.2,
               }}
-              placeholder="Search legal terms..."
-              data-ocid="glossary.search_input"
-            />
-            <div className="flex flex-wrap gap-1">
-              <button
-                type="button"
-                onClick={() => setGlossaryLetter("")}
-                className={`px-2 py-0.5 rounded text-xs font-medium border ${!glossaryLetter ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground"}`}
+            >
+              Law Section <span style={goldText}>/</span> আইন বিভাগ
+            </h1>
+            <p
+              style={{
+                color: "#c9a84c",
+                fontSize: "13px",
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                marginTop: "8px",
+                fontFamily: "Georgia, serif",
+              }}
+            >
+              Indian Legal Reference — Bilingual
+            </p>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              gap: "24px",
+              fontSize: "11px",
+              color: "#a89060",
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+            }}
+          >
+            <span>IPC • BNS • CrPC</span>
+            <span style={goldText}>⚖</span>
+            <span>IT Act • Contract Act • HMA</span>
+          </div>
+        </div>
+      </header>
+
+      {/* Main content */}
+      <div
+        style={{ maxWidth: "1100px", margin: "0 auto", padding: "32px 16px" }}
+      >
+        <Tabs defaultValue="search">
+          <TabsList
+            style={{
+              background: "#07101f",
+              border: "1px solid rgba(201,168,76,0.3)",
+              borderRadius: "10px",
+              padding: "4px",
+              marginBottom: "28px",
+              display: "flex",
+              flexWrap: "wrap",
+              height: "auto",
+              gap: "2px",
+            }}
+          >
+            {[
+              {
+                value: "search",
+                icon: <Search className="w-3.5 h-3.5" />,
+                label: "Search",
+              },
+              {
+                value: "cases",
+                icon: <Gavel className="w-3.5 h-3.5" />,
+                label: "Case Finder",
+              },
+              {
+                value: "comparison",
+                icon: <Globe2 className="w-3.5 h-3.5" />,
+                label: "IPC vs BNS",
+              },
+              {
+                value: "glossary",
+                icon: <BookOpen className="w-3.5 h-3.5" />,
+                label: "Legal Glossary",
+              },
+            ].map((tab) => (
+              <TabsTrigger
+                key={tab.value}
+                value={tab.value}
+                data-ocid={`law.${tab.value}.tab`}
+                style={{ gap: "6px" }}
+                className="data-[state=active]:bg-[#c9a84c] data-[state=active]:text-[#0a1628] data-[state=active]:font-bold text-[#a89060] hover:text-[#f0e6d0] transition-colors"
               >
-                All
-              </button>
-              {ALPHABET.map((l) => (
+                {tab.icon}
+                {tab.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+
+          {/* ====== SEARCH TAB ====== */}
+          <TabsContent value="search">
+            {/* Language Toggle */}
+            <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
+              {(["english", "bengali"] as const).map((lang) => (
                 <button
-                  key={l}
+                  key={lang}
                   type="button"
-                  onClick={() => {
-                    setGlossaryLetter(l);
-                    setGlossaryQuery("");
+                  onClick={() => setLanguage(lang)}
+                  data-ocid="law.language.toggle"
+                  style={{
+                    padding: "6px 16px",
+                    borderRadius: "6px",
+                    border: `1px solid ${language === lang ? "#c9a84c" : "rgba(201,168,76,0.3)"}`,
+                    background:
+                      language === lang
+                        ? "rgba(201,168,76,0.15)"
+                        : "transparent",
+                    color: language === lang ? "#c9a84c" : "#a89060",
+                    fontSize: "12px",
+                    cursor: "pointer",
+                    fontWeight: language === lang ? 600 : 400,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
                   }}
-                  className={`px-2 py-0.5 rounded text-xs font-medium border ${glossaryLetter === l ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground"}`}
                 >
-                  {l}
+                  <Languages className="w-3.5 h-3.5" />
+                  {lang === "english" ? "English" : "বাংলা"}
                 </button>
               ))}
             </div>
-            <p className="text-xs text-muted-foreground">
-              {filteredGlossary.length} terms
+
+            {/* Search Box */}
+            <div
+              style={{ display: "flex", gap: "8px", marginBottom: "8px" }}
+              data-ocid="law.search.input"
+            >
+              <div style={{ flex: 1, position: "relative" }}>
+                <Search
+                  style={{
+                    position: "absolute",
+                    left: "12px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    color: "#a89060",
+                    width: "16px",
+                    height: "16px",
+                  }}
+                />
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search by section number (IPC 302), keyword (murder), or topic (bail)..."
+                  onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                  data-ocid="law.input"
+                  style={{ ...inputStyle, paddingLeft: "40px" }}
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => handleSearch()}
+                disabled={isSearching}
+                data-ocid="law.search.button"
+                style={{
+                  background: "linear-gradient(135deg, #c9a84c, #a88030)",
+                  color: "#0a1628",
+                  border: "none",
+                  borderRadius: "8px",
+                  padding: "10px 20px",
+                  fontWeight: "700",
+                  fontSize: "13px",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                <Search className="w-4 h-4" />
+                Search
+              </button>
+            </div>
+            <p style={{ ...mutedText, fontSize: "11px", marginBottom: "20px" }}>
+              💡 Tip: Try "IPC 302", "bail", "CrPC 438", "Article 21", "Contract
+              Act 10"
             </p>
-            <div className="space-y-3" data-ocid="glossary.list">
-              {filteredGlossary.map((g, idx) => (
-                <div
-                  key={g.term}
-                  className="rounded-xl border border-border bg-card p-4"
-                  data-ocid={`glossary.item.${idx + 1}`}
+
+            {/* Popular Chips */}
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "8px",
+                marginBottom: "20px",
+              }}
+            >
+              {POPULAR_ACTS.map((a) => (
+                <button
+                  key={a.query}
+                  type="button"
+                  onClick={() => {
+                    setQuery(a.query);
+                    handleSearch(a.query);
+                  }}
+                  data-ocid="law.quick.button"
+                  style={{
+                    background: "rgba(201,168,76,0.08)",
+                    border: "1px solid rgba(201,168,76,0.3)",
+                    borderRadius: "20px",
+                    padding: "4px 12px",
+                    color: "#c9a84c",
+                    fontSize: "11px",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                  }}
                 >
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-bold text-sm">{g.term}</h3>
-                    <Badge variant="secondary" className="text-xs">
-                      {g.bengali}
-                    </Badge>
+                  <Star style={{ width: "10px", height: "10px" }} />
+                  <span style={{ fontWeight: "600" }}>{a.label}</span>
+                  <span style={mutedText}>— {a.desc}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Recently Viewed */}
+            {recentlyViewed.length > 0 && (
+              <div
+                style={{
+                  ...navyCard,
+                  marginBottom: "20px",
+                  overflow: "hidden",
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => setShowRecent((v) => !v)}
+                  data-ocid="law.recent.toggle"
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "10px 16px",
+                    background: "transparent",
+                    border: "none",
+                    color: "#c9a84c",
+                    cursor: "pointer",
+                    fontSize: "12px",
+                    fontWeight: "600",
+                  }}
+                >
+                  <span
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                    }}
+                  >
+                    <Clock className="w-3.5 h-3.5" /> Recently Viewed (
+                    {recentlyViewed.length})
+                  </span>
+                  {showRecent ? (
+                    <ChevronUp className="w-4 h-4" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4" />
+                  )}
+                </button>
+                {showRecent && (
+                  <div
+                    style={{
+                      padding: "8px 16px 16px",
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: "8px",
+                    }}
+                  >
+                    {recentlyViewed.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => {
+                          setQuery(item.query);
+                          handleSearch(item.query);
+                        }}
+                        data-ocid="law.recent.button"
+                        style={{
+                          background: "rgba(201,168,76,0.1)",
+                          border: "1px solid rgba(201,168,76,0.3)",
+                          borderRadius: "16px",
+                          padding: "4px 12px",
+                          color: "#f0e6d0",
+                          fontSize: "11px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        {item.title || item.query}
+                      </button>
+                    ))}
                   </div>
-                  <p className="text-sm mb-1">{g.definition}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {g.definitionBn}
-                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Filter Bar */}
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+                flexWrap: "wrap",
+                marginBottom: "20px",
+                padding: "14px 16px",
+                background: "#0d1f3c",
+                border: "1px solid rgba(201,168,76,0.25)",
+                borderRadius: "10px",
+                alignItems: "center",
+              }}
+            >
+              <span
+                style={{
+                  ...goldText,
+                  fontSize: "12px",
+                  fontWeight: "600",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                }}
+              >
+                <Filter className="w-3.5 h-3.5" /> Filters
+              </span>
+              {[
+                {
+                  label: "Act",
+                  value: filterAct,
+                  setter: setFilterAct,
+                  options: [
+                    "All",
+                    "IPC",
+                    "BNS",
+                    "CrPC",
+                    "IT Act",
+                    "Contract Act",
+                    "HMA",
+                    "Constitution",
+                  ],
+                },
+                {
+                  label: "Category",
+                  value: filterCategory,
+                  setter: setFilterCategory,
+                  options: ["All", "Criminal", "Civil", "Constitutional"],
+                },
+                {
+                  label: "Punishment",
+                  value: filterPunishment,
+                  setter: setFilterPunishment,
+                  options: ["All", "Imprisonment", "Fine", "Both", "Death"],
+                },
+              ].map(({ label, value, setter, options }) => (
+                <div
+                  key={label}
+                  style={{ display: "flex", alignItems: "center", gap: "6px" }}
+                >
+                  <span style={{ ...mutedText, fontSize: "11px" }}>
+                    {label}:
+                  </span>
+                  <select
+                    value={value}
+                    onChange={(e) => setter(e.target.value)}
+                    data-ocid="law.filter.select"
+                    style={{
+                      background: "#0f2040",
+                      border: "1px solid rgba(201,168,76,0.3)",
+                      borderRadius: "6px",
+                      padding: "4px 8px",
+                      color: value !== "All" ? "#c9a84c" : "#a89060",
+                      fontSize: "12px",
+                      cursor: "pointer",
+                      outline: "none",
+                    }}
+                  >
+                    {options.map((o) => (
+                      <option
+                        key={o}
+                        value={o}
+                        style={{ background: "#0f2040", color: "#f0e6d0" }}
+                      >
+                        {o}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               ))}
-              {filteredGlossary.length === 0 && (
-                <div
-                  className="text-center py-10 text-muted-foreground"
-                  data-ocid="glossary.empty_state"
-                >
-                  <BookOpen className="w-8 h-8 mx-auto mb-2 opacity-40" />
-                  <p>No terms found.</p>
-                </div>
-              )}
             </div>
-          </div>
-        </TabsContent>
-      </Tabs>
+
+            {/* Loading */}
+            {isSearching && (
+              <div
+                data-ocid="law.loading_state"
+                style={{ textAlign: "center", padding: "48px 0", ...mutedText }}
+              >
+                <div
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    border: "3px solid rgba(201,168,76,0.2)",
+                    borderTop: "3px solid #c9a84c",
+                    borderRadius: "50%",
+                    animation: "lawSpin 0.8s linear infinite",
+                    margin: "0 auto 12px",
+                  }}
+                />
+                <p style={{ fontSize: "13px" }}>Searching legal database...</p>
+              </div>
+            )}
+
+            {/* Not Found */}
+            {notFound && !isSearching && (
+              <div
+                data-ocid="law.empty_state"
+                style={{
+                  textAlign: "center",
+                  padding: "48px 24px",
+                  background: "#0d1f3c",
+                  border: "1px solid rgba(201,168,76,0.2)",
+                  borderRadius: "12px",
+                }}
+              >
+                <Scale
+                  style={{
+                    width: "48px",
+                    height: "48px",
+                    color: "rgba(201,168,76,0.3)",
+                    margin: "0 auto 12px",
+                  }}
+                />
+                <p
+                  style={{
+                    ...mutedText,
+                    fontSize: "14px",
+                    marginBottom: "8px",
+                  }}
+                >
+                  No section found for "{query}"
+                </p>
+                <p style={{ color: "#6a6050", fontSize: "12px" }}>
+                  Try: "IPC 302", "Article 21", "CrPC 438", or "bail"
+                </p>
+              </div>
+            )}
+
+            {/* Filter mismatch */}
+            {result && !isSearching && !resultPassesFilter() && (
+              <div
+                data-ocid="law.filter.empty_state"
+                style={{
+                  padding: "16px",
+                  background: "#0d1f3c",
+                  border: "1px solid rgba(201,168,76,0.2)",
+                  borderRadius: "10px",
+                  ...mutedText,
+                  fontSize: "13px",
+                  textAlign: "center",
+                }}
+              >
+                ⚠️ No match for current filters. Try adjusting the Act or
+                Category filter.
+              </div>
+            )}
+
+            {/* Result Card */}
+            {result && !isSearching && resultPassesFilter() && (
+              <div className="law-result-card" data-ocid="law.result.card">
+                {/* Card Header */}
+                <div
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #0d1f3c 0%, #0f2855 100%)",
+                    border: "1px solid rgba(201,168,76,0.5)",
+                    borderRadius: "12px 12px 0 0",
+                    padding: "20px 24px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                    gap: "16px",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <div style={{ flex: 1 }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                        flexWrap: "wrap",
+                        marginBottom: "6px",
+                      }}
+                    >
+                      <h2
+                        style={{
+                          fontFamily: "Georgia, serif",
+                          fontSize: "clamp(16px, 3vw, 22px)",
+                          fontWeight: "700",
+                          ...primaryText,
+                          margin: 0,
+                        }}
+                      >
+                        {result.title}
+                      </h2>
+                      {severity && (
+                        <span
+                          className={severityBadgeClass}
+                          data-ocid="law.severity.badge"
+                          style={{
+                            padding: "2px 10px",
+                            borderRadius: "12px",
+                            fontSize: "11px",
+                            fontWeight: "700",
+                            letterSpacing: "0.06em",
+                          }}
+                        >
+                          {severityIcon} {severity}
+                        </span>
+                      )}
+                    </div>
+                    {result.actName && (
+                      <p
+                        style={{
+                          ...goldText,
+                          fontSize: "13px",
+                          margin: 0,
+                          fontStyle: "italic",
+                        }}
+                      >
+                        {result.actName}
+                      </p>
+                    )}
+                  </div>
+                  <div style={{ display: "flex", gap: "8px", flexShrink: 0 }}>
+                    <button
+                      type="button"
+                      onClick={handleShare}
+                      data-ocid="law.share.button"
+                      style={{
+                        background: shareCopied
+                          ? "rgba(201,168,76,0.2)"
+                          : "rgba(201,168,76,0.1)",
+                        border: "1px solid rgba(201,168,76,0.4)",
+                        borderRadius: "8px",
+                        padding: "8px 12px",
+                        color: "#c9a84c",
+                        cursor: "pointer",
+                        fontSize: "12px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                      }}
+                    >
+                      <Share2 className="w-3.5 h-3.5" />
+                      {shareCopied ? "Copied!" : "Share"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => window.print()}
+                      data-ocid="law.export.button"
+                      style={{
+                        background: "rgba(201,168,76,0.1)",
+                        border: "1px solid rgba(201,168,76,0.4)",
+                        borderRadius: "8px",
+                        padding: "8px 12px",
+                        color: "#c9a84c",
+                        cursor: "pointer",
+                        fontSize: "12px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                      }}
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      Export PDF
+                    </button>
+                  </div>
+                </div>
+
+                {/* Card Body */}
+                <div
+                  style={{
+                    background: "#0f2040",
+                    border: "1px solid rgba(201,168,76,0.4)",
+                    borderTop: "none",
+                    borderRadius: "0 0 12px 12px",
+                    padding: "24px",
+                  }}
+                >
+                  {/* Two-column layout */}
+                  <div
+                    className="law-two-col"
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 1fr",
+                      gap: "20px",
+                      marginBottom: "24px",
+                    }}
+                  >
+                    {/* Left: Original Section Text */}
+                    <div
+                      style={{
+                        background: "rgba(7,16,31,0.5)",
+                        border: "1px solid rgba(201,168,76,0.2)",
+                        borderRadius: "8px",
+                        padding: "16px",
+                      }}
+                    >
+                      <h3 style={{ ...goldText, ...labelStyle }}>
+                        <BookMarked style={{ width: "12px", height: "12px" }} />{" "}
+                        Original Section Text
+                      </h3>
+                      <p
+                        style={{
+                          fontFamily: "'Courier New', Courier, monospace",
+                          fontSize: "12px",
+                          lineHeight: "1.7",
+                          color: "#d4c9b0",
+                          whiteSpace: "pre-wrap",
+                          margin: 0,
+                        }}
+                      >
+                        {result.sectionText ||
+                          "(Full text available at indiacode.nic.in)"}
+                      </p>
+                    </div>
+                    {/* Right: Bengali Explanation */}
+                    <div
+                      style={{
+                        background: "rgba(201,168,76,0.04)",
+                        border: "1px solid rgba(201,168,76,0.25)",
+                        borderRadius: "8px",
+                        padding: "16px",
+                      }}
+                    >
+                      <h3 style={{ ...goldText, ...labelStyle }}>
+                        <Lightbulb style={{ width: "12px", height: "12px" }} />{" "}
+                        Bengali Explanation / ব্যাখ্যা
+                      </h3>
+                      <p
+                        style={{
+                          fontSize: "13px",
+                          lineHeight: "1.8",
+                          ...primaryText,
+                          whiteSpace: "pre-wrap",
+                          margin: 0,
+                        }}
+                      >
+                        {result.explanation}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Practical Examples */}
+                  {result.examples && result.examples.length > 0 && (
+                    <div style={{ marginBottom: "20px" }}>
+                      <h3 style={{ ...goldText, ...labelStyle }}>
+                        📌 Practical Examples
+                      </h3>
+                      <ul
+                        style={{
+                          listStyle: "none",
+                          padding: 0,
+                          margin: 0,
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "8px",
+                        }}
+                      >
+                        {result.examples.map((ex) => (
+                          <li
+                            key={ex}
+                            style={{
+                              display: "flex",
+                              gap: "10px",
+                              fontSize: "13px",
+                              color: "#d4c9b0",
+                              padding: "8px 12px",
+                              background: "rgba(201,168,76,0.05)",
+                              borderRadius: "6px",
+                              borderLeft: "2px solid rgba(201,168,76,0.4)",
+                            }}
+                          >
+                            <ArrowRight
+                              style={{
+                                width: "14px",
+                                height: "14px",
+                                color: "#c9a84c",
+                                flexShrink: 0,
+                                marginTop: "2px",
+                              }}
+                            />
+                            {ex}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Landmark Cases */}
+                  {result.landmarkCases && result.landmarkCases.length > 0 && (
+                    <div style={{ marginBottom: "20px" }}>
+                      <h3 style={{ ...goldText, ...labelStyle }}>
+                        ⚖️ Landmark Cases
+                      </h3>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "8px",
+                        }}
+                      >
+                        {result.landmarkCases.map((c) => (
+                          <div
+                            key={c.name}
+                            style={{
+                              background: "rgba(7,16,31,0.6)",
+                              border: "1px solid rgba(201,168,76,0.2)",
+                              borderRadius: "8px",
+                              padding: "12px 14px",
+                            }}
+                          >
+                            <p
+                              style={{
+                                ...primaryText,
+                                fontWeight: "600",
+                                fontSize: "13px",
+                                margin: "0 0 4px",
+                                fontFamily: "Georgia, serif",
+                              }}
+                            >
+                              {c.name}
+                            </p>
+                            {c.citation && (
+                              <p
+                                style={{
+                                  ...goldText,
+                                  fontSize: "11px",
+                                  fontFamily: "monospace",
+                                  margin: "0 0 4px",
+                                }}
+                              >
+                                {c.citation}
+                              </p>
+                            )}
+                            {(c.principle ?? c.summary) && (
+                              <p
+                                style={{
+                                  ...mutedText,
+                                  fontSize: "12px",
+                                  margin: 0,
+                                  lineHeight: "1.6",
+                                }}
+                              >
+                                {c.principle ?? c.summary}
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Exceptions */}
+                  {result.exceptions && (
+                    <div
+                      style={{
+                        marginBottom: "20px",
+                        padding: "14px",
+                        background: "rgba(255,200,0,0.04)",
+                        border: "1px solid rgba(201,168,76,0.25)",
+                        borderRadius: "8px",
+                      }}
+                    >
+                      <h3 style={{ ...goldText, ...labelStyle }}>
+                        ⚠️ Exceptions & Provisos
+                      </h3>
+                      {Array.isArray(result.exceptions) ? (
+                        <ul style={{ margin: 0, paddingLeft: "16px" }}>
+                          {result.exceptions.map((ex) => (
+                            <li
+                              key={ex}
+                              style={{
+                                color: "#d4c9b0",
+                                fontSize: "13px",
+                                marginBottom: "4px",
+                              }}
+                            >
+                              {ex}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p
+                          style={{
+                            color: "#d4c9b0",
+                            fontSize: "13px",
+                            margin: 0,
+                          }}
+                        >
+                          {result.exceptions}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Overriding Effect */}
+                  {result.overridingEffect && (
+                    <div
+                      style={{
+                        marginBottom: "20px",
+                        padding: "14px",
+                        background: "rgba(255,140,0,0.06)",
+                        border: "1px solid rgba(255,140,0,0.25)",
+                        borderRadius: "8px",
+                      }}
+                    >
+                      <h3 style={{ color: "#e8a040", ...labelStyle }}>
+                        🔄 Overriding Effect & Cross-Laws
+                      </h3>
+                      <p
+                        style={{
+                          color: "#d4c9b0",
+                          fontSize: "13px",
+                          margin: 0,
+                        }}
+                      >
+                        {result.overridingEffect}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Related Sections */}
+                  {result.relatedSections &&
+                    result.relatedSections.length > 0 && (
+                      <div style={{ marginBottom: "20px" }}>
+                        <h3 style={{ ...goldText, ...labelStyle }}>
+                          <Link2 style={{ width: "12px", height: "12px" }} />{" "}
+                          Related Sections
+                        </h3>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexWrap: "wrap",
+                            gap: "8px",
+                          }}
+                        >
+                          {result.relatedSections.map((sec) => (
+                            <button
+                              key={sec.ref}
+                              type="button"
+                              onClick={() => {
+                                setQuery(sec.ref);
+                                handleSearch(sec.ref);
+                              }}
+                              data-ocid="law.related.button"
+                              style={{
+                                background: "rgba(201,168,76,0.1)",
+                                border: "1px solid rgba(201,168,76,0.4)",
+                                borderRadius: "6px",
+                                padding: "4px 12px",
+                                color: "#c9a84c",
+                                fontSize: "12px",
+                                cursor: "pointer",
+                                fontWeight: "600",
+                              }}
+                            >
+                              {sec.ref}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                  {/* Legal Disclaimer */}
+                  <div
+                    data-ocid="law.disclaimer"
+                    style={{
+                      marginTop: "20px",
+                      padding: "12px 16px",
+                      background: "rgba(201,168,76,0.04)",
+                      border: "1px solid rgba(201,168,76,0.3)",
+                      borderRadius: "8px",
+                    }}
+                  >
+                    <p
+                      style={{
+                        ...mutedText,
+                        fontSize: "11px",
+                        margin: 0,
+                        lineHeight: "1.6",
+                      }}
+                    >
+                      ⚖️ <strong style={goldText}>Legal Disclaimer:</strong> This
+                      information is for educational purposes only and does not
+                      constitute legal advice. For authoritative text, refer to:{" "}
+                      <a
+                        href="https://www.indiacode.nic.in"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ ...goldText, textDecoration: "underline" }}
+                      >
+                        indiacode.nic.in
+                      </a>{" "}
+                      — Legislative Department, Ministry of Law and Justice
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </TabsContent>
+
+          {/* ====== CASE FINDER TAB ====== */}
+          <TabsContent value="cases">
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "16px" }}
+            >
+              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                <input
+                  value={caseQuery}
+                  onChange={(e) => setCaseQuery(e.target.value)}
+                  placeholder="Search cases by name, topic (e.g. bail, FIR, murder)..."
+                  data-ocid="casefinder.search_input"
+                  style={{ ...inputStyle, flex: 1, minWidth: "200px" }}
+                />
+                <input
+                  value={caseTopicFilter}
+                  onChange={(e) => setCaseTopicFilter(e.target.value)}
+                  placeholder="Filter by topic..."
+                  data-ocid="casefinder.filter_input"
+                  style={{ ...inputStyle, width: "180px" }}
+                />
+              </div>
+              <p style={{ ...mutedText, fontSize: "12px", margin: 0 }}>
+                {filteredCases.length} cases found
+              </p>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
+                }}
+                data-ocid="casefinder.list"
+              >
+                {filteredCases.map((c, idx) => (
+                  <div
+                    key={c.name}
+                    className="law-card"
+                    style={{ padding: "16px" }}
+                    data-ocid={`casefinder.item.${idx + 1}`}
+                  >
+                    <h3
+                      style={{
+                        ...primaryText,
+                        fontWeight: "600",
+                        fontSize: "14px",
+                        margin: "0 0 4px",
+                        fontFamily: "Georgia, serif",
+                      }}
+                    >
+                      {c.name}
+                    </h3>
+                    <p
+                      style={{
+                        ...goldText,
+                        fontSize: "11px",
+                        fontFamily: "monospace",
+                        margin: "0 0 8px",
+                      }}
+                    >
+                      {c.citation} · {c.court} · {c.year}
+                    </p>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: "6px",
+                        marginBottom: "8px",
+                      }}
+                    >
+                      {c.topics.map((t) => (
+                        <span
+                          key={t}
+                          style={{
+                            background: "rgba(201,168,76,0.1)",
+                            border: "1px solid rgba(201,168,76,0.3)",
+                            borderRadius: "10px",
+                            padding: "2px 8px",
+                            ...goldText,
+                            fontSize: "11px",
+                          }}
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                    <p
+                      style={{
+                        ...mutedText,
+                        fontSize: "13px",
+                        lineHeight: "1.6",
+                        margin: 0,
+                      }}
+                    >
+                      {c.summary}
+                    </p>
+                  </div>
+                ))}
+                {filteredCases.length === 0 && (
+                  <div
+                    style={{
+                      textAlign: "center",
+                      padding: "48px 0",
+                      ...mutedText,
+                    }}
+                    data-ocid="casefinder.empty_state"
+                  >
+                    <Gavel
+                      style={{
+                        width: "32px",
+                        height: "32px",
+                        margin: "0 auto 8px",
+                        opacity: 0.3,
+                      }}
+                    />
+                    <p style={{ fontSize: "13px" }}>
+                      No cases found. Try a different search term.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* ====== IPC vs BNS TAB ====== */}
+          <TabsContent value="comparison">
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "16px" }}
+            >
+              <p style={{ ...mutedText, fontSize: "13px", margin: 0 }}>
+                The Bharatiya Nyaya Sanhita, 2023 (BNS) replaces the Indian
+                Penal Code, 1860 (IPC). Below is a section-wise comparison.
+              </p>
+              <input
+                value={ipcBnsQuery}
+                onChange={(e) => setIpcBnsQuery(e.target.value)}
+                placeholder="Search by section number or title..."
+                data-ocid="comparison.search_input"
+                style={inputStyle}
+              />
+              <p style={{ ...mutedText, fontSize: "12px", margin: 0 }}>
+                {filteredComparison.length} rows found
+              </p>
+              <div
+                style={{
+                  borderRadius: "12px",
+                  border: "1px solid rgba(201,168,76,0.3)",
+                  overflow: "hidden",
+                }}
+                data-ocid="comparison.table"
+              >
+                <div style={{ overflowX: "auto" }}>
+                  <table
+                    style={{
+                      width: "100%",
+                      fontSize: "13px",
+                      borderCollapse: "collapse",
+                    }}
+                  >
+                    <thead>
+                      <tr
+                        style={{
+                          background: "#07101f",
+                          borderBottom: "1px solid rgba(201,168,76,0.3)",
+                        }}
+                      >
+                        {[
+                          "IPC §",
+                          "IPC Title",
+                          "BNS §",
+                          "BNS Title",
+                          "Note",
+                        ].map((h) => (
+                          <th
+                            key={h}
+                            style={{
+                              textAlign: "left",
+                              padding: "10px 14px",
+                              ...goldText,
+                              fontWeight: "700",
+                              fontSize: "11px",
+                              letterSpacing: "0.08em",
+                              textTransform: "uppercase",
+                            }}
+                          >
+                            {h}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredComparison.map((r, idx) => (
+                        <tr
+                          key={`${r.ipcSec}-${r.bnsSec}`}
+                          style={{
+                            borderBottom: "1px solid rgba(201,168,76,0.1)",
+                            background: idx % 2 === 0 ? "#0f2040" : "#0d1c38",
+                          }}
+                          data-ocid={`comparison.row.${idx + 1}`}
+                        >
+                          <td
+                            style={{
+                              padding: "10px 14px",
+                              fontFamily: "monospace",
+                              fontWeight: "700",
+                              ...primaryText,
+                            }}
+                          >
+                            {r.ipcSec}
+                          </td>
+                          <td
+                            style={{ padding: "10px 14px", color: "#d4c9b0" }}
+                          >
+                            {r.ipcTitle}
+                          </td>
+                          <td
+                            style={{
+                              padding: "10px 14px",
+                              fontFamily: "monospace",
+                              fontWeight: "700",
+                              ...goldText,
+                            }}
+                          >
+                            {r.bnsSec}
+                          </td>
+                          <td
+                            style={{ padding: "10px 14px", color: "#d4c9b0" }}
+                          >
+                            {r.bnsTitle}
+                          </td>
+                          <td
+                            style={{
+                              padding: "10px 14px",
+                              ...mutedText,
+                              fontSize: "12px",
+                            }}
+                          >
+                            {r.note}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* ====== GLOSSARY TAB ====== */}
+          <TabsContent value="glossary">
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "16px" }}
+            >
+              <input
+                value={glossaryQuery}
+                onChange={(e) => {
+                  setGlossaryQuery(e.target.value);
+                  setGlossaryLetter("");
+                }}
+                placeholder="Search legal terms..."
+                data-ocid="glossary.search_input"
+                style={inputStyle}
+              />
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                <button
+                  type="button"
+                  onClick={() => setGlossaryLetter("")}
+                  style={{
+                    padding: "3px 8px",
+                    borderRadius: "4px",
+                    border: `1px solid ${!glossaryLetter ? "#c9a84c" : "rgba(201,168,76,0.3)"}`,
+                    background: !glossaryLetter
+                      ? "rgba(201,168,76,0.2)"
+                      : "transparent",
+                    color: !glossaryLetter ? "#c9a84c" : "#a89060",
+                    fontSize: "11px",
+                    fontWeight: "600",
+                    cursor: "pointer",
+                  }}
+                >
+                  All
+                </button>
+                {ALPHABET.map((l) => (
+                  <button
+                    key={l}
+                    type="button"
+                    onClick={() => {
+                      setGlossaryLetter(l);
+                      setGlossaryQuery("");
+                    }}
+                    style={{
+                      padding: "3px 7px",
+                      borderRadius: "4px",
+                      border: `1px solid ${glossaryLetter === l ? "#c9a84c" : "rgba(201,168,76,0.2)"}`,
+                      background:
+                        glossaryLetter === l
+                          ? "rgba(201,168,76,0.2)"
+                          : "transparent",
+                      color: glossaryLetter === l ? "#c9a84c" : "#a89060",
+                      fontSize: "11px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+              <p style={{ ...mutedText, fontSize: "12px", margin: 0 }}>
+                {filteredGlossary.length} terms
+              </p>
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: "8px" }}
+                data-ocid="glossary.list"
+              >
+                {filteredGlossary.map((g, idx) => (
+                  <div
+                    key={g.term}
+                    className="law-card"
+                    style={{ padding: "14px 16px" }}
+                    data-ocid={`glossary.item.${idx + 1}`}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        marginBottom: "6px",
+                      }}
+                    >
+                      <h3
+                        style={{
+                          ...primaryText,
+                          fontWeight: "700",
+                          fontSize: "14px",
+                          margin: 0,
+                          fontFamily: "Georgia, serif",
+                        }}
+                      >
+                        {g.term}
+                      </h3>
+                      <span
+                        style={{
+                          background: "rgba(201,168,76,0.12)",
+                          border: "1px solid rgba(201,168,76,0.3)",
+                          borderRadius: "10px",
+                          padding: "2px 8px",
+                          ...goldText,
+                          fontSize: "11px",
+                        }}
+                      >
+                        {g.bengali}
+                      </span>
+                    </div>
+                    <p
+                      style={{
+                        color: "#d4c9b0",
+                        fontSize: "13px",
+                        lineHeight: "1.6",
+                        margin: "0 0 4px",
+                      }}
+                    >
+                      {g.definition}
+                    </p>
+                    <p
+                      style={{
+                        ...mutedText,
+                        fontSize: "12px",
+                        margin: 0,
+                        lineHeight: "1.6",
+                      }}
+                    >
+                      {g.definitionBn}
+                    </p>
+                  </div>
+                ))}
+                {filteredGlossary.length === 0 && (
+                  <div
+                    style={{
+                      textAlign: "center",
+                      padding: "40px 0",
+                      ...mutedText,
+                    }}
+                    data-ocid="glossary.empty_state"
+                  >
+                    <BookOpen
+                      style={{
+                        width: "32px",
+                        height: "32px",
+                        margin: "0 auto 8px",
+                        opacity: 0.3,
+                      }}
+                    />
+                    <p style={{ fontSize: "13px" }}>No terms found.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 }
