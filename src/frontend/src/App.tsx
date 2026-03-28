@@ -7,6 +7,8 @@ import { ArtsSolver } from "./components/ArtsSolver";
 import { BookmarksPage } from "./components/BookmarksPage";
 import { CAHomePage } from "./components/CAHomePage";
 import { CASolver } from "./components/CASolver";
+import { CMAHomePage } from "./components/CMAHomePage";
+import { CMASolver } from "./components/CMASolver";
 import { CommerceHomePage } from "./components/CommerceHomePage";
 import { CommerceSolver } from "./components/CommerceSolver";
 import { CustomerCasePage } from "./components/CustomerCasePage";
@@ -30,6 +32,7 @@ import { ScienceSolver } from "./components/ScienceSolver";
 import { TermsFullPage, TermsModal } from "./components/TermsPage";
 import { UsernameModal } from "./components/UsernameModal";
 import type { CALevel } from "./data/caSubjects";
+import type { CMALevel } from "./data/cmaSubjects";
 import { useActor } from "./hooks/useActor";
 import { useInternetIdentity } from "./hooks/useInternetIdentity";
 
@@ -52,6 +55,8 @@ type Page =
   | "neetSolver"
   | "ca"
   | "caSolver"
+  | "cma"
+  | "cmaSolver"
   | "qa"
   | "mockTest"
   | "progress"
@@ -79,6 +84,8 @@ function AppInner() {
   const [neetClass, setNeetClass] = useState(11);
   const [caLevel, setCaLevel] = useState<CALevel>("foundation");
   const [caSubject, setCaSubject] = useState("");
+  const [cmaLevel, setCmaLevel] = useState<CMALevel>("foundation");
+  const [cmaSubject, setCmaSubject] = useState("");
   const { identity } = useInternetIdentity();
   const { actor, isFetching } = useActor();
   const adminCheckDone = useRef(false);
@@ -220,6 +227,12 @@ function AppInner() {
     setCurrentPage("caSolver");
   }
 
+  function handleCMASelect(level: CMALevel, subject: string) {
+    setCmaLevel(level);
+    setCmaSubject(subject);
+    setCurrentPage("cmaSolver");
+  }
+
   function handleUsernameSaved(name: string) {
     setUsername(name);
     setShowUsernameModal(false);
@@ -341,6 +354,16 @@ function AppInner() {
               level={caLevel}
               subjectId={caSubject}
               onBack={() => setCurrentPage("ca")}
+            />
+          )}
+
+          {currentPage === "cma" && <CMAHomePage onSelect={handleCMASelect} />}
+
+          {currentPage === "cmaSolver" && (
+            <CMASolver
+              level={cmaLevel}
+              subjectId={cmaSubject}
+              onBack={() => setCurrentPage("cma")}
             />
           )}
 

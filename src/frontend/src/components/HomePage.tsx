@@ -68,6 +68,14 @@ const QUICK_ACCESS = [
     border: "border-purple-400/20",
   },
   {
+    id: "cma",
+    label: "CMA Preparation",
+    icon: GraduationCap,
+    color: "text-teal-300",
+    bg: "bg-teal-300/10",
+    border: "border-teal-300/20",
+  },
+  {
     id: "notes",
     label: "Notes & Study Materials",
     icon: BookOpen,

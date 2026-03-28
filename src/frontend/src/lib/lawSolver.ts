@@ -6727,6 +6727,556 @@ const LAW_DATABASE: LawDB = {
       "IT Act 80",
     ],
   },
+  ipc_300: {
+    title: "IPC Section 300 — Definition of Murder",
+    actName: "Indian Penal Code, 1860",
+    sectionNumber: "300",
+    sectionText:
+      "Except in the cases hereinafter excepted, culpable homicide is murder, if the act by which the death is caused is done with the intention of causing death, or if it is done with the intention of causing such bodily injury as the offender knows to be likely to cause the death of the person to whom the harm is caused, or if it is done with the intention of causing bodily injury to any person and the bodily injury intended to be inflicted is sufficient in the ordinary course of nature to cause death, or if the person committing the act knows that it is so imminently dangerous that it must, in all probability, cause death or such bodily injury as is likely to cause death, and commits such act without any excuse for incurring the risk of causing death or such injury. Exceptions: (1) Grave and sudden provocation; (2) Right of private defence exceeded; (3) Public servant acting in good faith; (4) Sudden fight without premeditation; (5) Consent.",
+    explanation:
+      "Section 300 IPC defines murder precisely. Culpable homicide becomes murder when: (1) there is intention to cause death, (2) intention to cause bodily injury known likely to cause death, (3) intention to cause injury sufficient to cause death in ordinary course of nature, or (4) act is imminently dangerous and committed without excuse. The five exceptions reduce murder to culpable homicide not amounting to murder (Section 304 IPC).\n\nবাংলা: ধারা ৩০০ খুনের সংজ্ঞা দেয়। যখন কোনো কাজ মৃত্যু ঘটানোর ইচ্ছায়, বা মৃত্যু ঘটাতে পারে জেনেও করা হয়, তখন তা হত্যা। পাঁচটি ব্যতিক্রমে হত্যা 'কালপেবল হোমিসাইড' হিসেবে গণ্য হয়।",
+    examples: [
+      "A person plans in advance to kill a business rival and shoots him — murder under all four clauses of Section 300.",
+      "A husband stabs his wife knowing that a single stab to the heart is sufficient to cause death — murder under Third clause of Section 300.",
+      "A person throws a bomb into a crowded market knowing it will kill someone — murder under Fourth clause (imminently dangerous act).",
+    ],
+    landmarkCases: [
+      {
+        name: "KM Nanavati v. State of Maharashtra (1962) AIR 1962 SC 605",
+        citation: "AIR 1962 SC 605",
+        summary:
+          "Supreme Court held that the 'grave and sudden provocation' exception under Section 300 requires that the accused had no time to cool down. A Naval officer killing his wife's lover after confrontation was held to be murder, not culpable homicide.",
+        principle:
+          "Grave and sudden provocation must be immediate — no cooling time allowed.",
+      },
+      {
+        name: "Virsa Singh v. State of Punjab (1958) AIR 1958 SC 465",
+        citation: "AIR 1958 SC 465",
+        summary:
+          "SC laid down the test for the Third clause of Section 300 — the prosecution must prove that the accused intended to inflict the specific injury found, and that injury was sufficient to cause death in the ordinary course of nature.",
+        principle:
+          "Four-step test for Third clause: act intentional, injury intentionally inflicted, injury sufficient to cause death, accused knew this.",
+      },
+    ],
+    exceptions:
+      "Five exceptions to Section 300 that reduce murder to culpable homicide not amounting to murder:\n1. Grave and sudden provocation\n2. Private defence exceeded in good faith\n3. Public servant acting in good faith exceeds powers\n4. Sudden fight without premeditation\n5. Consent of victim above 18 years\n\nবাংলা: পাঁচটি ব্যতিক্রম: (১) হঠাৎ উত্তেজনা, (২) আত্মরক্ষায় অতিরিক্ত, (৩) সরকারি কর্মচারীর সদ্বিশ্বাস, (৪) হঠাৎ ঝগড়া, (৫) সম্মতি।",
+    overridingEffect:
+      "Section 300 must be read with Section 299 (culpable homicide) and Section 302 (punishment for murder). BNS 2023 Section 100 defines murder and Section 101 prescribes punishment.",
+    relatedSections: [
+      {
+        ref: "IPC Section 299",
+        description: "Culpable homicide (lesser offence)",
+      },
+      { ref: "IPC Section 302", description: "Punishment for Murder" },
+      {
+        ref: "IPC Section 304",
+        description: "Punishment for culpable homicide not amounting to murder",
+      },
+      {
+        ref: "BNS Section 100",
+        description: "BNS 2023 equivalent — definition of murder",
+      },
+      { ref: "BNS Section 101", description: "BNS 2023 punishment for murder" },
+    ],
+  },
+  ipc_96: {
+    title: "IPC Section 96 — Things Done in Private Defence",
+    actName: "Indian Penal Code, 1860",
+    sectionNumber: "96",
+    sectionText:
+      "Nothing is an offence which is done in the exercise of the right of private defence.",
+    explanation:
+      "Section 96 IPC is the foundational provision for the right of private defence. It provides a complete defence against criminal liability when the act is done in bona fide exercise of the right of private defence. This right extends to both body and property. The burden of proving private defence lies on the accused on balance of probabilities.\n\nবাংলা: ধারা ৯৬ আত্মরক্ষার অধিকারের মূল ভিত্তি। ব্যক্তি, অন্যের শরীর এবং সম্পত্তি রক্ষার অধিকার দেওয়া হয়েছে।",
+    examples: [
+      "A woman stabs an attacker who is about to rape her — complete defence under Section 96 read with Section 100.",
+      "A person kills a burglar who entered his house at night armed with a weapon — justified under private defence of property.",
+      "A shopkeeper hits a robber with a stick causing grievous hurt — private defence if force was proportionate.",
+    ],
+    landmarkCases: [
+      {
+        name: "Darshan Singh v. State of Punjab (2010) 2 SCC 333",
+        citation: "(2010) 2 SCC 333",
+        summary:
+          "SC held that the right of private defence is a natural right available to every person and courts must view such cases from the perspective of a reasonable person placed in similar circumstances.",
+        principle:
+          "Right of private defence is a natural right — courts must take a sympathetic view.",
+      },
+      {
+        name: "Yogendra Morarji v. State of Gujarat (1980) AIR 1980 SC 660",
+        citation: "AIR 1980 SC 660",
+        summary:
+          "SC held that the accused must have reasonable apprehension of danger to himself or others to exercise the right of private defence.",
+        principle:
+          "Reasonable apprehension of danger is the key ingredient for private defence.",
+      },
+    ],
+    exceptions:
+      "Right of private defence does NOT extend to:\n1. Situations where there is time to recourse to public authorities (Section 99)\n2. More harm than necessary — proportionality requirement (Section 99)\n3. Acts of public servants acting in good faith (unless danger to life)\n4. If the threat is not imminent\n\nবাংলা: পুলিশের সাহায্য পাওয়ার সময় থাকলে আত্মরক্ষার অধিকার প্রযোজ্য নয়। প্রয়োজনের বেশি বল প্রয়োগ করা যাবে না।",
+    overridingEffect:
+      "Sections 96-106 IPC form a complete code on private defence. BNS 2023 Sections 34-44 replace these provisions.",
+    relatedSections: [
+      {
+        ref: "IPC Section 97",
+        description: "Right of private defence of body and property",
+      },
+      {
+        ref: "IPC Section 99",
+        description: "Acts against which private defence not available",
+      },
+      {
+        ref: "IPC Section 100",
+        description: "When private defence of body extends to causing death",
+      },
+      {
+        ref: "IPC Section 103",
+        description:
+          "When private defence of property extends to causing death",
+      },
+      { ref: "BNS Section 34", description: "BNS 2023 equivalent" },
+    ],
+  },
+  ipc_499: {
+    title: "IPC Section 499 — Defamation",
+    actName: "Indian Penal Code, 1860",
+    sectionNumber: "499",
+    sectionText:
+      "Whoever, by words either spoken or intended to be read, or by signs or by visible representations, makes or publishes any imputation concerning any person intending to harm, or knowing or having reason to believe that such imputation will harm, the reputation of such person, is said, except in the cases hereinafter excepted, to defame that person.",
+    explanation:
+      "Section 499 IPC defines defamation as making or publishing any imputation about a person with intent to harm or knowing it will harm their reputation. It includes spoken words, written words, signs, and visual representations. Defamation of a deceased person is also covered if it would harm the living family.\n\nবাংলা: মুখে বলে, লিখে, ইশারায় বা দৃশ্যমান উপস্থাপনায় কারো সুনাম নষ্ট করার উদ্দেশ্যে কোনো অভিযোগ করলে মানহানি হয়।",
+    examples: [
+      "Publishing a newspaper article falsely stating that a doctor performed illegal operations — defamation under Section 499.",
+      "Posting on social media falsely claiming a business person committed fraud — defamation.",
+      "Making a speech falsely accusing a politician of corruption — defamation.",
+    ],
+    landmarkCases: [
+      {
+        name: "Subramanian Swamy v. Union of India (2016) 7 SCC 221",
+        citation: "(2016) 7 SCC 221",
+        summary:
+          "Supreme Court upheld the constitutional validity of criminal defamation under Sections 499-500 IPC. Held that the right to reputation is a fundamental right under Article 21 and criminal defamation is a reasonable restriction on freedom of speech under Article 19(2).",
+        principle:
+          "Criminal defamation is constitutionally valid — reputation is part of right to life under Article 21.",
+      },
+      {
+        name: "Sewakram Sobhani v. R.K. Karanjia (1981) 3 SCC 208",
+        citation: "AIR 1981 SC 1514",
+        summary:
+          "SC held that an editor is responsible for everything published in his newspaper and cannot escape liability for defamatory content.",
+        principle:
+          "Editor is vicariously liable for defamatory content published in newspaper.",
+      },
+    ],
+    exceptions:
+      "Ten exceptions to defamation:\n1. True imputation for public good (truth)\n2. Fair comment on public conduct of public servants\n3. Fair report of court proceedings\n4. Comments on court judgments\n5. Fair comment on public performances\n6. Censure by authority over subordinate in good faith\n7. Accusation by authorized person in good faith\n8. Imputation to protect interests of person making it\n9. Fair comment on public questions\n10. Caution given in good faith\n\nবাংলা: সত্য বলা জনস্বার্থে হলে মানহানি নয়। আদালতের রিপোর্ট, সরকারি কর্মকর্তার কাজের সমালোচনা মানহানি নয়।",
+    overridingEffect:
+      "Section 499 must be read with Section 500 (punishment). BNS 2023 Section 356 deals with defamation.",
+    relatedSections: [
+      {
+        ref: "IPC Section 500",
+        description: "Punishment for Defamation (2 years)",
+      },
+      {
+        ref: "IPC Section 501",
+        description: "Printing or engraving defamatory matter",
+      },
+      { ref: "BNS Section 356", description: "BNS 2023 equivalent" },
+      {
+        ref: "Constitution Article 19(1)(a)",
+        description: "Freedom of speech — conflicting right",
+      },
+    ],
+  },
+  ipc_503: {
+    title: "IPC Section 503 — Criminal Intimidation",
+    actName: "Indian Penal Code, 1860",
+    sectionNumber: "503",
+    sectionText:
+      "Whoever threatens another with any injury to his person, reputation or property, or to the person or reputation of any one in whom that person is interested, with intent to cause alarm to that person, or to cause that person to do any act which he is not legally bound to do, or to omit to do any act which that person is legally entitled to do, as the means of avoiding the execution of such threat, commits criminal intimidation.",
+    explanation:
+      "Section 503 punishes criminal intimidation — threatening a person with injury to their person, reputation, or property to coerce them into doing something they are not legally bound to do or to omit something they are legally entitled to do. Intent to cause alarm or coercion is essential.\n\nবাংলা: কাউকে ভয় দেখিয়ে কোনো কাজ করাতে বা না করাতে বাধ্য করলে ধারা ৫০৩ প্রযোজ্য।",
+    examples: [
+      "Threatening a witness with physical harm if he testifies against the accused — criminal intimidation.",
+      "Sending a letter to a journalist threatening to harm his family if he publishes a story — Section 503.",
+      "Warning an employer to dismiss an employee or face violent consequences — criminal intimidation.",
+    ],
+    landmarkCases: [
+      {
+        name: "Romesh Chandra Arora v. State (1960) AIR 1960 SC 154",
+        citation: "AIR 1960 SC 154",
+        summary:
+          "SC held that criminal intimidation requires the accused to have made the threat with intention to cause alarm or to coerce the threatened person.",
+        principle:
+          "Intent to cause alarm or coercion is essential ingredient of criminal intimidation.",
+      },
+    ],
+    exceptions:
+      "No statutory exceptions. However, a conditional threat not intended to cause alarm may not constitute criminal intimidation. Warning given in good faith (e.g., warning of legal action) is not intimidation.\n\nবাংলা: সরল বিশ্বাসে আইনি পদক্ষেপের সতর্কতা মানহানি নয়।",
+    overridingEffect:
+      "Punishment is under Section 506 IPC (2 years, or 7 years if threat involves death/grievous hurt). BNS 2023 Section 351 is the equivalent.",
+    relatedSections: [
+      {
+        ref: "IPC Section 506",
+        description: "Punishment for criminal intimidation",
+      },
+      { ref: "IPC Section 384", description: "Extortion (coercion by threat)" },
+      { ref: "BNS Section 351", description: "BNS 2023 equivalent" },
+    ],
+  },
+  it_act_43: {
+    title:
+      "IT Act Section 43 — Penalty for Damage to Computer, Computer System",
+    actName: "Information Technology Act, 2000",
+    sectionNumber: "43",
+    sectionText:
+      "If any person without permission of the owner or any other person who is in-charge of a computer, computer system or computer network— (a) accesses or secures access to such computer, computer system or computer network or computer resource; (b) downloads, copies or extracts any data, computer data base or information from such computer; (c) introduces or causes to be introduced any computer contaminant or computer virus; (d) damages or causes to be damaged any computer, computer system or data; (e) disrupts or causes disruption of any computer, computer system or computer network; (f) denies or causes the denial of access to any person authorised to access any computer; (g) provides any assistance to any person to facilitate access to a computer in contravention of this Act — he shall be liable to pay damages by way of compensation not exceeding one crore rupees to the person so affected.",
+    explanation:
+      "Section 43 IT Act imposes civil liability (compensation up to Rs 1 crore) for unauthorized access to computers, downloading data without permission, introducing viruses, causing damage, disrupting networks, or denying authorized access. This is a civil penalty provision — criminal liability for the same acts is covered under Section 66.\n\nবাংলা: ধারা ৪৩ কম্পিউটারে অননুমোদিত প্রবেশ, ডেটা চুরি, ভাইরাস প্রবেশ বা ক্ষতির জন্য ১ কোটি টাকা পর্যন্ত ক্ষতিপূরণ দেওয়ার নির্দেশ দেয়। এটি দেওয়ানি দায়।",
+    examples: [
+      "A hacker breaks into a company's server and downloads customer data — liable for compensation under Section 43(a) and (b).",
+      "An employee deliberately introduces a virus into company computers causing data loss — Section 43(c) and (d).",
+      "A person launches a DDoS attack on a bank's website causing service disruption — Section 43(e).",
+    ],
+    landmarkCases: [
+      {
+        name: "Avnish Bajaj v. State of Delhi (2005) 116 DLT 769",
+        citation: "(2005) 116 DLT 769",
+        summary:
+          "Delhi HC discussed the liability of intermediaries for objectionable content hosted on their platforms, laying groundwork for Section 43 and 66 IT Act interpretation.",
+        principle:
+          "Intermediaries can be held liable for facilitating unauthorized access or hosting illegal content.",
+      },
+    ],
+    exceptions:
+      "Section 43 does not apply to: (1) Authorized security testing/penetration testing with written permission; (2) Government agencies acting under lawful authority; (3) Internet service providers acting in good faith under court orders.\n\nবাংলা: লিখিত অনুমতি নিয়ে নিরাপত্তা পরীক্ষা করলে ধারা ৪৩ প্রযোজ্য নয়।",
+    overridingEffect:
+      "Section 43 provides civil remedy while Section 66 provides criminal remedy for the same acts. Section 43A adds liability for data protection failures by body corporates.",
+    relatedSections: [
+      {
+        ref: "IT Act Section 43A",
+        description: "Liability for failure to protect sensitive personal data",
+      },
+      {
+        ref: "IT Act Section 66",
+        description: "Computer related offences (criminal liability)",
+      },
+      {
+        ref: "IT Act Section 66B",
+        description: "Receiving stolen computer resource",
+      },
+      {
+        ref: "IT Act Section 72",
+        description: "Breach of confidentiality and privacy",
+      },
+    ],
+  },
+  it_act_69a: {
+    title:
+      "IT Act Section 69A — Power to Issue Directions for Blocking Public Access",
+    actName: "Information Technology Act, 2000",
+    sectionNumber: "69A",
+    sectionText:
+      "Where the Central Government or a State Government or any of its officers specially authorised by the Central Government or the State Government, as the case may be, in this behalf may, subject to the provisions of sub-sections (2) and (3), for reasons to be recorded in writing, by order, direct any agency of the Government or intermediary to block for access by the public or cause to be blocked for access by the public any information generated, transmitted, received, stored or hosted in any computer resource. The grounds are: (i) in the interest of sovereignty and integrity of India; (ii) defence of India; (iii) security of the State; (iv) friendly relations with foreign States; (v) public order; (vi) for preventing incitement to the commission of any cognizable offence.",
+    explanation:
+      "Section 69A empowers the Central and State Governments to block access to any online information for reasons including national security, public order, and prevention of incitement to offences. This is the legal basis for blocking websites, social media accounts, and apps in India (e.g., TikTok ban 2020). The blocking order must be in writing.\n\nবাংলা: ধারা ৬৯এ সরকারকে জাতীয় নিরাপত্তা, সার্বভৌমত্ব রক্ষায় যেকোনো ওয়েবসাইট বা অনলাইন তথ্য ব্লক করার ক্ষমতা দেয়।",
+    examples: [
+      "Government blocking access to a social media platform spreading communal violence — Section 69A.",
+      "Blocking a website hosting terrorist recruitment videos in the interest of national security.",
+      "Temporary blocking of TikTok in 2020 on grounds of sovereignty and integrity of India.",
+    ],
+    landmarkCases: [
+      {
+        name: "Shreya Singhal v. Union of India (2015) 5 SCC 1",
+        citation: "(2015) 5 SCC 1",
+        summary:
+          "Supreme Court struck down Section 66A IT Act as unconstitutional but upheld the validity of Section 69A, holding that the blocking power must be exercised in accordance with the procedure established by law.",
+        principle:
+          "Section 69A blocking power is constitutionally valid if exercised with procedural safeguards.",
+      },
+      {
+        name: "Foundation for Media Professionals v. Union Territory of Jammu and Kashmir (2020) 12 SCC 285",
+        citation: "(2020) 12 SCC 285",
+        summary:
+          "SC addressed internet shutdowns in J&K and held that the power to shutdown internet must be proportionate and subject to judicial review.",
+        principle:
+          "Internet shutdowns must be proportionate, necessary, and subject to judicial review.",
+      },
+    ],
+    exceptions:
+      "Section 69A blocking orders must: (1) be in writing with reasons recorded; (2) follow Information Technology (Procedure and Safeguards for Blocking) Rules 2009; (3) be subject to judicial review by High Courts and Supreme Court.\n\nবাংলা: ব্লকিং আদেশ লিখিত হতে হবে এবং বিচার বিভাগীয় পর্যালোচনার সুযোগ থাকতে হবে।",
+    overridingEffect:
+      "Section 69A overrides any other law to the extent of inconsistency. It operates alongside Section 79 (safe harbour for intermediaries). The Blocking Rules 2009 provide the detailed procedure.",
+    relatedSections: [
+      { ref: "IT Act Section 66", description: "Computer related offences" },
+      {
+        ref: "IT Act Section 69",
+        description: "Power to intercept and monitor",
+      },
+      {
+        ref: "IT Act Section 79",
+        description: "Safe harbour exemption for intermediaries",
+      },
+      {
+        ref: "Constitution Article 19(1)(a)",
+        description: "Freedom of speech and expression",
+      },
+    ],
+  },
+  contract_56: {
+    title:
+      "Contract Act Section 56 — Agreement to Do Impossible Act (Doctrine of Frustration)",
+    actName: "Indian Contract Act, 1872",
+    sectionNumber: "56",
+    sectionText:
+      "An agreement to do an act impossible in itself is void. A contract to do an act which, after the contract is made, becomes impossible, or, by reason of some event which the promisor could not prevent, unlawful, becomes void when the act becomes impossible or unlawful. Where one person has promised to do something which he knew, or, with reasonable diligence, might have known, and which the promisee did not know, to be impossible or unlawful, such promisor must make compensation to such promisee for any loss which such promisee sustains through the non-performance of the promise.",
+    explanation:
+      "Section 56 codifies the Doctrine of Frustration in India. A contract becomes void if its performance becomes impossible due to an unforeseen event beyond the parties' control. The doctrine applies when: (1) there was a valid contract, (2) some part remains unperformed, (3) performance has become impossible, and (4) the impossibility is due to an event beyond the parties' control.\n\nবাংলা: চুক্তির পরে অপ্রত্যাশিত কারণে কাজ অসম্ভব হলে চুক্তি বাতিল হয়। একে 'হতাশার মতবাদ' বলে। COVID-19 মহামারীতে অনেক চুক্তি এই মতবাদে বাতিল হয়েছে।",
+    examples: [
+      "A contract to perform a concert in a hall — if the hall burns down before the concert, the contract is frustrated.",
+      "A contract to supply goods subsequently banned by government order — performance becomes unlawful, contract is frustrated.",
+      "A contract for construction on land later acquired by the government — impossible to perform.",
+    ],
+    landmarkCases: [
+      {
+        name: "Satyabrata Ghose v. Mugneeram Bangur (1954) AIR 1954 SC 44",
+        citation: "AIR 1954 SC 44",
+        summary:
+          "Supreme Court held that Section 56 does not merely incorporate the English doctrine of frustration. The scope is wider — impossibility can be practical as well as literal, and covers all cases where performance is radically different from what was originally contemplated.",
+        principle:
+          "Frustration in India covers not just literal impossibility but also fundamental change in circumstances.",
+      },
+      {
+        name: "Energy Watchdog v. Central Electricity Regulatory Commission (2017) 14 SCC 80",
+        citation: "(2017) 14 SCC 80",
+        summary:
+          "SC held that frustration cannot be claimed merely because performance has become more expensive or difficult — it must be fundamentally different from what was contracted for.",
+        principle:
+          "Increased cost or commercial difficulty alone does not frustrate a contract.",
+      },
+    ],
+    exceptions:
+      "Section 56 does NOT apply when: (1) impossibility was foreseeable at the time of contract; (2) the party claiming frustration caused the impossibility; (3) the contract expressly provides for the contingency (force majeure clause); (4) performance is just more difficult or expensive.\n\nবাংলা: পক্ষ নিজে অসম্ভবতার কারণ হলে, ঘটনা পূর্বাভাসযোগ্য হলে, চুক্তিতে ফোর্স মাজিয়ার ধারা থাকলে ধারা ৫৬ প্রযোজ্য নয়।",
+    overridingEffect:
+      "Section 56 must be read with Section 65 (obligation to restore benefit received under void contract). When frustration occurs, Section 65 requires restitution of benefits received.",
+    relatedSections: [
+      {
+        ref: "Contract Act Section 32",
+        description: "Contingent contract on happening of event",
+      },
+      {
+        ref: "Contract Act Section 65",
+        description: "Obligation to restore benefit under void agreement",
+      },
+      {
+        ref: "Contract Act Section 73",
+        description: "Compensation for breach",
+      },
+      {
+        ref: "Contract Act Section 10",
+        description: "What agreements are contracts",
+      },
+    ],
+  },
+  contract_73: {
+    title:
+      "Contract Act Section 73 — Compensation for Loss or Damage Caused by Breach",
+    actName: "Indian Contract Act, 1872",
+    sectionNumber: "73",
+    sectionText:
+      "When a contract has been broken, the party who suffers by such breach is entitled to receive, from the party who has broken it, compensation for any loss or damage caused to him thereby, which naturally arose in the usual course of things from such breach, or which the parties knew, when they made the contract, to be likely to result from the breach of it. Such compensation is not to be given for any remote or indirect loss or damage sustained by reason of the breach.",
+    explanation:
+      "Section 73 establishes the principle of compensation for breach of contract. The innocent party is entitled to damages for: (1) losses that naturally arise from the breach in the usual course of things (direct damages), and (2) losses that both parties knew at the time of contracting were likely to result from a breach (consequential damages). Remote or indirect damages are not recoverable. This codifies the principle in Hadley v. Baxendale.\n\nবাংলা: চুক্তি ভঙ্গ হলে ক্ষতিপূরণ পাওয়ার অধিকার আছে। সাধারণ ক্ষতি এবং বিশেষ ক্ষতি পাওয়া যায়। দূরবর্তী বা পরোক্ষ ক্ষতির জন্য ক্ষতিপূরণ পাওয়া যায় না।",
+    examples: [
+      "A supplier fails to deliver raw materials on time — manufacturer can claim lost profits that naturally arise from the delay.",
+      "A hotel cancels a wedding booking — couple can claim costs of rebooking and wasted deposits.",
+      "A contractor delays construction — owner can claim additional rental costs and lost rental income.",
+    ],
+    landmarkCases: [
+      {
+        name: "Hadley v. Baxendale (1854) 9 Exch 341 (applied in India)",
+        citation: "(1854) 9 Exch 341",
+        summary:
+          "The two-limb test for damages: (1) damages that arise naturally from the breach, and (2) special damages in the reasonable contemplation of both parties. Indian courts consistently apply this under Section 73.",
+        principle:
+          "Damages must be either naturally arising from breach or specifically contemplated by both parties.",
+      },
+      {
+        name: "Murlidhar Chiranjilal v. Harishchandra Dwarkadas (1962) AIR 1962 SC 366",
+        citation: "AIR 1962 SC 366",
+        summary:
+          "SC held that under Section 73, the injured party must take reasonable steps to mitigate their loss after breach — failure to mitigate reduces the compensation.",
+        principle:
+          "Duty to mitigate: injured party must take reasonable steps to minimize loss.",
+      },
+    ],
+    exceptions:
+      "Exceptions and limitations to Section 73: (1) Remote/indirect damages not recoverable; (2) Duty to mitigate — failure reduces damages; (3) Section 74 (liquidated damages clause) overrides Section 73 where parties pre-agreed on damages; (4) Punitive damages are not available.\n\nবাংলা: দূরবর্তী ক্ষতি, মিটিগেশনে ব্যর্থতা এবং ধারা ৭৪-এর লিকুইডেটেড ড্যামেজ ক্লজ ব্যতিক্রম।",
+    overridingEffect:
+      "Section 73 is supplemented by Section 74 (liquidated damages) and Section 75 (person rightfully rescinding entitled to compensation). Courts cannot award punitive damages under Section 73 — only compensatory damages.",
+    relatedSections: [
+      {
+        ref: "Contract Act Section 74",
+        description: "Compensation for breach where penalty is stipulated",
+      },
+      {
+        ref: "Contract Act Section 75",
+        description: "Party rightfully rescinding entitled to compensation",
+      },
+      {
+        ref: "Contract Act Section 56",
+        description: "Frustration of contract",
+      },
+    ],
+  },
+  constitution_art_12: {
+    title: "Constitution of India — Article 12 — Definition of State",
+    actName: "Constitution of India, 1950",
+    sectionNumber: "Article 12",
+    sectionText:
+      "In this Part, unless the context otherwise requires, 'the State' includes the Government and Parliament of India and the Government and the Legislature of each of the States and all local or other authorities within the territory of India or under the control of the Government of India.",
+    explanation:
+      "Article 12 defines 'State' for the purposes of Part III (Fundamental Rights) of the Constitution. The term 'State' under Article 12 includes: (1) Government and Parliament of India; (2) Government and Legislature of each State; (3) All local authorities (municipalities, panchayats); (4) Other authorities within India or under Government control. This definition determines who can be sued for violation of Fundamental Rights.\n\nবাংলা: সংবিধানের ১২ অনুচ্ছেদ 'রাষ্ট্র'-এর সংজ্ঞা দেয়। কেন্দ্রীয় সরকার, সংসদ, রাজ্য সরকার, পৌর সংস্থা এবং সরকারি নিয়ন্ত্রণাধীন প্রতিষ্ঠান — সবই 'রাষ্ট্র'।",
+    examples: [
+      "A government corporation (e.g., ONGC, BSNL) is 'State' under Article 12 — employees can challenge service conditions as violation of fundamental rights.",
+      "A university established by a State Act is 'other authority' under Article 12 — students can petition High Court against arbitrary expulsion.",
+      "A private bank is generally NOT 'State' under Article 12 — fundamental rights writ petitions do not lie against it.",
+    ],
+    landmarkCases: [
+      {
+        name: "Ajay Hasia v. Khalid Mujib (1981) AIR 1981 SC 487",
+        citation: "AIR 1981 SC 487",
+        summary:
+          "SC laid down 6-point test to determine if an entity is 'other authority' under Article 12: (1) entire share capital held by Government; (2) financial assistance from Government; (3) monopoly conferred by Government; (4) deep and pervasive state control; (5) functions of public importance; (6) transferred from Government department.",
+        principle:
+          "Six-factor test to determine if a body is 'State' under Article 12.",
+      },
+      {
+        name: "Ramana Dayaram Shetty v. International Airport Authority (1979) AIR 1979 SC 1628",
+        citation: "AIR 1979 SC 1628",
+        summary:
+          "SC held that statutory authorities performing public functions are 'State' under Article 12, expanding the definition to include many public sector undertakings.",
+        principle:
+          "Statutory bodies performing public functions qualify as 'State' under Article 12.",
+      },
+    ],
+    exceptions:
+      "Private bodies are NOT 'State' under Article 12 unless they: (1) are instrumentalities or agencies of the government; (2) have deep and pervasive government control; (3) perform public functions. A purely private company cannot be sued for violation of fundamental rights.\n\nবাংলা: বেসরকারি সংস্থা সাধারণত 'রাষ্ট্র' নয়। সরকারের গভীর নিয়ন্ত্রণ বা সরকারি কার্য সম্পাদন না করলে মৌলিক অধিকার লঙ্ঘনের মামলা করা যায় না।",
+    overridingEffect:
+      "Article 12 definition applies throughout Part III. An entity being 'State' means it is bound by fundamental rights and writ petition lies under Article 32 (SC) or Article 226 (HC) directly against it.",
+    relatedSections: [
+      {
+        ref: "Constitution Article 13",
+        description: "Laws inconsistent with fundamental rights are void",
+      },
+      { ref: "Constitution Article 14", description: "Right to equality" },
+      {
+        ref: "Constitution Article 32",
+        description: "Right to constitutional remedies (SC jurisdiction)",
+      },
+      {
+        ref: "Constitution Article 226",
+        description: "High Court writ jurisdiction",
+      },
+    ],
+  },
+  constitution_art_21a: {
+    title: "Constitution of India — Article 21A — Right to Education",
+    actName: "Constitution of India, 1950",
+    sectionNumber: "Article 21A",
+    sectionText:
+      "The State shall provide free and compulsory education to all children of the age of six to fourteen years in such manner as the State may, by law, determine.",
+    explanation:
+      "Article 21A was inserted by the Constitution (86th Amendment) Act, 2002. It makes elementary education a Fundamental Right for children aged 6-14 years. The State is obligated to provide free and compulsory education. This is implemented through the Right of Children to Free and Compulsory Education Act, 2009 (RTE Act).\n\nবাংলা: সংবিধানের ৮৬তম সংশোধনীতে (২০০২) ২১এ অনুচ্ছেদ যোগ করা হয়েছে। ৬-১৪ বছর বয়সী শিশুদের বিনামূল্যে ও বাধ্যতামূলক শিক্ষা মৌলিক অধিকার।",
+    examples: [
+      "A child aged 8 denied admission to a government school — parents can file writ petition for violation of Article 21A.",
+      "Government school charging fees from students — violation of Article 21A read with RTE Act.",
+      "Private schools must reserve 25% seats for economically weaker section children under RTE Act.",
+    ],
+    landmarkCases: [
+      {
+        name: "Society for Un-aided Private Schools of Rajasthan v. Union of India (2012) 6 SCC 1",
+        citation: "(2012) 6 SCC 1",
+        summary:
+          "SC upheld the 25% reservation for EWS children in unaided private schools under RTE Act. Held that Article 21A, read with Articles 21 and 45, creates a comprehensive right to education.",
+        principle:
+          "RTE Act's 25% reservation for EWS children in private schools is constitutional under Article 21A.",
+      },
+      {
+        name: "Unni Krishnan J.P. v. State of Andhra Pradesh (1993) AIR 1993 SC 2178",
+        citation: "AIR 1993 SC 2178",
+        summary:
+          "Even before Article 21A, SC held that the right to education up to age 14 flows from Article 21 (right to life). This judgment led to the 86th Amendment inserting Article 21A.",
+        principle:
+          "Right to free education for children up to 14 is part of right to life under Article 21.",
+      },
+    ],
+    exceptions:
+      "Article 21A applies to children aged 6-14 years only. Exceptions: (1) Madrasas and Vedic pathshalas are exempted from RTE Act by SC; (2) Minority institutions may have different rules under Article 30; (3) Children below 6 and above 14 are covered under Directive Principles, not fundamental rights.\n\nবাংলা: ৬-১৪ বছর বয়সীদের জন্য প্রযোজ্য। মাদ্রাসা ও বৈদিক পাঠশালা আরটিই আইনের বাইরে।",
+    overridingEffect:
+      "Article 21A must be read with Article 45 (free education for children under 6) and Article 51A(k) (fundamental duty of parents). The RTE Act 2009 is the enabling legislation.",
+    relatedSections: [
+      {
+        ref: "Constitution Article 21",
+        description: "Right to life and personal liberty",
+      },
+      {
+        ref: "Constitution Article 45",
+        description:
+          "Free and compulsory education for children under 6 (DPSP)",
+      },
+      {
+        ref: "Constitution Article 30",
+        description:
+          "Right of minorities to establish educational institutions",
+      },
+    ],
+  },
+  bns_101: {
+    title: "BNS Section 101 — Punishment for Murder",
+    actName: "Bharatiya Nyaya Sanhita, 2023",
+    sectionNumber: "101",
+    sectionText:
+      "Whoever commits murder shall be punished with death or imprisonment for life, and shall also be liable to fine, or with imprisonment for life or death, and fine, if the murder is committed by a group of five or more persons on grounds of race, caste or community, sex, place of birth, language, personal belief or any other similar ground each member of such group shall be punished with death or with imprisonment for life or imprisonment of either description for a term which shall not be less than seven years and shall also be liable to fine.",
+    explanation:
+      "BNS Section 101 replaces IPC Section 302. It retains death penalty and life imprisonment for murder. It adds a new provision: if murder is committed by a mob of 5 or more persons on grounds of caste, race, community, sex, religion etc. (mob lynching), EACH member is liable for death or minimum 7 years imprisonment. This specifically addresses mob violence.\n\nবাংলা: বিএনএস ধারা ১০১ আইপিসি ধারা ৩০২ প্রতিস্থাপন করেছে। হত্যার শাস্তি মৃত্যুদণ্ড বা যাবজ্জীবন কারাদণ্ড। ৫ বা তার বেশি লোকের মব লিঞ্চিং-এ প্রত্যেক সদস্য ন্যূনতম ৭ বছরের কারাদণ্ড পাবে।",
+    examples: [
+      "A single person intentionally kills another with a weapon — punished under BNS 101 with death or life imprisonment.",
+      "A mob of 8 persons beat someone to death on suspicion of cattle theft — each member liable under BNS 101 for minimum 7 years.",
+      "Honor killing by family members (5 or more) — BNS 101's mob provision applies.",
+    ],
+    landmarkCases: [
+      {
+        name: "Bachan Singh v. State of Punjab (1980) AIR 1980 SC 898",
+        citation: "AIR 1980 SC 898",
+        summary:
+          "SC upheld constitutional validity of death penalty and established 'rarest of rare' doctrine — death should be awarded only when all mitigating circumstances are absent and the crime is of extreme heinousness.",
+        principle:
+          "Death penalty only in 'rarest of rare' cases where life imprisonment is unquestionably foreclosed.",
+      },
+      {
+        name: "Tehseen Poonawalla v. Union of India (2018) 9 SCC 501",
+        citation: "(2018) 9 SCC 501",
+        summary:
+          "SC strongly condemned mob lynching, directed States to appoint nodal officers, and recommended enacting special legislation. This judgment influenced the mob violence provision in BNS 101.",
+        principle:
+          "Mob violence/lynching is a horrendous offence — State has duty to prevent and prosecute.",
+      },
+    ],
+    exceptions:
+      "Same exceptions as IPC Section 300: (1) Grave and sudden provocation; (2) Private defence exceeded; (3) Public servant acting in good faith; (4) Sudden fight without premeditation; (5) Consent. If any exception applies, offence falls under BNS Section 105 (culpable homicide not amounting to murder).\n\nবাংলা: আইপিসি ৩০০-এর পাঁচটি ব্যতিক্রম এখানেও প্রযোজ্য।",
+    overridingEffect:
+      "BNS 101 replaced IPC 302 with effect from 1 July 2024. The mob violence provision (5+ persons) is entirely new. For offences before 1 July 2024, IPC 302 still applies.",
+    relatedSections: [
+      { ref: "BNS Section 100", description: "Definition of Murder" },
+      {
+        ref: "BNS Section 105",
+        description: "Culpable homicide not amounting to murder",
+      },
+      {
+        ref: "IPC Section 302",
+        description: "Previous law (replaced by BNS 101)",
+      },
+    ],
+  },
 };
 
 const KEY_ALIASES: Record<string, string> = {
@@ -6925,7 +7475,7 @@ const KEY_ALIASES: Record<string, string> = {
   "it act 67": "ita_67",
   "it act section 67": "ita_67",
   "section 67 it act": "ita_67",
-  "bns 101": "ipc_302",
+
   "bns section 101": "ipc_302",
   "ipc 34": "ipc_34",
   ipc34: "ipc_34",
@@ -6951,7 +7501,7 @@ const KEY_ALIASES: Record<string, string> = {
   "bns 103": "bns_103",
   "bns section 103": "bns_103",
   "bharatiya nyaya sanhita 103": "bns_103",
-  "bns murder": "bns_103",
+
   "bns 64": "bns_64",
   "bns section 64": "bns_64",
   "bns rape": "bns_64",
@@ -7282,6 +7832,53 @@ const KEY_ALIASES: Record<string, string> = {
   crpc93: "crpc_93",
   "search warrant": "crpc_93",
   "issue search warrant": "crpc_93",
+
+  "ipc 300": "ipc_300",
+  ipc300: "ipc_300",
+  "murder definition": "ipc_300",
+  "definition of murder": "ipc_300",
+  "section 300 ipc": "ipc_300",
+  "ipc 96": "ipc_96",
+  ipc96: "ipc_96",
+  "private defence": "ipc_96",
+  "right of private defence": "ipc_96",
+  "self defence ipc": "ipc_96",
+  "ipc 499": "ipc_499",
+  ipc499: "ipc_499",
+  "defamation ipc": "ipc_499",
+  "criminal defamation": "ipc_499",
+  "ipc 503": "ipc_503",
+  ipc503: "ipc_503",
+  "criminal intimidation": "ipc_503",
+  "threat ipc": "ipc_503",
+  "it act 43": "it_act_43",
+  it43: "it_act_43",
+  "computer damage penalty": "it_act_43",
+  "hacking penalty": "it_act_43",
+  "it act 69a": "it_act_69a",
+  it69a: "it_act_69a",
+  "blocking websites": "it_act_69a",
+  "internet blocking law": "it_act_69a",
+  "contract act 56": "contract_56",
+  contract56: "contract_56",
+  "frustration of contract": "contract_56",
+  "doctrine of frustration": "contract_56",
+  "impossible act contract": "contract_56",
+  "contract act 73": "contract_73",
+  contract73: "contract_73",
+  "compensation for breach": "contract_73",
+  "damages contract": "contract_73",
+  "article 12": "constitution_art_12",
+  "art 12 constitution": "constitution_art_12",
+  "definition of state constitution": "constitution_art_12",
+  "article 21a": "constitution_art_21a",
+  "art 21a": "constitution_art_21a",
+  "right to education": "constitution_art_21a",
+  "free education article": "constitution_art_21a",
+  "bns 101": "bns_101",
+  bns101: "bns_101",
+  "bns murder": "bns_101",
+  "mob lynching law": "bns_101",
 };
 
 function findLawKey(query: string): string | null {

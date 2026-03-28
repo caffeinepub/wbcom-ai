@@ -54,6 +54,8 @@ type Page =
   | "neetSolver"
   | "ca"
   | "caSolver"
+  | "cma"
+  | "cmaSolver"
   | "qa"
   | "mockTest"
   | "progress"
@@ -110,6 +112,7 @@ export function Navbar({
       icon: <BarChart2 className="w-4 h-4" />,
     },
     { page: "ca", label: "CA", icon: <GraduationCap className="w-4 h-4" /> },
+    { page: "cma", label: "CMA", icon: <GraduationCap className="w-4 h-4" /> },
     { page: "qa", label: "Q&A", icon: <Library className="w-4 h-4" /> },
     ...(isLoggedIn
       ? [
@@ -195,7 +198,8 @@ export function Navbar({
     (page === "arts" && currentPage === "artsSolver") ||
     (page === "commerce" && currentPage === "commerceSolver") ||
     (page === "neet" && currentPage === "neetSolver") ||
-    (page === "ca" && currentPage === "caSolver");
+    (page === "ca" && currentPage === "caSolver") ||
+    (page === "cma" && currentPage === "cmaSolver");
 
   const btnBase =
     "flex items-center gap-1 px-2 py-1.5 rounded-md text-xs font-medium whitespace-nowrap border";
