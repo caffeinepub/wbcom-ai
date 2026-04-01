@@ -22,6 +22,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Principal } from "@dfinity/principal";
+import { HttpAgent } from "@icp-sdk/core/agent";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   Bell,
@@ -29,6 +30,7 @@ import {
   CheckCircle,
   Clock,
   FileText,
+  Gavel,
   History,
   Library,
   Loader2,
@@ -48,6 +50,7 @@ import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import type { LoginRecord } from "../backend";
+import { loadConfig } from "../config";
 import {
   QA_DATABASE,
   QUESTION_TYPE_LABELS,
@@ -63,6 +66,9 @@ import {
   useGetCustomerMessages,
   useGetUserCount,
 } from "../hooks/useQueries";
+import { StorageClient } from "../utils/StorageClient";
+import { loadJudgments, saveJudgments } from "./LawNewsTicker";
+import type { JudgmentEntry } from "./LawNewsTicker";
 
 const QUIZ_TOPICS = [
   // Accountancy
@@ -209,6 +215,20 @@ export function AdminPage() {
   const [bulkUploading, setBulkUploading] = useState(false);
   const [bulkCount, setBulkCount] = useState(0);
   const [loadingLoginHistory, setLoadingLoginHistory] = useState(false);
+  const [judgments, setJudgments] = useState<JudgmentEntry[]>(() =>
+    loadJudgments(),
+  );
+  const [newJudgment, setNewJudgment] = useState<Omit<JudgmentEntry, "id">>({
+    case: "",
+    court: "",
+    date: "",
+    summary: "",
+    fullSummary: "",
+  });
+  const [editingJudgment, setEditingJudgment] = useState<JudgmentEntry | null>(
+    null,
+  );
+  const [judgmentFormOpen, setJudgmentFormOpen] = useState(false);
   const loginHistoryFetched = useRef(false);
 
   async function waitForActor() {
@@ -327,28 +347,53 @@ export function AdminPage() {
       React.SetStateAction<Array<{ name: string; type: string; data: string }>>
     >,
   ) {
-    const MAX_FILE_SIZE = 10 * 1024 * 1024;
-    let totalSize = 0;
+    const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
     const results: Array<{ name: string; type: string; data: string }> = [];
+
     for (const file of Array.from(files)) {
-      totalSize += file.size;
-      if (totalSize > 50 * 1024 * 1024) {
-        toast.error("মোট file size 50MB-এর বেশি হতে পারবে না");
-        return;
-      }
       if (file.size > MAX_FILE_SIZE) {
-        toast.error(`${file.name} 10MB-এর বেশি বড়`);
+        toast.error(`${file.name} খুব বড় (সর্বোচ্চ 50MB)`);
         continue;
       }
-      const base64 = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve((reader.result as string).split(",")[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-      results.push({ name: file.name, type: file.type, data: base64 });
+
+      try {
+        toast.info(`${file.name} upload হচ্ছে...`);
+        const arrayBuffer = await file.arrayBuffer();
+        const bytes = new Uint8Array(arrayBuffer);
+
+        // Use blob storage for files > 500KB, base64 for smaller ones
+        if (file.size > 500 * 1024) {
+          const config = await loadConfig();
+          const agent = new HttpAgent({ host: config.backend_host });
+          const storageClient = new StorageClient(
+            config.bucket_name,
+            config.storage_gateway_url,
+            config.backend_canister_id,
+            config.project_id,
+            agent,
+          );
+          const { hash } = await storageClient.putFile(bytes);
+          const url = await storageClient.getDirectURL(hash);
+          results.push({ name: file.name, type: file.type, data: url });
+        } else {
+          const base64 = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () =>
+              resolve((reader.result as string).split(",")[1]);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+          results.push({ name: file.name, type: file.type, data: base64 });
+        }
+        toast.success(`${file.name} upload সম্পন্ন!`);
+      } catch {
+        toast.error(`${file.name} upload করা যায়নি`);
+      }
     }
-    setter((prev) => [...prev, ...results]);
+
+    if (results.length > 0) {
+      setter((prev) => [...prev, ...results]);
+    }
   }
 
   async function handleAddNote() {
@@ -468,6 +513,7 @@ export function AdminPage() {
       );
       toast.success("Notice পোস্ট হয়েছে!");
       setNewNotice({ title: "", content: "" });
+      setNoticePublishAt("");
       queryClient.invalidateQueries({ queryKey: ["premiumNotesList"] });
       queryClient.invalidateQueries({ queryKey: ["premiumNotesWithContent"] });
     } catch {
@@ -870,6 +916,14 @@ export function AdminPage() {
             <History className="w-3.5 h-3.5 mr-1.5" />
             লগইন ইতিহাস
           </TabsTrigger>
+          <TabsTrigger
+            value="lawjudgments"
+            className="data-[state=active]:bg-navy data-[state=active]:text-white text-navy"
+            data-ocid="admin.tab"
+          >
+            <Gavel className="w-3.5 h-3.5 mr-1.5" />
+            Law Judgments
+          </TabsTrigger>
         </TabsList>
 
         {/* Messages Tab */}
@@ -1000,13 +1054,77 @@ export function AdminPage() {
                       >
                         — বিজ্ঞান (Science) —
                       </SelectItem>
-                      {QUIZ_TOPICS.filter((t) => t.value.includes("_")).map(
-                        (t) => (
-                          <SelectItem key={t.value} value={t.value}>
-                            {t.label}
-                          </SelectItem>
-                        ),
-                      )}
+                      {QUIZ_TOPICS.filter(
+                        (t) =>
+                          t.value.includes("_") &&
+                          !t.value.startsWith("arts_") &&
+                          !t.value.startsWith("commerce_") &&
+                          !t.value.startsWith("neet_") &&
+                          !t.value.startsWith("ca_") &&
+                          !t.value.startsWith("cma_"),
+                      ).map((t) => (
+                        <SelectItem key={t.value} value={t.value}>
+                          {t.label}
+                        </SelectItem>
+                      ))}
+                      <SelectItem
+                        value="__arts_header__"
+                        disabled
+                        className="text-xs font-bold text-purple-700/60 uppercase"
+                      >
+                        — কলা (Arts) —
+                      </SelectItem>
+                      {QUIZ_TOPICS.filter((t) =>
+                        t.value.startsWith("arts_"),
+                      ).map((t) => (
+                        <SelectItem key={t.value} value={t.value}>
+                          {t.label}
+                        </SelectItem>
+                      ))}
+                      <SelectItem
+                        value="__commerce_header__"
+                        disabled
+                        className="text-xs font-bold text-amber-700/60 uppercase"
+                      >
+                        — বাণিজ্য (Commerce) —
+                      </SelectItem>
+                      {QUIZ_TOPICS.filter((t) =>
+                        t.value.startsWith("commerce_"),
+                      ).map((t) => (
+                        <SelectItem key={t.value} value={t.value}>
+                          {t.label}
+                        </SelectItem>
+                      ))}
+                      <SelectItem
+                        value="__neet_header__"
+                        disabled
+                        className="text-xs font-bold text-green-700/60 uppercase"
+                      >
+                        — NEET —
+                      </SelectItem>
+                      {QUIZ_TOPICS.filter((t) =>
+                        t.value.startsWith("neet_"),
+                      ).map((t) => (
+                        <SelectItem key={t.value} value={t.value}>
+                          {t.label}
+                        </SelectItem>
+                      ))}
+                      <SelectItem
+                        value="__cacma_header__"
+                        disabled
+                        className="text-xs font-bold text-blue-700/60 uppercase"
+                      >
+                        — CA/CMA —
+                      </SelectItem>
+                      {QUIZ_TOPICS.filter(
+                        (t) =>
+                          t.value.startsWith("ca_") ||
+                          t.value.startsWith("cma_"),
+                      ).map((t) => (
+                        <SelectItem key={t.value} value={t.value}>
+                          {t.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -2208,6 +2326,284 @@ export function AdminPage() {
                   </p>
                 </div>
               )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="lawjudgments">
+          <Card className="border-navy/20 shadow-sm mb-4">
+            <CardHeader>
+              <CardTitle className="text-base font-semibold text-navy flex items-center gap-2">
+                <Gavel className="w-4 h-4" />
+                Law Judgments Manager
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-4 bg-blue-50 border border-blue-100 rounded-lg p-3">
+                Add, edit or delete law judgment entries that appear in the
+                scrolling ticker on the Law section.
+              </p>
+              <Button
+                onClick={() => {
+                  setJudgmentFormOpen(!judgmentFormOpen);
+                  setEditingJudgment(null);
+                  setNewJudgment({
+                    case: "",
+                    court: "",
+                    date: "",
+                    summary: "",
+                    fullSummary: "",
+                  });
+                }}
+                className="mb-4 bg-navy text-white hover:bg-navy/90"
+                data-ocid="admin.judgment.open_modal_button"
+              >
+                <Plus className="w-3.5 h-3.5 mr-1.5" />
+                Add New Judgment
+              </Button>
+              {judgmentFormOpen && (
+                <div className="border border-navy/20 rounded-xl p-4 mb-4 bg-navy/3 space-y-3">
+                  <p className="text-sm font-semibold text-navy">
+                    {editingJudgment ? "Edit Judgment" : "Add New Judgment"}
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-xs text-navy font-semibold">
+                        Case Name *
+                      </Label>
+                      <Input
+                        value={
+                          editingJudgment
+                            ? editingJudgment.case
+                            : newJudgment.case
+                        }
+                        onChange={(e) =>
+                          editingJudgment
+                            ? setEditingJudgment({
+                                ...editingJudgment,
+                                case: e.target.value,
+                              })
+                            : setNewJudgment({
+                                ...newJudgment,
+                                case: e.target.value,
+                              })
+                        }
+                        placeholder="e.g. State of UP v. Ram Swarup"
+                        className="border-navy/20 mt-1"
+                        data-ocid="admin.judgment.input"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs text-navy font-semibold">
+                        Court *
+                      </Label>
+                      <Input
+                        value={
+                          editingJudgment
+                            ? editingJudgment.court
+                            : newJudgment.court
+                        }
+                        onChange={(e) =>
+                          editingJudgment
+                            ? setEditingJudgment({
+                                ...editingJudgment,
+                                court: e.target.value,
+                              })
+                            : setNewJudgment({
+                                ...newJudgment,
+                                court: e.target.value,
+                              })
+                        }
+                        placeholder="e.g. Supreme Court"
+                        className="border-navy/20 mt-1"
+                        data-ocid="admin.judgment.input"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs text-navy font-semibold">
+                        Date (YYYY-MM-DD) *
+                      </Label>
+                      <Input
+                        type="date"
+                        value={
+                          editingJudgment
+                            ? editingJudgment.date
+                            : newJudgment.date
+                        }
+                        onChange={(e) =>
+                          editingJudgment
+                            ? setEditingJudgment({
+                                ...editingJudgment,
+                                date: e.target.value,
+                              })
+                            : setNewJudgment({
+                                ...newJudgment,
+                                date: e.target.value,
+                              })
+                        }
+                        className="border-navy/20 mt-1"
+                        data-ocid="admin.judgment.input"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs text-navy font-semibold">
+                        One-line Summary *
+                      </Label>
+                      <Input
+                        value={
+                          editingJudgment
+                            ? editingJudgment.summary
+                            : newJudgment.summary
+                        }
+                        onChange={(e) =>
+                          editingJudgment
+                            ? setEditingJudgment({
+                                ...editingJudgment,
+                                summary: e.target.value,
+                              })
+                            : setNewJudgment({
+                                ...newJudgment,
+                                summary: e.target.value,
+                              })
+                        }
+                        placeholder="Brief one-line summary"
+                        className="border-navy/20 mt-1"
+                        data-ocid="admin.judgment.input"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-xs text-navy font-semibold">
+                      Full Summary *
+                    </Label>
+                    <Textarea
+                      value={
+                        editingJudgment
+                          ? editingJudgment.fullSummary
+                          : newJudgment.fullSummary
+                      }
+                      onChange={(e) =>
+                        editingJudgment
+                          ? setEditingJudgment({
+                              ...editingJudgment,
+                              fullSummary: e.target.value,
+                            })
+                          : setNewJudgment({
+                              ...newJudgment,
+                              fullSummary: e.target.value,
+                            })
+                      }
+                      placeholder="Detailed summary of the judgment..."
+                      rows={4}
+                      className="border-navy/20 mt-1"
+                      data-ocid="admin.judgment.textarea"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => {
+                        if (editingJudgment) {
+                          const updated = judgments.map((j) =>
+                            j.id === editingJudgment.id ? editingJudgment : j,
+                          );
+                          setJudgments(updated);
+                          saveJudgments(updated);
+                          toast.success("Judgment updated");
+                          setEditingJudgment(null);
+                        } else {
+                          if (
+                            !newJudgment.case.trim() ||
+                            !newJudgment.summary.trim()
+                          )
+                            return toast.error(
+                              "Case name and summary required",
+                            );
+                          const entry: JudgmentEntry = {
+                            ...newJudgment,
+                            id: Date.now(),
+                          };
+                          const updated = [entry, ...judgments];
+                          setJudgments(updated);
+                          saveJudgments(updated);
+                          toast.success("Judgment added");
+                          setNewJudgment({
+                            case: "",
+                            court: "",
+                            date: "",
+                            summary: "",
+                            fullSummary: "",
+                          });
+                        }
+                        setJudgmentFormOpen(false);
+                      }}
+                      className="bg-navy text-white hover:bg-navy/90"
+                      data-ocid="admin.judgment.save_button"
+                    >
+                      {editingJudgment ? "Update" : "Add Judgment"}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setJudgmentFormOpen(false);
+                        setEditingJudgment(null);
+                      }}
+                      data-ocid="admin.judgment.cancel_button"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              )}
+              <div className="space-y-2" data-ocid="admin.judgment.list">
+                {judgments.map((j, idx) => (
+                  <div
+                    key={j.id}
+                    className="flex items-start gap-3 p-3 rounded-lg border border-navy/10 bg-white hover:bg-navy/2 transition-colors"
+                    data-ocid={`admin.judgment.item.${idx + 1}`}
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-navy truncate">
+                        {j.case}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">
+                        {j.court} — {j.date}
+                      </p>
+                      <p className="text-[11px] text-foreground/70 mt-1 line-clamp-2">
+                        {j.summary}
+                      </p>
+                    </div>
+                    <div className="flex gap-1 shrink-0">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-7 w-7 text-navy"
+                        onClick={() => {
+                          setEditingJudgment(j);
+                          setJudgmentFormOpen(true);
+                        }}
+                        data-ocid="admin.judgment.edit_button"
+                      >
+                        <Pencil className="w-3 h-3" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-7 w-7 text-red-500"
+                        onClick={() => {
+                          const updated = judgments.filter(
+                            (x) => x.id !== j.id,
+                          );
+                          setJudgments(updated);
+                          saveJudgments(updated);
+                          toast.success("Deleted");
+                        }}
+                        data-ocid="admin.judgment.delete_button"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

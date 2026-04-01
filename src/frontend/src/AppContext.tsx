@@ -30,6 +30,7 @@ export function AppContextProvider({
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
+    document.documentElement.classList.toggle("dark", theme === "dark");
     localStorage.setItem("vs_theme", theme);
   }, [theme]);
 

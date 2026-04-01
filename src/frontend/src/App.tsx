@@ -27,6 +27,7 @@ import { PremiumNotesPage } from "./components/PremiumNotesPage";
 import { ProgressTrackerPage } from "./components/ProgressTrackerPage";
 import { QAPage } from "./components/QAPage";
 import { QuizPage } from "./components/QuizPage";
+import { SSCPage } from "./components/SSCPage";
 import { ScienceHomePage } from "./components/ScienceHomePage";
 import { ScienceSolver } from "./components/ScienceSolver";
 import { TermsFullPage, TermsModal } from "./components/TermsPage";
@@ -62,10 +63,80 @@ type Page =
   | "progress"
   | "bookmarks"
   | "doubt"
-  | "leaderboard";
+  | "leaderboard"
+  | "ssc";
 
 function getLocalStorageKey(principalId: string) {
   return `wbcom_username_${principalId}`;
+}
+
+function OfflineBanner() {
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const [dismissed, setDismissed] = useState(false);
+
+  useEffect(() => {
+    const goOffline = () => {
+      setIsOffline(true);
+      setDismissed(false);
+    };
+    const goOnline = () => setIsOffline(false);
+    window.addEventListener("offline", goOffline);
+    window.addEventListener("online", goOnline);
+    return () => {
+      window.removeEventListener("offline", goOffline);
+      window.removeEventListener("online", goOnline);
+    };
+  }, []);
+
+  // Add padding to main content when banner is visible
+  useEffect(() => {
+    const main = document.getElementById("main-content");
+    if (main) main.style.paddingBottom = isOffline && !dismissed ? "3rem" : "";
+  }, [isOffline, dismissed]);
+
+  if (!isOffline || dismissed) return null;
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 9999,
+        background: "#d97706",
+        color: "#fff",
+        padding: "10px 16px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        fontSize: "13px",
+        fontWeight: 500,
+        boxShadow: "0 -2px 12px rgba(0,0,0,0.3)",
+      }}
+    >
+      <span>
+        ⚠️ আপনি এখন অফলাইনে আছেন — সম্প্রতি দেখা content দেখা যাবে। You&apos;re offline
+        — recently viewed content is available.
+      </span>
+      <button
+        type="button"
+        onClick={() => setDismissed(true)}
+        style={{
+          background: "rgba(255,255,255,0.2)",
+          border: "none",
+          borderRadius: "4px",
+          color: "#fff",
+          cursor: "pointer",
+          padding: "2px 10px",
+          fontSize: "13px",
+          marginLeft: "12px",
+        }}
+      >
+        ✕
+      </button>
+    </div>
+  );
 }
 
 function AppInner() {
@@ -265,9 +336,10 @@ function AppInner() {
         username={username}
       />
       <Toaster richColors position="top-right" />
+      <OfflineBanner />
       <UsernameModal open={showUsernameModal} onSaved={handleUsernameSaved} />
 
-      <main className="flex-1">
+      <main className="flex-1" id="main-content">
         <div key={currentPage}>
           {currentPage === "home" && <HomePage onNavigate={handleNavigate} />}
 
@@ -396,6 +468,8 @@ function AppInner() {
               <DoubtPage username={username} />
             </div>
           )}
+
+          {currentPage === "ssc" && <SSCPage />}
 
           {currentPage === "leaderboard" && (
             <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">

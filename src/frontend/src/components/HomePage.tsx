@@ -4,6 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   BarChart2,
   BookOpen,
+  Briefcase,
   Calendar,
   FlaskConical,
   GraduationCap,
@@ -98,6 +99,14 @@ const QUICK_ACCESS = [
     color: "text-teal-400",
     bg: "bg-teal-400/10",
     border: "border-teal-400/20",
+  },
+  {
+    id: "ssc",
+    label: "SSC Jobs",
+    icon: Briefcase,
+    color: "text-orange-400",
+    bg: "bg-orange-400/10",
+    border: "border-orange-400/20",
   },
   {
     id: "customerCase",
@@ -348,7 +357,16 @@ export function HomePage({ onNavigate }: HomePageProps) {
                     </Badge>
                   </div>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    {note.content.slice(0, 100)}
+                    {(() => {
+                      const c = note.content;
+                      const marker = "__CONTENT__\n";
+                      if (c.includes(marker))
+                        return (
+                          c.split(marker)[1]?.slice(0, 100) ?? c.slice(0, 100)
+                        );
+                      if (c.startsWith("__ATTACHMENTS__")) return "";
+                      return c.slice(0, 100);
+                    })()}
                     {note.content.length > 100 ? "..." : ""}
                   </p>
                   <Button

@@ -7277,9 +7277,776 @@ const LAW_DATABASE: LawDB = {
       },
     ],
   },
+  // ===== IPR =====
+  ipr_copyright_14: {
+    title: "Copyright Act 1957 — Section 14 — Meaning of Copyright",
+    actName: "Copyright Act, 1957",
+    sectionNumber: "14",
+    sectionText:
+      "For the purposes of this Act, 'copyright' means the exclusive right subject to the provisions of this Act, to do or authorise the doing of any of the following acts in respect of a work or any substantial part thereof: in the case of a literary, dramatic or musical work, not being a computer programme, to reproduce the work in any material form including the storing of it in any medium by electronic means; to issue copies of the work to the public not being copies already in circulation; to perform the work in public, or communicate it to the public; to make any cinematograph film or sound recording in respect of the work; to make any translation of the work; to make any adaptation of the work.",
+    explanation:
+      "Section 14 of the Copyright Act, 1957 defines what 'copyright' means — it is the bundle of exclusive rights given to the creator of a literary, artistic, musical, dramatic, or cinematographic work. The owner of copyright has the right to reproduce, publish, perform, translate, adapt, or create derivative works. These rights are exclusive — only the copyright owner (or someone with their permission) can do these acts.  বাংলা: কপিরাইট আইনের ধারা 14 অনুযায়ী, কপিরাইট মানে কোনো সৃষ্টিকর্ম পুনরুৎপাদন, প্রকাশ, অনুবাদ বা অভিযোজন করার একচেটিয়া অধিকার। লেখক, চলচ্চিত্র নির্মাতা, সঙ্গীতজ্ঞ বা শিল্পীরা তাদের কাজের কপিরাইটের মালিক।",
+    examples: [
+      "A novelist writes a book — only the author can reproduce, translate, or adapt it without permission.",
+      "A filmmaker's movie cannot be copied and distributed by anyone else without licence from the producer.",
+      "A software company's code is protected under copyright — copying it constitutes infringement under Section 51.",
+    ],
+    landmarkCases: [
+      {
+        name: "Eastern Book Company v. D.B. Modak (2008) 1 SCC 1",
+        citation: "(2008) 1 SCC 1",
+        summary:
+          "Supreme Court held that mere copy-editing of judgments does not attract copyright; there must be minimal degree of creativity. Established 'modicum of creativity' standard for copyright protection.",
+      },
+      {
+        name: "R.G. Anand v. M/S Delux Films AIR 1978 SC 1613",
+        citation: "AIR 1978 SC 1613",
+        summary:
+          "Copyright does not protect ideas, only the expression of ideas. Two works can be similar in idea but different in expression.",
+      },
+    ],
+    exceptions:
+      "Copyright does not protect ideas, facts, methods, or systems — only their expression. Fair dealing for research, criticism, review, reporting of current events is permitted under Section 52.",
+    overridingEffect:
+      "The Copyright (Amendment) Act, 2012 significantly expanded digital rights and introduced provisions for digital rights management. Computer programmes are also protected under Section 14(b) with specific rights.",
+    relatedSections: [
+      {
+        ref: "Copyright Act Section 13",
+        description: "Works in which copyright subsists",
+      },
+      {
+        ref: "Copyright Act Section 51",
+        description: "Infringement of copyright",
+      },
+      {
+        ref: "Copyright Act Section 52",
+        description: "Certain acts not infringement (fair dealing)",
+      },
+      {
+        ref: "Copyright Act Section 17",
+        description: "First owner of copyright",
+      },
+    ],
+  },
+  ipr_patent_2: {
+    title: "Patents Act 1970 — Section 2 — Definitions",
+    actName: "Patents Act, 1970",
+    sectionNumber: "2",
+    sectionText:
+      "In this Act, unless the context otherwise requires — 'invention' means a new product or process involving an inventive step and capable of industrial application; 'inventive step' means a feature of an invention that involves technical advance as compared to the existing knowledge or having economic significance or both and that makes the invention not obvious to a person skilled in the art; 'patentee' means the person for the time being entered on the register as the grantee or proprietor of the patent.",
+    explanation:
+      "Section 2 of the Patents Act, 1970 provides key definitions. An 'invention' must be: (1) New/Novel — not previously published or used, (2) Have an Inventive Step — not obvious to a person skilled in the art, (3) Capable of Industrial Application — practically useful. 'Patentee' is the person who holds a valid patent.  বাংলা: পেটেন্ট আইনের ধারা 2 মূল সংজ্ঞা দেয়। 'উদ্ভাবন' মানে এমন কোনো নতুন পণ্য বা প্রক্রিয়া যা আগে ছিল না, যেটি উদ্ভাবনীয় পদক্ষেপ জড়িত, এবং শিল্পে প্রয়োগযোগ্য। 'পেটেন্টধারী' হলেন যিনি পেটেন্ট রেজিস্টারে নাম নথিভুক্ত।",
+    examples: [
+      "A pharmaceutical company invents a new drug molecule — this is patentable as it is novel and industrially applicable.",
+      "A software algorithm that improves search speeds may be patentable if it involves technical advance.",
+      "A known machine modified with a small change that is obvious to an engineer cannot get a patent for lacking inventive step.",
+    ],
+    landmarkCases: [
+      {
+        name: "Novartis AG v. Union of India (2013) 6 SCC 1",
+        citation: "(2013) 6 SCC 1",
+        summary:
+          "Supreme Court rejected patent for Gleevec (cancer drug) under Section 3(d) — incremental modification without enhanced therapeutic efficacy is not patentable. Landmark decision for generic medicine access.",
+      },
+    ],
+    exceptions:
+      "Section 3 excludes from patentability: discoveries of natural phenomena, mathematical methods, business methods, computer programmes per se, plants/animals, traditional knowledge, inventions contrary to public order/morality.",
+    overridingEffect:
+      "Patents (Amendment) Act 2005 introduced product patents for pharmaceuticals. TRIPS Agreement requires India to provide 20-year patent protection. Section 84 provides for compulsory licencing in public interest.",
+    relatedSections: [
+      { ref: "Patents Act Section 3", description: "What is not patentable" },
+      { ref: "Patents Act Section 48", description: "Rights of patentee" },
+      { ref: "Patents Act Section 84", description: "Compulsory licences" },
+      {
+        ref: "Patents Act Section 104A",
+        description: "Burden of proof in infringement",
+      },
+    ],
+  },
+  ipr_patent_48: {
+    title: "Patents Act 1970 — Section 48 — Rights of Patentee",
+    actName: "Patents Act, 1970",
+    sectionNumber: "48",
+    sectionText:
+      "Subject to the other provisions contained in this Act and the conditions specified in section 47, a patent granted under this Act shall confer upon the patentee — where the patent is for a product, the exclusive right to prevent third parties, who do not have the patentee's consent, from the act of making, using, offering for sale, selling or importing for those purposes that product in India; where the patent is for a process, the exclusive right to prevent third parties, who do not have the patentee's consent, from the act of using that process, and from the acts of using, offering for sale, selling or importing for those purposes the product obtained directly by that process in India.",
+    explanation:
+      "Section 48 grants the patentee exclusive monopoly rights for 20 years. If the patent is for a product — no one can make, use, sell, or import it without consent. If the patent is for a process — no one can use the process or sell the product made by that process.  বাংলা: ধারা 48 অনুযায়ী পেটেন্টধারী ২০ বছরের জন্য একচেটিয়া অধিকার পান। পণ্য পেটেন্টে — কেউ তৈরি, ব্যবহার, বিক্রি বা আমদানি করতে পারবে না। প্রক্রিয়া পেটেন্টে — সেই প্রক্রিয়া ব্যবহার বা তার দ্বারা তৈরি পণ্য বিক্রি নিষিদ্ধ।",
+    examples: [
+      "If Company A has a product patent on a drug, Company B cannot manufacture or sell a generic version for 20 years.",
+      "If a process patent exists for manufacturing steel, no one can use that exact process commercially.",
+      "A patentee can licence their patent to others and earn royalty under Section 70.",
+    ],
+    landmarkCases: [
+      {
+        name: "Cipla Ltd. v. F. Hoffmann-La Roche Ltd. (2009)",
+        citation: "Delhi HC 2009",
+        summary:
+          "High Court dealt with patent rights vs. public health — balance between patentee's exclusive rights and affordable medicine access. Established framework for interim injunctions in pharma patent cases.",
+      },
+    ],
+    exceptions:
+      "Rights do not extend to: acts done privately and for non-commercial purposes (Section 47), acts done for research/experimental purposes, acts for obtaining regulatory approval (Bolar provision).",
+    overridingEffect:
+      "Section 47 limits rights for government use. Section 84 allows compulsory licensing after 3 years if public needs are not met. WTO-TRIPS Agreement mandates these rights.",
+    relatedSections: [
+      {
+        ref: "Patents Act Section 47",
+        description: "Conditions to work of patented inventions",
+      },
+      {
+        ref: "Patents Act Section 84",
+        description: "Compulsory licences — working of patents",
+      },
+      {
+        ref: "Patents Act Section 104",
+        description: "Jurisdiction — infringement suits",
+      },
+    ],
+  },
+  ipr_trademark_2: {
+    title: "Trade Marks Act 1999 — Section 2 — Definitions",
+    actName: "Trade Marks Act, 1999",
+    sectionNumber: "2",
+    sectionText:
+      "In this Act, unless the context otherwise requires — 'mark' includes a device, brand, heading, label, ticket, name, signature, word, letter, numeral, shape of goods, packaging or combination of colours or any combination thereof; 'trade mark' means a mark capable of being represented graphically and which is capable of distinguishing the goods or services of one person from those of others and may include shape of goods, their packaging and combination of colours.",
+    explanation:
+      "Section 2 defines 'trade mark' — any mark (word, logo, symbol, shape, colour combination) that is graphically representable AND capable of distinguishing one person's goods/services from another's. A trademark identifies the source of goods. Famous trademarks: Tata, Amul, McDonald's golden arches.  বাংলা: ট্রেডমার্ক আইনের ধারা 2 'ট্রেডমার্ক' সংজ্ঞায়িত করে। যেকোনো চিহ্ন — শব্দ, লোগো, চিহ্ন, রং — যা গ্রাফিক্যালি উপস্থাপনযোগ্য এবং এক ব্যক্তির পণ্য অন্যজনের থেকে আলাদা করে, তাকে ট্রেডমার্ক বলে। TATA, Amul, McDonald's আর্চ বিখ্যাত উদাহরণ।",
+    examples: [
+      "The word 'TATA' in blue is a registered trademark — no one else can use it for similar goods.",
+      "McDonald's golden arches shape is a registered trademark globally.",
+      "Amul's 'Utterly Butterly Delicious' tagline is a registered service mark.",
+    ],
+    landmarkCases: [
+      {
+        name: "Cadila Healthcare Ltd. v. Cadila Pharmaceuticals Ltd. (2001) 5 SCC 73",
+        citation: "(2001) 5 SCC 73",
+        summary:
+          "In pharma trademark disputes, confusion test is stricter — even phonetically similar trademarks for drugs can cause confusion and harm consumers. Court must apply stricter test for life-saving drugs.",
+      },
+    ],
+    exceptions:
+      "Generic words describing goods cannot be registered (e.g., 'sweet' for candy). Well-known marks get cross-category protection under Section 11(2).",
+    overridingEffect:
+      "Trade Marks Act 1999 replaced Trade and Merchandise Marks Act 1958. Complies with TRIPS Agreement. Madrid Protocol for international registration was adopted by India in 2013.",
+    relatedSections: [
+      {
+        ref: "Trade Marks Act Section 9",
+        description: "Absolute grounds for refusal",
+      },
+      {
+        ref: "Trade Marks Act Section 29",
+        description: "Infringement of registered trade mark",
+      },
+      {
+        ref: "Trade Marks Act Section 135",
+        description: "Reliefs in suits for infringement",
+      },
+    ],
+  },
+  ipr_trademark_29: {
+    title:
+      "Trade Marks Act 1999 — Section 29 — Infringement of Registered Trademark",
+    actName: "Trade Marks Act, 1999",
+    sectionNumber: "29",
+    sectionText:
+      "A registered trade mark is infringed by a person who, not being a registered proprietor or a person using by way of permitted use, uses in the course of trade, a mark which is identical with, or deceptively similar to, the trade mark in relation to goods or services in respect of which the trade mark is registered. Infringement includes use of identical mark on identical goods, identical mark on similar goods (if likelihood of confusion), similar mark on identical/similar goods, use of well-known mark even on dissimilar goods.",
+    explanation:
+      "Section 29 defines trademark infringement. The key elements are: (1) Defendant is not the registered owner, (2) Use is in the course of trade, (3) Mark is identical or deceptively similar, (4) Used for same/similar goods/services. 'Deceptively similar' means the average consumer might be confused.  বাংলা: ধারা 29 ট্রেডমার্ক লঙ্ঘন সংজ্ঞায়িত করে। কেউ যদি অনুমতি ছাড়া একই বা বিভ্রান্তিকরভাবে মিল আছে এমন চিহ্ন বাণিজ্যিক উদ্দেশ্যে ব্যবহার করে, তা লঙ্ঘন। 'বিভ্রান্তিকরভাবে অনুরূপ' মানে সাধারণ ভোক্তা বিভ্রান্ত হতে পারেন।",
+    examples: [
+      "Using 'TATTA' (similar to TATA) on steel products is deceptive infringement of TATA's trademark.",
+      "Selling fake Nike shoes with the Nike swoosh is infringement under Section 29(1).",
+      "Using Amul's logo colours and style for a competing dairy brand creates consumer confusion — infringement.",
+    ],
+    landmarkCases: [
+      {
+        name: "Laxmikant V. Patel v. Chetanbhai Shah (2002) 3 SCC 65",
+        citation: "(2002) 3 SCC 65",
+        summary:
+          "Passing off action can be initiated even without registered trademark. Likelihood of confusion is key — even if marks are not identical, deceptive similarity is sufficient for injunction.",
+      },
+    ],
+    exceptions:
+      "Use of one's own name or description of goods in good faith; comparative advertising using competitor's trademark for honest comparison; use in educational/research context.",
+    overridingEffect:
+      "Section 135 provides for reliefs including injunction, damages, and delivery up of infringing goods. Criminal penalties under Section 103 for counterfeiting.",
+    relatedSections: [
+      {
+        ref: "Trade Marks Act Section 27",
+        description: "No action for unregistered mark",
+      },
+      {
+        ref: "Trade Marks Act Section 135",
+        description: "Reliefs in infringement suits",
+      },
+      {
+        ref: "Trade Marks Act Section 103",
+        description: "Penalty for falsifying trademarks",
+      },
+    ],
+  },
+  ipr_gi_act: {
+    title: "Geographical Indications of Goods Act 1999 — Key Provisions",
+    actName:
+      "Geographical Indications of Goods (Registration and Protection) Act, 1999",
+    sectionNumber: "Key Sections",
+    sectionText:
+      "A geographical indication is an indication which identifies goods as originating in the territory of a country, or a region or locality in that territory, where a given quality, reputation or other characteristic of the goods is essentially attributable to its geographical origin. Examples: Darjeeling Tea, Basmati Rice, Kancheepuram Silk, Mysore Silk, Kolhapuri Chappal.",
+    explanation:
+      "The GI Act protects goods that have a specific geographical origin and possess qualities or a reputation due to that origin. Once registered, only producers from that region can use the GI tag. It protects traditional Indian products from misappropriation.  বাংলা: ভৌগোলিক সূচক আইন সেই পণ্যগুলিকে রক্ষা করে যার গুণমান বা খ্যাতি তার ভৌগোলিক উৎসের কারণে। যেমন দার্জিলিং চা — শুধুমাত্র দার্জিলিংয়ের চা উৎপাদকরা এই ট্যাগ ব্যবহার করতে পারবেন। বাসমতি চাল, কাঞ্চিপুরম সিল্ক বিখ্যাত উদাহরণ।",
+    examples: [
+      "Darjeeling Tea — only tea grown in Darjeeling district can carry the 'Darjeeling Tea' GI tag.",
+      "Basmati Rice GI tag protects Indian producers from foreign producers misusing the name.",
+      "Kolhapuri Chappal from Maharashtra/Karnataka has protected GI status.",
+    ],
+    landmarkCases: [
+      {
+        name: "Basmati Rice GI dispute (India v. USA/Pakistan)",
+        citation: "GI Registry 2016",
+        summary:
+          "India obtained GI registration for Basmati Rice in 2016, preventing foreign producers from labeling their rice as 'Basmati'. Landmark victory for Indian agricultural exporters.",
+      },
+    ],
+    exceptions:
+      "GI protection does not prevent use of geographical terms as common names (generic terms). Individual producer rights — only authorized users/associations can enforce GI rights.",
+    overridingEffect:
+      "India implemented the GI Act under TRIPS Agreement obligations. GI registration is valid for 10 years and renewable. GI Registry is located in Chennai.",
+    relatedSections: [
+      {
+        ref: "GI Act Section 11",
+        description:
+          "Prohibition on registration of certain geographical indications",
+      },
+      {
+        ref: "GI Act Section 22",
+        description: "Infringement of geographical indication",
+      },
+      {
+        ref: "Trade Marks Act Section 2(e)",
+        description: "Exclusion of GI from trademark",
+      },
+    ],
+  },
+
+  // ===== BANKING LAW =====
+  banking_rbi_17: {
+    title:
+      "Reserve Bank of India Act 1934 — Section 17 — Business RBI May Transact",
+    actName: "Reserve Bank of India Act, 1934",
+    sectionNumber: "17",
+    sectionText:
+      "The Bank shall be authorized to carry on and transact the several parts of the business hereinafter specified, namely: the accepting of money on deposit without interest from, and the collection of money for, the Central and State Governments; the purchase, sale and rediscount of bills of exchange and promissory notes drawn on and payable in India and arising out of bona fide commercial or trade transactions; granting of loans and advances to scheduled banks against promissory notes, government securities or approved securities.",
+    explanation:
+      "Section 17 of the RBI Act defines the types of business the Reserve Bank of India (RBI) is authorized to conduct. These include: accepting deposits from Central/State Governments, managing foreign exchange, lending to scheduled banks (refinancing), buying/selling government securities, and managing monetary policy instruments.  বাংলা: RBI আইনের ধারা 17 রিজার্ভ ব্যাংক অফ ইন্ডিয়ার ব্যবসা নির্ধারণ করে। RBI কেন্দ্র ও রাজ্য সরকারের আমানত গ্রহণ, সরকারি সিকিউরিটি ক্রয়-বিক্রয়, শিডিউল্ড ব্যাংকগুলিকে ঋণ প্রদান এবং মুদ্রানীতি পরিচালনা করতে পারে।",
+    examples: [
+      "RBI lends to State Bank of India against government securities — this is authorized under Section 17.",
+      "RBI buys/sells government bonds in open market operations (OMO) under this section.",
+      "State Government deposits its surplus cash with RBI under Section 17.",
+    ],
+    landmarkCases: [
+      {
+        name: "Reserve Bank of India v. Peerless General Finance (1987) 1 SCC 424",
+        citation: "(1987) 1 SCC 424",
+        summary:
+          "Supreme Court upheld RBI's power to regulate non-banking financial companies under the RBI Act. RBI's regulatory mandate is broad and covers all aspects of monetary stability.",
+      },
+    ],
+    exceptions:
+      "RBI cannot engage in trade or commercial banking like accepting retail deposits from the public. These activities are reserved for commercial banks under Banking Regulation Act 1949.",
+    overridingEffect:
+      "RBI is the central bank of India established in 1935. It operates under RBI Act 1934. Banking Regulation Act 1949 governs commercial banks separately. FEMA 1999 governs foreign exchange management.",
+    relatedSections: [
+      {
+        ref: "RBI Act Section 42",
+        description: "Cash Reserve Ratio requirements",
+      },
+      {
+        ref: "Banking Regulation Act Section 22",
+        description: "Licensing of banks",
+      },
+      {
+        ref: "RBI Act Section 18",
+        description: "Purchase and sale of bills of exchange",
+      },
+    ],
+  },
+  banking_rbi_42: {
+    title:
+      "Reserve Bank of India Act 1934 — Section 42 — Cash Reserve Ratio (CRR)",
+    actName: "Reserve Bank of India Act, 1934",
+    sectionNumber: "42",
+    sectionText:
+      "Every scheduled bank shall maintain with the Bank an average daily balance, the amount of which shall not be less than three per cent. of the total of the net demand and time liabilities of such bank in India as on the last Friday of the second preceding fortnight. The Reserve Bank may, by notification in the Official Gazette, specify a higher or lower percentage of net demand and time liabilities not exceeding twenty per cent.",
+    explanation:
+      "Section 42 mandates Cash Reserve Ratio (CRR) — every scheduled bank must keep a minimum percentage of their Net Demand and Time Liabilities (NDTL) as cash reserve with the RBI. This is a key monetary policy tool. RBI can vary the CRR (currently around 4%) to control money supply and inflation.  বাংলা: ধারা 42 নগদ আমানত অনুপাত (CRR) নির্ধারণ করে। প্রতিটি শিডিউল্ড ব্যাংককে তাদের মোট চাহিদা ও মেয়াদী দায়ের একটি নির্দিষ্ট অংশ (ন্যূনতম 3%, সর্বোচ্চ 20%) RBI-তে নগদ হিসেবে রাখতে হবে। RBI এটি পরিবর্তন করে মুদ্রার প্রবাহ নিয়ন্ত্রণ করে।",
+    examples: [
+      "If SBI has ₹1 lakh crore NDTL and CRR is 4%, SBI must keep ₹4000 crore with RBI.",
+      "RBI raises CRR from 4% to 5% to curb inflation — banks have less money to lend, money supply reduces.",
+      "RBI lowers CRR during recession to increase liquidity and stimulate the economy.",
+    ],
+    landmarkCases: [
+      {
+        name: "All India Bank Employees Association v. National Industrial Tribunal AIR 1962 SC 171",
+        citation: "AIR 1962 SC 171",
+        summary:
+          "Upheld RBI's power to regulate banking system including reserve requirements. Banks are regulated entities and their compliance with CRR is mandatory.",
+      },
+    ],
+    exceptions:
+      "Cooperative banks have separate CRR requirements. Scheduled Payments Banks and Small Finance Banks have differentiated reserve requirements. Non-banking financial companies (NBFCs) are not subject to CRR under Section 42.",
+    overridingEffect:
+      "CRR and SLR (Statutory Liquidity Ratio under Banking Regulation Act Section 24) are the twin reserve requirements. Failure to maintain CRR attracts penalties under Section 42(3). RBI uses CRR as quantitative credit control tool.",
+    relatedSections: [
+      {
+        ref: "Banking Regulation Act Section 24",
+        description: "Statutory Liquidity Ratio (SLR)",
+      },
+      { ref: "RBI Act Section 17", description: "Business RBI may transact" },
+      {
+        ref: "RBI Act Section 45",
+        description: "Penalties for deficiency in CRR",
+      },
+    ],
+  },
+  banking_regulation_22: {
+    title: "Banking Regulation Act 1949 — Section 22 — Licensing of Banks",
+    actName: "Banking Regulation Act, 1949",
+    sectionNumber: "22",
+    sectionText:
+      "Save as hereinafter provided, no company shall carry on banking business in India unless it holds a licence issued in that behalf by the Reserve Bank and any such licence may be issued subject to such conditions as the Reserve Bank may think fit to impose. Every company seeking to carry on banking business in India shall apply in writing to the Reserve Bank for a licence under this section. Before granting any licence, the Reserve Bank may require to be satisfied by an inspection or otherwise that the company is or will be in a position to pay its present or future depositors in full.",
+    explanation:
+      "Section 22 requires every bank operating in India to obtain a banking licence from the Reserve Bank of India. The RBI examines financial health, management quality, business plan, and capital adequacy before granting a licence. This protects depositors and maintains financial stability.  বাংলা: ধারা 22 অনুযায়ী ভারতে ব্যাংকিং কার্যক্রম পরিচালনা করতে RBI-এর লাইসেন্স আবশ্যক। RBI আবেদনকারীর আর্থিক স্বাস্থ্য, ব্যবস্থাপনা, ব্যবসায়িক পরিকল্পনা এবং মূলধন পর্যাপ্ততা পরীক্ষা করে লাইসেন্স দেয়।",
+    examples: [
+      "Payments Bank licence was granted to Airtel, Paytm, India Post — each had to comply with Section 22.",
+      "New private bank licences (IDFC Bank, Bandhan Bank) granted in 2015 after rigorous RBI screening.",
+      "A microfinance institution converting to a Small Finance Bank must obtain fresh licence under Section 22.",
+    ],
+    landmarkCases: [
+      {
+        name: "RBI v. Tarapore Committee Recommendations (2008 case series)",
+        citation: "RBI Regulatory Orders 2008-2016",
+        summary:
+          "RBI has broad discretionary power to grant, suspend, or cancel bank licences. Financial stability and depositor protection are paramount considerations.",
+      },
+    ],
+    exceptions:
+      "Co-operative banks are separately regulated under Co-operative Societies Act and have different licensing requirements. RBI has jurisdiction over urban co-operative banks but not rural ones.",
+    overridingEffect:
+      "Section 22A-22E provide for special provisions for licensing of foreign banks. Section 36AA gives RBI power to remove directors/management of banks. Banking companies licensing is subject to Companies Act 2013 as well.",
+    relatedSections: [
+      { ref: "Banking Regulation Act Section 5", description: "Definitions" },
+      {
+        ref: "Banking Regulation Act Section 35",
+        description: "Inspection of banks by RBI",
+      },
+      { ref: "RBI Act Section 42", description: "Cash Reserve Ratio" },
+    ],
+  },
+  banking_sarfaesi_13: {
+    title: "SARFAESI Act 2002 — Section 13 — Enforcement of Security Interest",
+    actName:
+      "Securitisation and Reconstruction of Financial Assets and Enforcement of Security Interest Act, 2002",
+    sectionNumber: "13",
+    sectionText:
+      "Notwithstanding anything contained in section 69 or section 69A of the Transfer of Property Act, 1882, any security interest created in favour of any secured creditor may be enforced, without the intervention of the court or tribunal, by such creditor in accordance with the provisions of this Act. Where any borrower, who is under a liability to a secured creditor under a security agreement, makes any default in repayment of secured debt or any instalment thereof, and his account in respect of such debt is classified as non-performing asset (NPA), then the secured creditor may require the borrower by notice in writing to discharge in full his liabilities to the secured creditor within sixty days from the date of notice.",
+    explanation:
+      "Section 13 of SARFAESI Act is a landmark provision — it allows banks/financial institutions to recover loans WITHOUT going to court. If a loan account is classified as NPA (Non-Performing Asset), the bank can issue a 60-day notice. If unpaid, the bank can: (1) Take possession of secured assets, (2) Sell/lease/assign assets, (3) Appoint a manager for the asset.  বাংলা: SARFAESI আইনের ধারা 13 ব্যাংক ও আর্থিক প্রতিষ্ঠানকে আদালতের হস্তক্ষেপ ছাড়াই ঋণ আদায় করার ক্ষমতা দেয়। ঋণ NPA হলে 60 দিনের নোটিশ দিতে হবে। না মিটালে সম্পত্তি দখল, বিক্রি বা লিজ দেওয়া যাবে।",
+    examples: [
+      "A manufacturing company defaults on ₹50 crore loan — bank issues SARFAESI notice under Section 13(2) giving 60 days.",
+      "After 60 days, bank takes symbolic possession of mortgaged factory under Section 13(4).",
+      "Bank sells auctioned property to recover outstanding loan amount under Section 13(6).",
+    ],
+    landmarkCases: [
+      {
+        name: "Mardia Chemicals v. Union of India (2004) 4 SCC 311",
+        citation: "(2004) 4 SCC 311",
+        summary:
+          "Supreme Court upheld constitutional validity of SARFAESI Act. Right of banks to enforce security without court intervention is valid. However, Section 13(8) protection for borrower and DRT appeal rights must be maintained.",
+      },
+      {
+        name: "United Bank of India v. Satyawati Tondon (2010) 8 SCC 110",
+        citation: "(2010) 8 SCC 110",
+        summary:
+          "High Courts cannot entertain writ petitions challenging SARFAESI proceedings when alternate remedy of appeal to DRT exists.",
+      },
+    ],
+    exceptions:
+      "Section 13 does not apply to: agricultural land, amount below ₹1 lakh threshold, loans secured by lien, pledge, or hire-purchase. Borrower has right to appeal under Section 17 to Debt Recovery Tribunal (DRT) within 30 days.",
+    overridingEffect:
+      "SARFAESI overrides Section 69 of Transfer of Property Act for secured creditors. Insolvency and Bankruptcy Code 2016 (IBC) provides an alternative resolution mechanism. For amounts above ₹1 crore, IBC may be more effective.",
+    relatedSections: [
+      {
+        ref: "SARFAESI Act Section 17",
+        description: "Appeal to DRT against Section 13 action",
+      },
+      {
+        ref: "SARFAESI Act Section 14",
+        description: "Chief Metropolitan Magistrate to assist",
+      },
+      {
+        ref: "IBC 2016 Section 7",
+        description: "Insolvency application by financial creditor",
+      },
+      {
+        ref: "Transfer of Property Act Section 69",
+        description: "Power of sale when mortgage is in default",
+      },
+    ],
+  },
+  banking_ibc_7: {
+    title:
+      "Insolvency and Bankruptcy Code 2016 — Section 7 — Initiation of Corporate Insolvency by Financial Creditor",
+    actName: "Insolvency and Bankruptcy Code, 2016",
+    sectionNumber: "7",
+    sectionText:
+      "A financial creditor either by itself or jointly with other financial creditors, or any other person on behalf of the financial creditor, as may be notified by the Central Government, may file an application for initiating corporate insolvency resolution process against a corporate debtor before the Adjudicating Authority when a default has occurred. The application under sub-section (1) shall be filed in such form and manner and accompanied with such fee as may be prescribed. The financial creditor shall, along with the application furnish — record of the default recorded with the information utility or such other record or evidence of default as may be specified.",
+    explanation:
+      "Section 7 of IBC allows any financial creditor (bank, financial institution, bond holder) to file for Corporate Insolvency Resolution Process (CIRP) against a defaulting company. Minimum default amount: ₹1 crore (revised from ₹1 lakh during COVID). The NCLT must admit the application within 14 days and CIRP must complete in 180+90 days.  বাংলা: IBC-এর ধারা 7 কোনো আর্থিক পাওনাদার (ব্যাংক, আর্থিক প্রতিষ্ঠান) কে দেউলিয়া কোম্পানির বিরুদ্ধে NCLT-তে আবেদন করার অধিকার দেয়। ন্যূনতম খেলাপি ₹1 কোটি। NCLT 14 দিনের মধ্যে আবেদন গ্রহণ বা বাতিল করবে।",
+    examples: [
+      "SBI files CIRP petition under Section 7 against Bhushan Steel Ltd. for ₹56,000 crore default — Tata Steel acquires it.",
+      "Financial creditors of Jet Airways file insolvency application — resolution professional appointed to manage the airline.",
+      "A bond-holder whose bonds are unpaid can file as financial creditor under Section 7.",
+    ],
+    landmarkCases: [
+      {
+        name: "Innoventive Industries v. ICICI Bank (2018) 1 SCC 407",
+        citation: "(2018) 1 SCC 407",
+        summary:
+          "Supreme Court's first landmark IBC judgment — established that the CIRP process is mandatory once default is proven; NCLT has no discretion to reject if debt and default are established.",
+      },
+      {
+        name: "Essar Steel India Ltd. v. Satish Kumar Gupta (2019) 8 SCC 1",
+        citation: "(2019) 8 SCC 1",
+        summary:
+          "Committee of Creditors has commercial wisdom in approving resolution plan; NCLT/NCLAT cannot interfere with commercial decisions. Resolution plan can discriminate between creditors with legitimate reasons.",
+      },
+    ],
+    exceptions:
+      "Section 7 does not apply to individuals (Section 94/95 for personal insolvency) or partnership firms. Minimum threshold ₹1 crore. Government creditors like Customs, Tax departments are operational creditors, not financial creditors.",
+    overridingEffect:
+      "IBC overrides all other insolvency laws (SICA, RDDBFI Act, SARFAESI for purpose of resolution). Moratorium under Section 14 protects debtor from all proceedings. IBC has sunset clause — if no resolution in 330 days, mandatory liquidation under Section 33.",
+    relatedSections: [
+      {
+        ref: "IBC Section 9",
+        description: "Insolvency application by operational creditor",
+      },
+      { ref: "IBC Section 14", description: "Moratorium during CIRP" },
+      { ref: "IBC Section 33", description: "Initiation of liquidation" },
+      {
+        ref: "SARFAESI Act Section 13",
+        description: "Security enforcement — alternative to IBC",
+      },
+    ],
+  },
+
+  // ===== ENVIRONMENTAL LAW =====
+  env_epa_2: {
+    title: "Environment Protection Act 1986 — Section 2 — Definitions",
+    actName: "Environment (Protection) Act, 1986",
+    sectionNumber: "2",
+    sectionText:
+      "In this Act, unless the context otherwise requires — 'environment' includes water, air and land and the inter-relationship which exists among and between water, air and land, and human beings, other living creatures, plants, micro-organism and property; 'environmental pollutant' means any solid, liquid or gaseous substance present in such concentration as may be, or tend to be, injurious to environment; 'environmental pollution' means the presence in the environment of any environmental pollutant.",
+    explanation:
+      "Section 2 provides the foundational definitions under the Environment Protection Act, 1986, which is an umbrella legislation for environment protection in India. 'Environment' is broadly defined to include water, air, land, and their inter-relationships with all living beings. 'Environmental pollutant' covers any solid, liquid, or gas injurious to the environment.  বাংলা: পরিবেশ সুরক্ষা আইনের ধারা 2 মূল সংজ্ঞা দেয়। 'পরিবেশ' মানে জল, বায়ু, ভূমি এবং মানুষ সহ সকল জীবের সাথে তাদের পারস্পরিক সম্পর্ক। 'পরিবেশ দূষণকারী' হলো যেকোনো কঠিন, তরল বা গ্যাসীয় পদার্থ যা পরিবেশের জন্য ক্ষতিকর।",
+    examples: [
+      "Industrial effluents discharged into rivers are 'environmental pollutants' under this definition.",
+      "Factory smoke containing SO2 and NOx is gaseous environmental pollutant affecting air.",
+      "Plastic waste leaching into soil/water is a solid environmental pollutant.",
+    ],
+    landmarkCases: [
+      {
+        name: "M.C. Mehta v. Union of India (Taj Trapezium Case) AIR 1997 SC 734",
+        citation: "AIR 1997 SC 734",
+        summary:
+          "Supreme Court ordered polluting industries in Taj Trapezium Zone to relocate or shift to natural gas, applying EPA 1986. Taj Mahal's marble was being damaged by industrial pollution.",
+      },
+    ],
+    exceptions:
+      "Certain industrial activities with prior environmental clearance are permitted. EIA notification under EPA 1986 requires Environmental Impact Assessment for development projects.",
+    overridingEffect:
+      "EPA 1986 is umbrella legislation — it supersedes Water Act 1974 and Air Act 1981 in enforcement. NGT Act 2010 provides specialized tribunal for environmental cases.",
+    relatedSections: [
+      { ref: "EPA Section 3", description: "Central Government powers" },
+      { ref: "EPA Section 15", description: "Penalties for violation" },
+      {
+        ref: "Water (Prevention and Control of Pollution) Act 1974",
+        description: "Water pollution control",
+      },
+      {
+        ref: "Air (Prevention and Control of Pollution) Act 1981",
+        description: "Air pollution control",
+      },
+    ],
+  },
+  env_epa_3: {
+    title:
+      "Environment Protection Act 1986 — Section 3 — Powers of Central Government",
+    actName: "Environment (Protection) Act, 1986",
+    sectionNumber: "3",
+    sectionText:
+      "Subject to the provisions of this Act, the Central Government shall have the power to take all such measures as it deems necessary or expedient for the purpose of protecting and improving the quality of the environment and preventing, controlling and abating environmental pollution. In particular, and without prejudice to the generality of the foregoing provisions, such measures may include — co-ordination of actions by the State Governments, officers and other authorities; laying down standards for the quality of environment; laying down standards for emission or discharge of environmental pollutants.",
+    explanation:
+      "Section 3 gives the Central Government wide-ranging powers to protect the environment. These include: setting emission standards, laying down quality standards for air/water/soil, restricting industries, designating eco-sensitive zones, creating protected areas, and coordinating environmental enforcement.  বাংলা: ধারা 3 কেন্দ্রীয় সরকারকে পরিবেশ সুরক্ষার জন্য ব্যাপক ক্ষমতা দেয়। নির্গমন মান নির্ধারণ, শিল্প প্রতিষ্ঠানের উপর বিধিনিষেধ, পরিবেশ সংবেদনশীল অঞ্চল নির্ধারণ এবং পরিবেশ বিভাগের সাথে সমন্বয় এর অন্তর্ভুক্ত।",
+    examples: [
+      "Central Government uses Section 3 powers to declare Aravalli hills as eco-sensitive zone.",
+      "Emission standards for vehicles (BS-VI norms) set under powers derived from Section 3.",
+      "Coastal Regulation Zone (CRZ) notifications issued under Section 3 to protect coastlines.",
+    ],
+    landmarkCases: [
+      {
+        name: "Vellore Citizens Welfare Forum v. Union of India AIR 1996 SC 2715",
+        citation: "AIR 1996 SC 2715",
+        summary:
+          "Supreme Court held that the precautionary principle and polluter pays principle are part of Indian environmental law under EPA 1986. Tanneries causing Palar river pollution ordered to pay compensation.",
+      },
+    ],
+    exceptions:
+      "Central Government must follow principles of natural justice before restricting industries. State Governments have concurrent powers under State Pollution Control Board. Constitutional provisions (Entry 13, List III) give concurrent jurisdiction.",
+    overridingEffect:
+      "Central Government can override State Government decisions in environmental matters under Section 3. MOEF (Ministry of Environment, Forest and Climate Change) exercises these powers through notifications.",
+    relatedSections: [
+      { ref: "EPA Section 5", description: "Power to issue directions" },
+      { ref: "EPA Section 15", description: "Penalties for contravention" },
+      {
+        ref: "National Green Tribunal Act Section 14",
+        description: "NGT jurisdiction over EPA violations",
+      },
+    ],
+  },
+  env_epa_15: {
+    title: "Environment Protection Act 1986 — Section 15 — Penalties",
+    actName: "Environment (Protection) Act, 1986",
+    sectionNumber: "15",
+    sectionText:
+      "Whoever fails to comply with or contravenes any of the provisions of this Act, or the rules made or orders or directions issued thereunder, shall, in respect of each such failure or contravention, be punishable with imprisonment for a term which may extend to five years with fine which may extend to one lakh rupees, or with both, and in case the failure or contravention continues, with additional fine which may extend to five thousand rupees for every day during which such failure or contravention continues after the conviction for the first such failure or contravention. If the failure or contravention referred to in sub-section (1) continues beyond a period of one year after the date of conviction, the offender shall be punishable with imprisonment for a term which may extend to seven years.",
+    explanation:
+      "Section 15 is the penal provision of the EPA 1986. Violations are punishable with: imprisonment up to 5 years + fine up to ₹1 lakh for initial violation; additional ₹5,000 per day for continuing violations; if violation continues beyond 1 year after conviction — imprisonment may extend to 7 years.  বাংলা: ধারা 15 EPA-এর দণ্ড বিধান। লঙ্ঘনে 5 বছর পর্যন্ত কারাদণ্ড + ₹1 লাখ পর্যন্ত জরিমানা। চলমান লঙ্ঘনে প্রতিদিন অতিরিক্ত ₹5,0 জরিমানা। দোষী সাব্যস্তের পরেও লঙ্ঘন 1 বছরের বেশি চলালে 7 বছর পর্যন্ত কারাদণ্ড।",
+    examples: [
+      "Factory owner violating emission standards after EPA direction — can be imprisoned up to 5 years under Section 15.",
+      "Repeated discharge of toxic effluents after court order — daily ₹5000 penalty plus imprisonment.",
+      "Industrial unit continuing to operate in eco-sensitive zone after 1 year of conviction — 7 years imprisonment.",
+    ],
+    landmarkCases: [
+      {
+        name: "Hindustan Coca-Cola Beverages v. Collector of Central Excise (2007)",
+        citation: "NGT 2007",
+        summary:
+          "Established that corporate entities face liability under Section 15, and senior management can be personally liable under Section 16 for offences by companies.",
+      },
+    ],
+    exceptions:
+      "Section 15(2) — if convicted person is a company, the company and its officers in charge who consented to/connived at the offence are both liable. Section 16 makes company directors/managers personally liable.",
+    overridingEffect:
+      "NGT Act 2010 provides civil liability for environmental damage separately. Section 17 provides for offences by companies. Central Government can compound offences under Section 24.",
+    relatedSections: [
+      {
+        ref: "EPA Section 16",
+        description: "Offences by companies — director liability",
+      },
+      {
+        ref: "EPA Section 17",
+        description: "Offences by Government Departments",
+      },
+      {
+        ref: "NGT Act Section 14",
+        description: "Civil liability for environmental damage",
+      },
+    ],
+  },
+  env_wildlife_9: {
+    title: "Wildlife Protection Act 1972 — Section 9 — Prohibition of Hunting",
+    actName: "Wildlife (Protection) Act, 1972",
+    sectionNumber: "9",
+    sectionText:
+      "No person shall hunt any wild animal specified in Schedules I, II, III and IV except as provided under section 11 and section 12. Any person who contravenes the provisions of this section shall, on conviction, be punishable with imprisonment for a term which shall not be less than three years but which may extend to seven years and also with fine which shall not be less than ten thousand rupees.",
+    explanation:
+      "Section 9 is the core prohibition of the Wildlife Protection Act — it bans hunting of all scheduled wild animals. Animals in Schedule I (tiger, lion, elephant, rhino, leopard) get the highest protection. Hunting includes killing, capturing, poisoning, trapping, or snaring wild animals. Minimum punishment: 3 years, maximum 7 years + ₹10,000 fine.  বাংলা: বন্যপ্রাণী সুরক্ষা আইনের ধারা 9 অনুযায়ী তফসিলভুক্ত যেকোনো বন্যপ্রাণী শিকার করা সম্পূর্ণ নিষিদ্ধ। বাঘ, সিংহ, হাতি, গণ্ডার (তফসিল I) সর্বোচ্চ সুরক্ষা পায়। শাস্তি: ন্যূনতম 3 বছর, সর্বোচ্চ 7 বছর + ₹10,0 জরিমানা।",
+    examples: [
+      "Poaching a tiger from Sundarbans National Park is punishable with 3-7 years imprisonment under Section 9.",
+      "Capturing elephants for commercial purposes is prohibited — only Section 12 (research/education) exceptions apply.",
+      "Trapping peacocks (national bird, Schedule I) even for feathers constitutes illegal hunting.",
+    ],
+    landmarkCases: [
+      {
+        name: "T.N. Godavarman Thirumulkpad v. Union of India (1997) 2 SCC 267",
+        citation: "(1997) 2 SCC 267",
+        summary:
+          "Landmark forest protection case — Supreme Court's continuing mandamus has protected forest land and wildlife across India. Court has issued hundreds of orders on forest governance and wildlife protection.",
+      },
+      {
+        name: "Wildlife Protection Society of India v. Union of India (2011)",
+        citation: "Supreme Court 2011",
+        summary:
+          "Court upheld strict enforcement of Wildlife Act — directed investigation into tiger poaching networks and ordered State Governments to strengthen wildlife protection infrastructure.",
+      },
+    ],
+    exceptions:
+      "Section 11 allows Chief Wildlife Warden to permit killing of wild animals that are dangerous to human life or disabled/diseased. Section 12 permits capture for scientific research, education, or for zoos.",
+    overridingEffect:
+      "Project Tiger (1973) and Project Elephant (1992) launched under this Act. CITES (Convention on International Trade in Endangered Species) obligations implemented through this Act. Schedule I can be amended by Central Government.",
+    relatedSections: [
+      {
+        ref: "WPA Section 11",
+        description: "Hunting of wild animals — permissible cases",
+      },
+      {
+        ref: "WPA Section 17A",
+        description: "Prohibition of picking plants in sanctuaries",
+      },
+      { ref: "WPA Section 51", description: "Penalties for violation" },
+      {
+        ref: "Forest Conservation Act Section 2",
+        description: "Restrictions on forest land diversion",
+      },
+    ],
+  },
+  env_forest_2: {
+    title:
+      "Forest (Conservation) Act 1980 — Section 2 — Restrictions on Dereservation",
+    actName: "Forest (Conservation) Act, 1980",
+    sectionNumber: "2",
+    sectionText:
+      "Notwithstanding anything contained in any other law for the time being in force in a State, no State Government or other authority shall make, except with the prior approval of the Central Government, any order directing — that any reserved forest (within the meaning of the expression 'reserved forest' in any law for the time being in force in that State) or any portion thereof, shall cease to be reserved; that any forest land or any portion thereof may be used for any non-forest purpose; that any forest land or any portion thereof or any portion of the forest land comprised within a sanctuary or National Park may be assigned by way of lease or otherwise to any private person or to any authority, corporation, agency or any other organisation not owned, managed or controlled by Government.",
+    explanation:
+      "Section 2 of the Forest Conservation Act is a powerful restriction — no State Government can divert forest land for non-forest purposes WITHOUT prior approval of the Central Government. 'Non-forest purpose' includes mining, industry, roads, buildings, and settlements. This provision has been crucial in halting illegal forest diversion.  বাংলা: বন সংরক্ষণ আইনের ধারা 2 রাজ্য সরকারকে কেন্দ্রীয় সরকারের পূর্বানুমতি ছাড়া বনভূমি অ-বনজ উদ্দেশ্যে ব্যবহার করতে নিষেধ করে। খনিজ উত্তোলন, শিল্প, রাস্তা, বাসস্থানের জন্য বনভূমি ব্যবহার 'অ-বনজ উদ্দেশ্য'। অনুমতি ছাড়া এই কাজ অপরাধ।",
+    examples: [
+      "A State Government wanting to build a highway through forest must get Central Government approval under Section 2.",
+      "Mining company cannot start operations in forest land without Forest Advisory Committee clearance.",
+      "Converting forest land to agriculture without prior approval is a violation under Section 2.",
+    ],
+    landmarkCases: [
+      {
+        name: "T.N. Godavarman v. Union of India (1997) 2 SCC 267",
+        citation: "(1997) 2 SCC 267",
+        summary:
+          "Supreme Court gave expansive interpretation to 'forest' — includes all land recorded as forest in government records, regardless of ownership. Massive impact — stopped indiscriminate forest clearing across India.",
+      },
+    ],
+    exceptions:
+      "Bona fide use of forest land by Forest Department for silviculture, wildlife conservation is permitted. Central Government can approve diversion for public interest (roads, dams) after Forest Advisory Committee recommendation.",
+    overridingEffect:
+      "Forest (Conservation) Amendment Act 2023 controversially modified definitions. Supreme Court in Godavarman case expanded protection beyond this Act to all 'forests'. FRA 2006 (Forest Rights Act) creates rights of forest-dwelling communities.",
+    relatedSections: [
+      {
+        ref: "Forest Conservation Act Section 3A",
+        description: "Penalties for violation",
+      },
+      {
+        ref: "Wildlife Protection Act Section 9",
+        description: "Prohibition of hunting",
+      },
+      {
+        ref: "EPA Section 3",
+        description: "Central Government power for environment protection",
+      },
+    ],
+  },
+  env_ngt_14: {
+    title:
+      "National Green Tribunal Act 2010 — Section 14 — Jurisdiction of NGT",
+    actName: "National Green Tribunal Act, 2010",
+    sectionNumber: "14",
+    sectionText:
+      "The Tribunal shall have the jurisdiction over all civil cases where a substantial question relating to environment (including enforcement of any legal right relating to environment), is involved and such question arises out of the implementation of the enactments specified in Schedule I. The Tribunal shall hear the disputes arising from the following acts: Water (Prevention and Control of Pollution) Act, 1974; Water (Prevention and Control of Pollution) Cess Act, 1977; Forest (Conservation) Act, 1980; Air (Prevention and Control of Pollution) Act, 1981; Environment (Protection) Act, 1986; Public Liability Insurance Act, 1991; Biological Diversity Act, 2002.",
+    explanation:
+      "Section 14 of the NGT Act establishes the National Green Tribunal's jurisdiction — it handles all civil cases involving substantial environmental questions arising from Schedule I environmental laws. NGT provides speedy, expert justice for environmental disputes. It can award compensation, impose penalties, and issue directions.  বাংলা: NGT আইনের ধারা 14 জাতীয় সবুজ ট্রাইব্যুনালের এখতিয়ার নির্ধারণ করে। পরিবেশ সংক্রান্ত যেকোনো দেওয়ানি বিষয়ে NGT বিচার করতে পারে। জলদূষণ, বায়ুদূষণ, বনভূমি, পরিবেশ সুরক্ষা সংক্রান্ত বিষয়ে NGT দ্রুত বিচার দেয়।",
+    examples: [
+      "Citizens affected by industrial pollution can directly approach NGT for compensation under Section 14.",
+      "NGT can take suo moto cognizance of environment violations (e.g., stubble burning, river pollution).",
+      "Solid Waste Management violations can be challenged before NGT instead of High Court.",
+    ],
+    landmarkCases: [
+      {
+        name: "Almitra H. Patel v. Union of India (NGT 2014)",
+        citation: "NGT 2014",
+        summary:
+          "NGT passed landmark orders on solid waste management, directing municipalities to comply with Solid Waste Management Rules. Established NGT's broad jurisdiction over municipal environmental violations.",
+      },
+      {
+        name: "Vellore Citizens Welfare Forum v. Union of India (1996)",
+        citation: "AIR 1996 SC 2715",
+        summary:
+          "Pre-NGT case that established polluter pays principle — now applied by NGT in awarding compensation to pollution victims.",
+      },
+    ],
+    exceptions:
+      "NGT has no jurisdiction over criminal matters — criminal prosecution under EPA, WPA happens in Magistrate Courts. NGT also has no jurisdiction over nuclear/atomic energy matters. High Courts retain supervisory jurisdiction under Article 226/227.",
+    overridingEffect:
+      "NGT has original and appellate jurisdiction. Appeals from NGT go to Supreme Court. NGT's orders are binding and enforceable as civil court decrees. NGT has benches in New Delhi, Bhopal, Pune, Kolkata, Chennai.",
+    relatedSections: [
+      {
+        ref: "NGT Act Section 15",
+        description: "Relief and compensation for environmental damage",
+      },
+      { ref: "NGT Act Section 18", description: "Appeals to NGT" },
+      { ref: "EPA Section 15", description: "Penalties under EPA" },
+      {
+        ref: "NGT Act Section 22",
+        description: "Appeal to Supreme Court from NGT",
+      },
+    ],
+  },
 };
 
 const KEY_ALIASES: Record<string, string> = {
+  "copyright act 14": "ipr_copyright_14",
+  "copyright 14": "ipr_copyright_14",
+  "copyright act section 14": "ipr_copyright_14",
+  "meaning of copyright": "ipr_copyright_14",
+  "patent act 2": "ipr_patent_2",
+  "patents act 2": "ipr_patent_2",
+  "patent definition": "ipr_patent_2",
+  "invention definition": "ipr_patent_2",
+  "patent act 48": "ipr_patent_48",
+  "patents act 48": "ipr_patent_48",
+  "rights of patentee": "ipr_patent_48",
+  "patentee rights": "ipr_patent_48",
+  "trademark 2": "ipr_trademark_2",
+  "trade marks act 2": "ipr_trademark_2",
+  "trademark definition": "ipr_trademark_2",
+  "trademark 29": "ipr_trademark_29",
+  "trade marks act 29": "ipr_trademark_29",
+  "trademark infringement": "ipr_trademark_29",
+  "gi act": "ipr_gi_act",
+  "geographical indication": "ipr_gi_act",
+  "darjeeling tea": "ipr_gi_act",
+  "rbi act 17": "banking_rbi_17",
+  "rbi 17": "banking_rbi_17",
+  "rbi act 42": "banking_rbi_42",
+  "rbi 42": "banking_rbi_42",
+  "cash reserve ratio": "banking_rbi_42",
+  crr: "banking_rbi_42",
+  "banking regulation 22": "banking_regulation_22",
+  "banking regulation act 22": "banking_regulation_22",
+  "bank licence": "banking_regulation_22",
+  "sarfaesi 13": "banking_sarfaesi_13",
+  "sarfaesi act 13": "banking_sarfaesi_13",
+  "enforcement of security interest": "banking_sarfaesi_13",
+  "npa enforcement": "banking_sarfaesi_13",
+  "ibc 7": "banking_ibc_7",
+  "ibc section 7": "banking_ibc_7",
+  "insolvency financial creditor": "banking_ibc_7",
+  cirp: "banking_ibc_7",
+  "epa 2": "env_epa_2",
+  "environment protection act 2": "env_epa_2",
+  "environmental pollutant definition": "env_epa_2",
+  "epa 3": "env_epa_3",
+  "environment protection act 3": "env_epa_3",
+  "central government environment powers": "env_epa_3",
+  "epa 15": "env_epa_15",
+  "environment protection act 15": "env_epa_15",
+  "epa penalty": "env_epa_15",
+  "environment penalty": "env_epa_15",
+  "wildlife 9": "env_wildlife_9",
+  "wildlife protection act 9": "env_wildlife_9",
+  "prohibition of hunting": "env_wildlife_9",
+  "tiger poaching": "env_wildlife_9",
+  "forest conservation act 2": "env_forest_2",
+  "forest act 2": "env_forest_2",
+  "forest diversion": "env_forest_2",
+  "ngt 14": "env_ngt_14",
+  "ngt act 14": "env_ngt_14",
+  "national green tribunal jurisdiction": "env_ngt_14",
+  "green tribunal": "env_ngt_14",
   "ipc 378": "ipc_378",
   ipc378: "ipc_378",
   "section 378 ipc": "ipc_378",
@@ -8718,4 +9485,25 @@ export function generateLawExplanation(
 
 export function getAllActNames(): string[] {
   return [...new Set(Object.values(LAW_DATABASE).map((r) => r.actName))];
+}
+
+export function getAllLawEntries(): Array<{
+  key: string;
+  title: string;
+  actName: string;
+  sectionNumber: string;
+  explanation: string;
+  sectionText: string;
+  punishmentSeverity?: string;
+}> {
+  return Object.entries(LAW_DATABASE).map(([key, entry]) => ({
+    key,
+    title: entry.title || "",
+    actName: entry.actName || entry.act || "",
+    sectionNumber: entry.sectionNumber || entry.section || "",
+    explanation:
+      entry.explanation || entry.bengaliExplanation || entry.summary || "",
+    sectionText: entry.sectionText || "",
+    punishmentSeverity: entry.punishmentSeverity,
+  }));
 }

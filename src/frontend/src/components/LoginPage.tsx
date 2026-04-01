@@ -169,7 +169,7 @@ export function LoginPage() {
           <img
             src="/assets/generated/vidya-setu-logo-transparent.dim_400x200.png"
             alt="Vidya Setu AI"
-            className="h-20 w-auto object-contain animate-logo-float"
+            className="h-20 w-auto object-contain"
             style={{
               filter: "drop-shadow(0 0 16px oklch(0.75 0.18 200 / 0.7))",
             }}

@@ -1,0 +1,24 @@
+{
+  "name": "Vidya Setu AI",
+  "short_name": "Vidya Setu",
+  "description": "Connecting You to Smarter Learning - WBCHSE, NEET, CA, CMA, Law",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#1a2744",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/assets/generated/vidya-setu-icon-192.dim_192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/generated/vidya-setu-icon.dim_512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

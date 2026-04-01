@@ -61,7 +61,8 @@ type Page =
   | "progress"
   | "bookmarks"
   | "doubt"
-  | "leaderboard";
+  | "leaderboard"
+  | "ssc";
 
 interface NavbarProps {
   currentPage: string;
@@ -113,6 +114,7 @@ export function Navbar({
     },
     { page: "ca", label: "CA", icon: <GraduationCap className="w-4 h-4" /> },
     { page: "cma", label: "CMA", icon: <GraduationCap className="w-4 h-4" /> },
+    { page: "ssc", label: "SSC Jobs", icon: <Briefcase className="w-4 h-4" /> },
     { page: "qa", label: "Q&A", icon: <Library className="w-4 h-4" /> },
     ...(isLoggedIn
       ? [

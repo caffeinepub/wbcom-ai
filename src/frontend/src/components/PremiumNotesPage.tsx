@@ -144,7 +144,11 @@ function AttachmentsSection({
                 className="rounded-lg overflow-hidden border border-border"
               >
                 <img
-                  src={`data:${a.type};base64,${a.data}`}
+                  src={
+                    a.data.startsWith("http")
+                      ? a.data
+                      : `data:${a.type};base64,${a.data}`
+                  }
                   alt={a.name}
                   className="w-full object-contain max-h-64"
                 />
@@ -170,19 +174,39 @@ function AttachmentsSection({
               <div className="flex items-center justify-between px-3 py-2 bg-muted/30 border-b border-border">
                 <span className="text-xs font-medium truncate">{a.name}</span>
                 <a
-                  href={`data:application/pdf;base64,${a.data}`}
-                  download={a.name}
+                  href={
+                    a.data.startsWith("http")
+                      ? a.data
+                      : `data:application/pdf;base64,${a.data}`
+                  }
+                  download={!a.data.startsWith("http") ? a.name : undefined}
+                  target={a.data.startsWith("http") ? "_blank" : undefined}
+                  rel="noopener noreferrer"
                   className="text-xs text-blue-600 hover:underline ml-2 shrink-0"
                 >
-                  ডাউনলোড
+                  {a.data.startsWith("http") ? "খুলুন" : "ডাউনলোড"}
                 </a>
               </div>
-              <iframe
-                src={`data:application/pdf;base64,${a.data}`}
-                title={a.name}
-                className="w-full"
-                style={{ height: "600px" }}
-              />
+              {a.data.startsWith("http") ? (
+                <div className="p-3 flex items-center gap-2 bg-red-50 dark:bg-red-950/20">
+                  <span className="text-2xl">📄</span>
+                  <a
+                    href={a.data}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-blue-600 hover:underline"
+                  >
+                    PDF দেখতে এখানে ক্লিক করুন — {a.name}
+                  </a>
+                </div>
+              ) : (
+                <iframe
+                  src={`data:application/pdf;base64,${a.data}`}
+                  title={a.name}
+                  className="w-full"
+                  style={{ height: "600px" }}
+                />
+              )}
             </div>
           ))}
         </div>
@@ -192,8 +216,13 @@ function AttachmentsSection({
           {others.map((a, i) => (
             <a
               key={`other-${a.name}-${i}`}
-              href={`data:${a.type};base64,${a.data}`}
-              download={a.name}
+              href={
+                a.data.startsWith("http")
+                  ? a.data
+                  : `data:${a.type};base64,${a.data}`
+              }
+              download={!a.data.startsWith("http") ? a.name : undefined}
+              target={a.data.startsWith("http") ? "_blank" : undefined}
               className="flex items-center gap-2 text-xs text-blue-600 hover:underline"
             >
               <FileText className="w-3.5 h-3.5" />
@@ -321,12 +350,12 @@ export function PremiumNotesPage() {
           <p className="text-sm text-purple-700">
             Instagram-এ DM করুন:{" "}
             <a
-              href="https://instagram.com/wbcomai"
+              href="https://instagram.com/vidyasetuai"
               target="_blank"
               rel="noopener noreferrer"
               className="font-bold text-purple-900 hover:underline"
             >
-              @wbcomai
+              @vidyasetuai
             </a>
           </p>
         </div>
@@ -520,7 +549,7 @@ export function PremiumNotesPage() {
           </h2>
           <p className="text-sm text-red-700 mb-4">
             আপনার request rejected হয়েছে। আরও তথ্যের জন্য Instagram-এ DM করুন:
-            @wbcomai
+            @vidyasetuai
           </p>
         </div>
       )}
@@ -617,8 +646,31 @@ export function PremiumNotesPage() {
                           {note.title}
                         </CardTitle>
                       </div>
-                      <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
-                        <BookOpen className="w-4 h-4 text-emerald-700" />
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const { content: plainContent } = parseNoteContent(
+                              note.content,
+                            );
+                            const pw = window.open("", "_blank");
+                            if (pw) {
+                              pw.document.write(
+                                `<html><body><h2>${note.title}</h2><pre style="white-space:pre-wrap;font-family:sans-serif">${plainContent}</pre></body></html>`,
+                              );
+                              pw.document.close();
+                              pw.print();
+                            }
+                          }}
+                          className="text-xs px-2 py-1 rounded border border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
+                          data-print-hide="true"
+                          title="Print"
+                        >
+                          🖨️
+                        </button>
+                        <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
+                          <BookOpen className="w-4 h-4 text-emerald-700" />
+                        </div>
                       </div>
                     </div>
                   </CardHeader>
