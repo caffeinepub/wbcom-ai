@@ -167,7 +167,7 @@ export function LoginPage() {
         {/* Logo */}
         <div className="flex flex-col items-center gap-4">
           <img
-            src="/assets/generated/vidya-setu-logo-transparent.dim_400x200.png"
+            src="/assets/generated/vidya-setu-logo-v2-transparent.dim_400x120.png"
             alt="Vidya Setu AI"
             className="h-20 w-auto object-contain"
             style={{

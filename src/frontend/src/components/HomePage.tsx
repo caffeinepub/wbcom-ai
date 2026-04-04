@@ -198,7 +198,7 @@ export function HomePage({ onNavigate }: HomePageProps) {
       {/* Hero Banner */}
       <section className="py-12 px-4 text-center border-b border-border bg-gradient-to-b from-primary/5 to-transparent">
         <img
-          src="/assets/generated/vidya-setu-logo-transparent.dim_400x200.png"
+          src="/assets/generated/vidya-setu-logo-v2-transparent.dim_400x120.png"
           alt="Vidya Setu AI"
           className="h-16 sm:h-20 w-auto object-contain mx-auto mb-4"
         />

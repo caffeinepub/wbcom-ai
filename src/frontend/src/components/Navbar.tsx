@@ -236,9 +236,10 @@ export function Navbar({
             data-ocid="nav.link"
           >
             <img
-              src="/assets/generated/vidya-setu-logo-transparent.dim_400x200.png"
+              src="/assets/generated/vidya-setu-logo-v2-transparent.dim_400x120.png"
               alt="Vidya Setu AI"
               className="h-9 w-auto object-contain"
+              style={{ filter: "drop-shadow(0 0 8px rgba(255,200,50,0.5))" }}
             />
             <div className="leading-tight hidden sm:block">
               <span className="block font-display font-bold text-sm leading-none">

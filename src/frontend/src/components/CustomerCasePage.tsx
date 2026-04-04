@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,6 +12,13 @@ import { ProblemType } from "../backend.d";
 import { useActor } from "../hooks/useActor";
 import { useInternetIdentity } from "../hooks/useInternetIdentity";
 import { useGetMyCustomerMessages, useSaveProblem } from "../hooks/useQueries";
+import {
+  ImageUploader,
+  MessageImages,
+  type UploadedImage,
+  formatImagesAppend,
+  parseImagesFromMessage,
+} from "./ImageUploader";
 
 export function CustomerCasePage() {
   const { actor, isFetching } = useActor();
@@ -23,6 +31,8 @@ export function CustomerCasePage() {
   const [supportName, setSupportName] = useState("");
   const [supportMessage, setSupportMessage] = useState("");
   const [isSendingSupport, setIsSendingSupport] = useState(false);
+  const [supportImages, setSupportImages] = useState<UploadedImage[]>([]);
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
 
   const { data: myMessages, isLoading: loadingMyMessages } =
     useGetMyCustomerMessages();
@@ -88,13 +98,17 @@ export function CustomerCasePage() {
     }
     setIsSendingSupport(true);
     try {
-      await readyActor.submitCustomerMessage(
-        supportName.trim(),
-        supportMessage.trim(),
+      // Append image URLs to message if any were uploaded
+      const imageAppend = formatImagesAppend(
+        supportImages.map((img) => img.url),
       );
+      const fullMessage = supportMessage.trim() + imageAppend;
+
+      await readyActor.submitCustomerMessage(supportName.trim(), fullMessage);
       toast.success("আপনার বার্তা পাঠানো হয়েছে / Message sent to support!");
       setSupportName("");
       setSupportMessage("");
+      setSupportImages([]);
     } catch {
       toast.error("বার্তা পাঠানো যায়নি। আবার চেষ্টা করুন।");
     } finally {
@@ -239,6 +253,10 @@ export function CustomerCasePage() {
               onChange={(e) => setSupportMessage(e.target.value)}
             />
           </div>
+
+          {/* Image uploader */}
+          <ImageUploader onImagesChange={setSupportImages} maxImages={5} />
+
           <Button
             data-ocid="support.submit_button"
             onClick={handleSendSupport}
@@ -297,11 +315,13 @@ export function CustomerCasePage() {
         ) : (
           <div className="space-y-4">
             {myMessages.map((msg, idx) => {
-              // adminReply is Candid optional: [] | [string]
               const adminReply =
                 msg.adminReply && msg.adminReply.length > 0
                   ? msg.adminReply[0]
                   : null;
+              const { text: msgText, imageUrls } = parseImagesFromMessage(
+                msg.message,
+              );
 
               return (
                 <Card
@@ -321,8 +341,12 @@ export function CustomerCasePage() {
                         আপনার বার্তা / Your Message:
                       </p>
                       <p className="text-sm text-foreground whitespace-pre-wrap">
-                        {msg.message}
+                        {msgText}
                       </p>
+                      <MessageImages
+                        imageUrls={imageUrls}
+                        onImageClick={setLightboxUrl}
+                      />
                     </div>
 
                     {adminReply ? (
@@ -347,6 +371,19 @@ export function CustomerCasePage() {
           </div>
         )}
       </div>
+
+      {/* Lightbox Dialog */}
+      <Dialog open={!!lightboxUrl} onOpenChange={() => setLightboxUrl(null)}>
+        <DialogContent className="max-w-3xl p-2 bg-black/90 border-none">
+          {lightboxUrl && (
+            <img
+              src={lightboxUrl}
+              alt="Enlarged view"
+              className="w-full max-h-[80vh] object-contain rounded"
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

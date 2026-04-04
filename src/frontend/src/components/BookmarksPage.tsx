@@ -2,22 +2,22 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Bookmark, BookmarkX, Search } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export interface BookmarkItem {
   id: string;
-  type: "note" | "question" | "lawSection";
+  type: "note" | "question" | "lawSection" | "ssc";
   title: string;
   content: string;
   subject?: string;
   savedAt: number;
 }
 
-const STORAGE_KEY = "vs_bookmarks";
+export const BOOKMARKS_STORAGE_KEY = "vs_bookmarks";
 
 function loadBookmarks(): BookmarkItem[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(BOOKMARKS_STORAGE_KEY);
     return raw ? (JSON.parse(raw) as BookmarkItem[]) : [];
   } catch {
     return [];
@@ -26,7 +26,7 @@ function loadBookmarks(): BookmarkItem[] {
 
 function saveBookmarksToStorage(items: BookmarkItem[]) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    localStorage.setItem(BOOKMARKS_STORAGE_KEY, JSON.stringify(items));
   } catch {
     // ignore
   }
@@ -34,6 +34,25 @@ function saveBookmarksToStorage(items: BookmarkItem[]) {
 
 export function useBookmarks() {
   const [bookmarks, setBookmarks] = useState<BookmarkItem[]>(loadBookmarks);
+
+  // Refresh from storage when window regains focus (user navigated back)
+  useEffect(() => {
+    function handleFocus() {
+      setBookmarks(loadBookmarks());
+    }
+    window.addEventListener("focus", handleFocus);
+    // Also listen for custom event fired when bookmarks change in other components
+    function handleStorageEvent(e: StorageEvent) {
+      if (e.key === BOOKMARKS_STORAGE_KEY) {
+        setBookmarks(loadBookmarks());
+      }
+    }
+    window.addEventListener("storage", handleStorageEvent);
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      window.removeEventListener("storage", handleStorageEvent);
+    };
+  }, []);
 
   const addBookmark = useCallback((item: BookmarkItem) => {
     setBookmarks((prev) => {
@@ -64,12 +83,14 @@ const TYPE_LABELS: Record<BookmarkItem["type"], string> = {
   note: "Note",
   question: "Question",
   lawSection: "Law Section",
+  ssc: "SSC",
 };
 
 const TYPE_COLORS: Record<BookmarkItem["type"], string> = {
   note: "bg-violet-400/15 text-violet-300 border-violet-400/25",
   question: "bg-cyan-400/15 text-cyan-300 border-cyan-400/25",
   lawSection: "bg-indigo-400/15 text-indigo-300 border-indigo-400/25",
+  ssc: "bg-amber-400/15 text-amber-300 border-amber-400/25",
 };
 
 export function BookmarksPage() {
@@ -96,7 +117,7 @@ export function BookmarksPage() {
           <Bookmark className="w-5 h-5 text-primary" />
         </div>
         <div>
-          <h1 className="font-display font-bold text-2xl">Bookmarks</h1>
+          <h1 className="font-bold text-2xl">Bookmarks</h1>
           <p className="text-muted-foreground text-sm">
             সংরক্ষিত নোট, প্রশ্ন ও আইন বিভাগ
           </p>
@@ -124,6 +145,7 @@ export function BookmarksPage() {
           <option value="note">Notes</option>
           <option value="question">Questions</option>
           <option value="lawSection">Law Sections</option>
+          <option value="ssc">SSC</option>
         </select>
       </div>
 
@@ -135,13 +157,13 @@ export function BookmarksPage() {
           <BookmarkX className="w-12 h-12 mx-auto mb-3 opacity-30" />
           <p className="font-medium">কোনো bookmark নেই</p>
           <p className="text-sm mt-1">
-            আইন বিভাগ বা Q&A Bank থেকে বিষয়সমূহ bookmark করুন।
+            আইন বিভাগ, Q&A Bank বা SSC section থেকে বিষয়সমূহ bookmark করুন।
           </p>
         </div>
       ) : (
         <div className="space-y-3">
           <p className="text-xs text-muted-foreground">
-            {filtered.length} saved items
+            {filtered.length} saved item{filtered.length !== 1 ? "s" : ""}
           </p>
           {filtered.map((b, idx) => (
             <div

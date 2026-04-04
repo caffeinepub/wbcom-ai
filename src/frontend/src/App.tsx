@@ -5,6 +5,7 @@ import { AdminPage } from "./components/AdminPage";
 import { ArtsHomePage } from "./components/ArtsHomePage";
 import { ArtsSolver } from "./components/ArtsSolver";
 import { BookmarksPage } from "./components/BookmarksPage";
+import { BottomMobileNav } from "./components/BottomMobileNav";
 import { CAHomePage } from "./components/CAHomePage";
 import { CASolver } from "./components/CASolver";
 import { CMAHomePage } from "./components/CMAHomePage";
@@ -14,6 +15,7 @@ import { CommerceSolver } from "./components/CommerceSolver";
 import { CustomerCasePage } from "./components/CustomerCasePage";
 import { DoubtPage } from "./components/DoubtPage";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { GalleryPermissionModal } from "./components/GalleryPermissionModal";
 import { HistoryPage } from "./components/HistoryPage";
 import { HomePage } from "./components/HomePage";
 import { LawPage } from "./components/LawPage";
@@ -338,8 +340,9 @@ function AppInner() {
       <Toaster richColors position="top-right" />
       <OfflineBanner />
       <UsernameModal open={showUsernameModal} onSaved={handleUsernameSaved} />
+      <GalleryPermissionModal />
 
-      <main className="flex-1" id="main-content">
+      <main className="flex-1 pb-16 md:pb-0" id="main-content">
         <div key={currentPage}>
           {currentPage === "home" && <HomePage onNavigate={handleNavigate} />}
 
@@ -520,7 +523,16 @@ function AppInner() {
           </div>
         </div>
       </footer>
+
       <TermsModal />
+
+      {/* Mobile bottom navigation */}
+      <BottomMobileNav
+        currentPage={currentPage}
+        onNavigate={handleNavigate}
+        isLoggedIn={!!identity}
+        username={username}
+      />
     </div>
   );
 }

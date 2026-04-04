@@ -1,11 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, MessageCircleQuestion, Reply, Send } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useActor } from "../hooks/useActor";
 import { useGetMyCustomerMessages } from "../hooks/useQueries";
+import {
+  ImageUploader,
+  MessageImages,
+  type UploadedImage,
+  formatImagesAppend,
+  parseImagesFromMessage,
+} from "./ImageUploader";
 
 interface DoubtPageProps {
   username: string;
@@ -16,6 +24,8 @@ export function DoubtPage({ username }: DoubtPageProps) {
   const { data: doubts, isLoading, refetch } = useGetMyCustomerMessages();
   const [question, setQuestion] = useState("");
   const [sending, setSending] = useState(false);
+  const [doubtImages, setDoubtImages] = useState<UploadedImage[]>([]);
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
 
   async function submitDoubt() {
     if (!question.trim()) return;
@@ -25,9 +35,12 @@ export function DoubtPage({ username }: DoubtPageProps) {
     }
     setSending(true);
     try {
-      await actor.submitCustomerMessage(username || "Student", question.trim());
+      const imageAppend = formatImagesAppend(doubtImages.map((img) => img.url));
+      const fullQuestion = question.trim() + imageAppend;
+      await actor.submitCustomerMessage(username || "Student", fullQuestion);
       toast.success("আপনার প্রশ্ন পাঠানো হয়েছে!");
       setQuestion("");
+      setDoubtImages([]);
       refetch();
     } catch {
       toast.error("পাঠানো সম্ভব হয়নি");
@@ -61,6 +74,10 @@ export function DoubtPage({ username }: DoubtPageProps) {
             rows={4}
             data-ocid="doubt.textarea"
           />
+
+          {/* Image uploader */}
+          <ImageUploader onImagesChange={setDoubtImages} maxImages={5} />
+
           <Button
             onClick={submitDoubt}
             disabled={!question.trim() || sending}
@@ -105,6 +122,9 @@ export function DoubtPage({ username }: DoubtPageProps) {
                 Array.isArray(d.adminReply) && d.adminReply.length > 0
                   ? d.adminReply[0]
                   : null;
+              const { text: msgText, imageUrls } = parseImagesFromMessage(
+                d.message,
+              );
               return (
                 <Card key={String(d.id)} data-ocid={`doubt.item.${idx + 1}`}>
                   <CardContent className="pt-4 space-y-3">
@@ -115,8 +135,12 @@ export function DoubtPage({ username }: DoubtPageProps) {
                         ).toLocaleString("en-IN")}
                       </p>
                       <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                        {d.message}
+                        {msgText}
                       </p>
+                      <MessageImages
+                        imageUrls={imageUrls}
+                        onImageClick={setLightboxUrl}
+                      />
                     </div>
                     {reply ? (
                       <div className="rounded-lg bg-green-500/10 border border-green-500/30 p-3">
@@ -140,6 +164,19 @@ export function DoubtPage({ username }: DoubtPageProps) {
           </div>
         )}
       </div>
+
+      {/* Lightbox Dialog */}
+      <Dialog open={!!lightboxUrl} onOpenChange={() => setLightboxUrl(null)}>
+        <DialogContent className="max-w-3xl p-2 bg-black/90 border-none">
+          {lightboxUrl && (
+            <img
+              src={lightboxUrl}
+              alt="Enlarged view"
+              className="w-full max-h-[80vh] object-contain rounded"
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
